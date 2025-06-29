@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Mail, Lock, Star, Verified } from 'lucide-react';
+import { MapPin, Phone, Mail, Lock, Star, Verified, User } from 'lucide-react';
 import { Service } from '@/types/database';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -13,10 +13,24 @@ interface ServiceCardProps {
 }
 
 export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
-  const { canAccessContactInfo } = useAuth();
+  const { canAccessContactInfo, user } = useAuth();
   const [imageError, setImageError] = useState(false);
 
   const defaultImage = "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop";
+
+  const handleViewProfile = () => {
+    window.location.href = `/provider/${service.user_id}`;
+  };
+
+  const handleContactClick = () => {
+    if (!user) {
+      window.location.href = '/auth';
+      return;
+    }
+    if (onContactClick) {
+      onContactClick(service);
+    }
+  };
 
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
@@ -96,20 +110,19 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1"
-              onClick={() => window.location.href = `/service/${service.id}`}
+              className="flex-1 bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+              onClick={handleViewProfile}
             >
-              View Details
+              <User className="w-4 h-4 mr-1" />
+              View Profile
             </Button>
-            {canAccessContactInfo && onContactClick && (
-              <Button 
-                size="sm" 
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
-                onClick={() => onContactClick(service)}
-              >
-                Contact
-              </Button>
-            )}
+            <Button 
+              size="sm" 
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={handleContactClick}
+            >
+              Contact
+            </Button>
           </div>
         </div>
       </CardContent>

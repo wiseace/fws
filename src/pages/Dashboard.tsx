@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
@@ -16,15 +15,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, User, Settings, CreditCard } from 'lucide-react';
+import { Plus, Edit, Trash2, User, Settings, CreditCard, Loader2 } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, loading: authLoading, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
 
   // Form state
   const [serviceName, setServiceName] = useState('');
@@ -36,36 +36,65 @@ const Dashboard = () => {
   const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
-    if (user) {
-      fetchUserServices();
-      fetchCategories();
+    if (user && !authLoading) {
+      initializeDashboard();
     }
-  }, [user]);
+  }, [user, authLoading]);
+
+  const initializeDashboard = async () => {
+    try {
+      await Promise.all([
+        fetchUserServices(),
+        fetchCategories(),
+        refreshProfile()
+      ]);
+    } catch (error) {
+      console.error('Error initializing dashboard:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load dashboard data",
+        variant: "destructive"
+      });
+    } finally {
+      setDataLoading(false);
+    }
+  };
 
   const fetchCategories = async () => {
-    const { data } = await supabase
-      .from('categories')
-      .select('*')
-      .order('name');
-    
-    if (data) setCategories(data);
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      if (data) setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
   };
 
   const fetchUserServices = async () => {
     if (!user) return;
     
-    const { data } = await supabase
-      .from('services')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    
-    if (data) {
-      const typedServices = data.map(service => ({
-        ...service,
-        contact_info: service.contact_info as { phone?: string; email?: string; }
-      })) as Service[];
-      setServices(typedServices);
+    try {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      if (data) {
+        const typedServices = data.map(service => ({
+          ...service,
+          contact_info: service.contact_info as { phone?: string; email?: string; }
+        })) as Service[];
+        setServices(typedServices);
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
     }
   };
 
@@ -170,6 +199,22 @@ const Dashboard = () => {
     }
   };
 
+  if (authLoading || dataLoading) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen bg-gray-50">
+          <Header editMode={false} onToggleEdit={() => {}} />
+          <div className="flex justify-center items-center py-20">
+            <div className="text-center">
+              <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-blue-600" />
+              <p className="text-gray-600">Loading your dashboard...</p>
+            </div>
+          </div>
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
@@ -195,7 +240,7 @@ const Dashboard = () => {
                   {profile?.user_type === 'provider' && (
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button onClick={resetForm}>
+                        <Button onClick={resetForm} className="bg-blue-600 hover:bg-blue-700">
                           <Plus className="w-4 h-4 mr-2" />
                           Add Service
                         </Button>
@@ -293,7 +338,7 @@ const Dashboard = () => {
                             >
                               Cancel
                             </Button>
-                            <Button type="submit">
+                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                               {editingService ? 'Update' : 'Add'} Service
                             </Button>
                           </div>
@@ -403,7 +448,7 @@ const Dashboard = () => {
                       </p>
                     </div>
                   )}
-                  <Button onClick={() => window.location.href = '/pricing'}>
+                  <Button onClick={() => window.location.href = '/pricing'} className="bg-blue-600 hover:bg-blue-700">
                     Upgrade Subscription
                   </Button>
                 </CardContent>

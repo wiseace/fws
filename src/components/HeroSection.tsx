@@ -21,14 +21,7 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
   };
 
   return (
-    <section 
-      className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white py-20 min-h-[600px] flex items-center"
-      style={{
-        backgroundImage: `linear-gradient(rgba(30, 58, 138, 0.8), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=1080&fit=crop')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-    >
+    <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white py-20 min-h-[600px] flex items-center">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <EditableElement
           editMode={editMode}
