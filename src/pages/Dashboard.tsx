@@ -60,7 +60,13 @@ const Dashboard = () => {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     
-    if (data) setServices(data);
+    if (data) {
+      const typedServices = data.map(service => ({
+        ...service,
+        contact_info: service.contact_info as { phone?: string; email?: string; }
+      })) as Service[];
+      setServices(typedServices);
+    }
   };
 
   const resetForm = () => {

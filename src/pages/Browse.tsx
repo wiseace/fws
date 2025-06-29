@@ -47,7 +47,13 @@ const Browse = () => {
       .eq('is_active', true)
       .order('created_at', { ascending: false });
     
-    if (data) setServices(data);
+    if (data) {
+      const typedServices = data.map(service => ({
+        ...service,
+        contact_info: service.contact_info as { phone?: string; email?: string; }
+      })) as Service[];
+      setServices(typedServices);
+    }
     setLoading(false);
   };
 
@@ -75,7 +81,13 @@ const Browse = () => {
 
     const { data } = await query.order('created_at', { ascending: false });
     
-    if (data) setServices(data);
+    if (data) {
+      const typedServices = data.map(service => ({
+        ...service,
+        contact_info: service.contact_info as { phone?: string; email?: string; }
+      })) as Service[];
+      setServices(typedServices);
+    }
     setLoading(false);
   };
 
