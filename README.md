@@ -1,73 +1,135 @@
-# Welcome to your Lovable project
 
-## Project info
+# FindWho - Professional Directory Clone
 
-**URL**: https://lovable.dev/projects/13d652b2-f19f-4b5f-9528-251cdec00174
+A modern, fully editable professional directory website with visual editing capabilities and Supabase integration.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- 🎨 **Visual Editor**: Inline editing of text, images, and content
+- 📱 **Responsive Design**: Works perfectly on all devices
+- 🔍 **Advanced Search**: Filter by category, location, and keywords
+- ⭐ **Professional Profiles**: Detailed profile cards with ratings and verification
+- 🎯 **Category Filtering**: Easy navigation through different professional categories
+- 🔧 **Live Editing Panel**: Built-in CMS-style admin interface
+- 🗄️ **Supabase Ready**: Structure prepared for database integration
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/13d652b2-f19f-4b5f-9528-251cdec00174) and start prompting.
+- **Frontend**: React, TypeScript, Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Icons**: Lucide React
+- **Database**: Supabase (ready for integration)
+- **Deployment**: Vercel/Netlify ready
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd findwho-clone
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-Follow these steps:
+4. **Open in browser**
+   Navigate to `http://localhost:8080`
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Editing Guide
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Visual Editing Mode
+1. Click the "Edit Mode" button in the header
+2. Click on any text element to edit it inline
+3. Use the editing panel on the right for advanced options
+4. Exit edit mode to see the final result
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Adding New Profiles
+1. Enable edit mode
+2. Scroll to the directory section
+3. Click "Add New Profile" button
+4. Fill in the profile details
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Customizing Design
+1. Open the editing panel
+2. Go to the "Design" tab
+3. Modify colors, typography, and layout options
 
-**Edit a file directly in GitHub**
+## Supabase Integration
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+To connect with Supabase for dynamic content management:
 
-**Use GitHub Codespaces**
+1. **Set up Supabase project**
+2. **Create profiles table**:
+   ```sql
+   CREATE TABLE profiles (
+     id SERIAL PRIMARY KEY,
+     name VARCHAR(255) NOT NULL,
+     title VARCHAR(255) NOT NULL,
+     bio TEXT,
+     location VARCHAR(255),
+     image_url TEXT,
+     category VARCHAR(100),
+     rating DECIMAL(2,1),
+     verified BOOLEAN DEFAULT false,
+     created_at TIMESTAMP DEFAULT NOW()
+   );
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+3. **Configure environment variables**
+4. **Enable real-time sync**
 
-## What technologies are used for this project?
+## Deployment
 
-This project is built with:
+### GitHub Integration
+1. Connect your GitHub account in Lovable
+2. Push changes automatically sync
+3. Set up GitHub Actions for CI/CD
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Hosting Options
+- **Vercel**: Connect GitHub repo for automatic deployments
+- **Netlify**: Drag and drop build folder or connect Git
+- **Custom hosting**: Build with `npm run build`
 
-## How can I deploy this project?
+## Customization
 
-Simply open [Lovable](https://lovable.dev/projects/13d652b2-f19f-4b5f-9528-251cdec00174) and click on Share -> Publish.
+### Color Scheme
+Modify the color palette in `tailwind.config.ts` or use the visual editor.
 
-## Can I connect a custom domain to my Lovable project?
+### Layout Components
+All components are modular and can be easily rearranged:
+- `Header` - Navigation and branding
+- `HeroSection` - Main banner with search
+- `DirectoryGrid` - Profile listings
+- `ProfileCard` - Individual profile display
+- `Footer` - Site footer
 
-Yes, you can!
+### Content Management
+- Edit content directly in the browser
+- Add/remove sections with the editing panel
+- Manage profiles through the admin interface
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Contributing
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## Support
+
+For support and questions:
+- Check the documentation
+- Open an issue on GitHub
+- Contact support
+
+## License
+
+This project is licensed under the MIT License.
