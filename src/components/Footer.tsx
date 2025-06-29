@@ -1,5 +1,5 @@
 
-import { Facebook, Twitter, Instagram, LinkedIn } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 interface FooterProps {
   editMode: boolean;
@@ -22,7 +22,7 @@ export const Footer = ({ editMode }: FooterProps) => {
               <Facebook className="w-6 h-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors" />
               <Twitter className="w-6 h-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors" />
               <Instagram className="w-6 h-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors" />
-              <LinkedIn className="w-6 h-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors" />
+              <Linkedin className="w-6 h-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors" />
             </div>
           </div>
 
