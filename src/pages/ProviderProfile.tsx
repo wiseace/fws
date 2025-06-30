@@ -2,14 +2,17 @@
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Mail, Star, Verified, ArrowLeft, Calendar, Award } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { ProviderHeader } from '@/components/provider/ProviderHeader';
+import { ProviderInfo } from '@/components/provider/ProviderInfo';
+import { ProviderServices } from '@/components/provider/ProviderServices';
+import { ProviderVerification } from '@/components/provider/ProviderVerification';
 
 const ProviderProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -54,7 +57,6 @@ const ProviderProfile = () => {
       return;
     }
 
-    // Show contact info since user has access
     toast.success('Contact information revealed below');
   };
 
@@ -119,152 +121,21 @@ const ProviderProfile = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Profile Card */}
           <div className="lg:col-span-2">
-            <Card className="overflow-hidden">
-              <div className="h-48 bg-gradient-to-r from-blue-600 to-blue-800 relative">
-                {mainService.image_url && (
-                  <img 
-                    src={mainService.image_url} 
-                    alt={mainService.service_name}
-                    className="w-full h-full object-cover opacity-30"
-                  />
-                )}
-                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
-                  <div className="p-6 text-white">
-                    <div className="flex items-center mb-2">
-                      <h1 className="text-3xl font-bold mr-3">{provider.user?.name}</h1>
-                      {provider.user?.is_verified && (
-                        <div className="bg-blue-600 rounded-full p-1">
-                          <Verified className="w-5 h-5 text-white" />
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-blue-100 text-lg">{mainService.service_name}</p>
-                  </div>
-                </div>
-              </div>
-
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">About</h3>
-                    <p className="text-gray-600 mb-4">
-                      {mainService.description || "Professional service provider with years of experience delivering quality work."}
-                    </p>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center text-gray-700">
-                        <MapPin className="w-4 h-4 mr-2 text-blue-600" />
-                        <span>{mainService.location || "Location not specified"}</span>
-                      </div>
-                      <div className="flex items-center text-gray-700">
-                        <Star className="w-4 h-4 mr-2 text-yellow-500 fill-current" />
-                        <span>4.8 rating (25 reviews)</span>
-                      </div>
-                      <div className="flex items-center text-gray-700">
-                        <Calendar className="w-4 h-4 mr-2 text-green-600" />
-                        <span>Available for bookings</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
-                    {canAccessContactInfo ? (
-                      <div className="space-y-2">
-                        {contactInfo.phone && (
-                          <div className="flex items-center text-gray-700">
-                            <Phone className="w-4 h-4 mr-2 text-blue-600" />
-                            <span>{contactInfo.phone}</span>
-                          </div>
-                        )}
-                        {contactInfo.email && (
-                          <div className="flex items-center text-gray-700">
-                            <Mail className="w-4 h-4 mr-2 text-blue-600" />
-                            <span>{contactInfo.email}</span>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div className="flex items-center text-gray-500 mb-2">
-                          <Phone className="w-4 h-4 mr-2" />
-                          <span>••• ••• ••••</span>
-                        </div>
-                        <div className="flex items-center text-gray-500 mb-3">
-                          <Mail className="w-4 h-4 mr-2" />
-                          <span>••••••@••••.com</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Verify your account and subscribe to view contact details
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t">
-                  <Button 
-                    onClick={handleContactClick}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    {canAccessContactInfo ? 'Contact Now' : 'Unlock Contact Info'}
-                  </Button>
-                </div>
-              </CardContent>
+            <ProviderHeader user={provider.user} mainService={mainService} />
+            <Card className="mt-0">
+              <ProviderInfo 
+                mainService={mainService}
+                canAccessContactInfo={canAccessContactInfo}
+                contactInfo={contactInfo}
+                onContactClick={handleContactClick}
+              />
             </Card>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Services Card */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Services Offered</h3>
-                <div className="space-y-3">
-                  {provider.services.map((service) => (
-                    <div key={service.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium">{service.service_name}</h4>
-                        <Badge variant="secondary" className="mt-1">
-                          {service.category}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Verification Status */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Verification Status</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    {provider.user?.is_verified ? (
-                      <>
-                        <div className="bg-green-100 rounded-full p-1 mr-3">
-                          <Verified className="w-4 h-4 text-green-600" />
-                        </div>
-                        <span className="text-green-600 font-medium">Verified Provider</span>
-                      </>
-                    ) : (
-                      <>
-                        <div className="bg-gray-100 rounded-full p-1 mr-3">
-                          <Award className="w-4 h-4 text-gray-600" />
-                        </div>
-                        <span className="text-gray-600">Unverified</span>
-                      </>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    {provider.user?.is_verified 
-                      ? "This provider has been verified and meets our quality standards."
-                      : "This provider has not yet completed verification."}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <ProviderServices services={provider.services} />
+            <ProviderVerification user={provider.user} />
           </div>
         </div>
       </div>
