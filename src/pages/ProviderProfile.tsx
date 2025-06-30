@@ -62,6 +62,17 @@ const ProviderProfile = () => {
     window.history.back();
   };
 
+  // Helper function to safely access contact info
+  const getContactInfo = (contactInfo: any) => {
+    if (!contactInfo || typeof contactInfo !== 'object') {
+      return { phone: null, email: null };
+    }
+    return {
+      phone: contactInfo.phone || null,
+      email: contactInfo.email || null
+    };
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -89,6 +100,7 @@ const ProviderProfile = () => {
   }
 
   const mainService = provider.services[0];
+  const contactInfo = getContactInfo(mainService.contact_info);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -159,16 +171,16 @@ const ProviderProfile = () => {
                     <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
                     {canAccessContactInfo ? (
                       <div className="space-y-2">
-                        {mainService.contact_info?.phone && (
+                        {contactInfo.phone && (
                           <div className="flex items-center text-gray-700">
                             <Phone className="w-4 h-4 mr-2 text-blue-600" />
-                            <span>{mainService.contact_info.phone}</span>
+                            <span>{contactInfo.phone}</span>
                           </div>
                         )}
-                        {mainService.contact_info?.email && (
+                        {contactInfo.email && (
                           <div className="flex items-center text-gray-700">
                             <Mail className="w-4 h-4 mr-2 text-blue-600" />
-                            <span>{mainService.contact_info.email}</span>
+                            <span>{contactInfo.email}</span>
                           </div>
                         )}
                       </div>
