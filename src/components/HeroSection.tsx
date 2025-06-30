@@ -1,22 +1,23 @@
 
 import { Search, MapPin, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { EditableElement } from './EditableElement';
-import { useState } from 'react';
+import { SearchWithGeolocation } from './SearchWithGeolocation';
 
 interface HeroSectionProps {
   editMode: boolean;
 }
 
 export const HeroSection = ({ editMode }: HeroSectionProps) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [location, setLocation] = useState('');
-
-  const handleSearch = () => {
+  const handleSearch = (filters: { search?: string; category?: string; location?: string; userLocation?: { lat: number; lng: number } }) => {
     const params = new URLSearchParams();
-    if (searchTerm) params.set('search', searchTerm);
-    if (location) params.set('location', location);
+    if (filters.search) params.set('search', filters.search);
+    if (filters.category) params.set('category', filters.category);
+    if (filters.location) params.set('location', filters.location);
+    if (filters.userLocation) {
+      params.set('lat', filters.userLocation.lat.toString());
+      params.set('lng', filters.userLocation.lng.toString());
+    }
     window.location.href = `/browse?${params.toString()}`;
   };
 
@@ -37,35 +38,12 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
           defaultValue="Connect with verified artisans, craftsmen, and service providers. Quality work, trusted professionals, verified credentials."
         />
 
-        {/* Search Bar */}
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-4 flex flex-col md:flex-row gap-4 mb-12">
-          <div className="flex-1 flex items-center px-4">
-            <Search className="w-5 h-5 text-gray-400 mr-3" />
-            <Input
-              placeholder="What service do you need?"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="border-0 focus:ring-0 text-gray-900 placeholder-gray-500 text-lg"
-            />
-          </div>
-          
-          <div className="flex-1 flex items-center px-4 border-l border-gray-200">
-            <MapPin className="w-5 h-5 text-gray-400 mr-3" />
-            <Input
-              placeholder="Enter your location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="border-0 focus:ring-0 text-gray-900 placeholder-gray-500 text-lg"
-            />
-          </div>
-          
-          <Button 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
-            onClick={handleSearch}
-          >
-            Search Now
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
+        {/* Enhanced Search Bar with Geolocation */}
+        <div className="max-w-5xl mx-auto mb-12">
+          <SearchWithGeolocation 
+            onSearch={handleSearch}
+            className="shadow-2xl"
+          />
         </div>
 
         {/* Popular Categories */}
