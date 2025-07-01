@@ -12,9 +12,22 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header editMode={editMode} onToggleEdit={() => setEditMode(!editMode)} />
-      <HeroSection editMode={editMode} />
-      <DirectoryGrid editMode={editMode} />
-      <Footer editMode={editMode} />
+      
+      {/* Hero Section with Error Boundary */}
+      <div className="error-boundary">
+        <HeroSection editMode={editMode} />
+      </div>
+      
+      {/* Directory Grid with Error Boundary */}
+      <div className="error-boundary">
+        <DirectoryGrid editMode={editMode} />
+      </div>
+      
+      {/* Footer with Error Boundary */}
+      <div className="error-boundary">
+        <Footer editMode={editMode} />
+      </div>
+      
       {editMode && <EditingPanel />}
     </div>
   );

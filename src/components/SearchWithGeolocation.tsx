@@ -15,21 +15,29 @@ interface SearchWithGeolocationProps {
 
 export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGeolocationProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [locationFilter, setLocationFilter] = useState('');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
-  const { data: categories } = useQuery({
+  const { data: categories, isError } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .order('name');
+        
+        if (error) {
+          console.error('Categories fetch error:', error);
+          throw error;
+        }
+        return data || [];
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        return [];
+      }
     }
   });
 
@@ -81,7 +89,7 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
   const handleSearch = () => {
     const filters = {
       search: searchTerm || undefined,
-      category: selectedCategory || undefined,
+      category: selectedCategory === 'all' ? undefined : selectedCategory,
       location: locationFilter || undefined,
       userLocation: userLocation || undefined
     };
@@ -116,12 +124,18 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
-            {categories?.map((category) => (
-              <SelectItem key={category.id} value={category.name}>
-                {category.name}
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories && categories.length > 0 ? (
+              categories.map((category) => (
+                <SelectItem key={category.id} value={category.name}>
+                  {category.name}
+                </SelectItem>
+              ))
+            ) : (
+              <SelectItem value="loading" disabled>
+                {isError ? 'Failed to load categories' : 'Loading categories...'}
               </SelectItem>
-            ))}
+            )}
           </SelectContent>
         </Select>
 

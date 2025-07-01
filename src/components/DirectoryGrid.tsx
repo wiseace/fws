@@ -80,43 +80,78 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [profiles] = useState(sampleProfiles);
 
+  console.log('DirectoryGrid rendering with profiles:', profiles.length);
+
   const filteredProfiles = selectedCategory === 'All' 
     ? profiles 
     : profiles.filter(profile => profile.category === selectedCategory);
 
-  return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">
-          Featured Professionals
-        </h2>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Connect with verified experts and professionals in various fields
-        </p>
-      </div>
+  console.log('Filtered profiles:', filteredProfiles.length);
 
-      <CategoryFilter 
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-        {filteredProfiles.map((profile) => (
-          <ProfileCard 
-            key={profile.id} 
-            profile={profile} 
-            editMode={editMode}
-          />
-        ))}
-      </div>
-
-      {editMode && (
-        <div className="mt-8 text-center">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
-            + Add New Profile
-          </button>
+  try {
+    return (
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Featured Professionals
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Connect with verified experts and professionals in various fields
+          </p>
         </div>
-      )}
-    </section>
-  );
+
+        <CategoryFilter 
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+          {filteredProfiles && filteredProfiles.length > 0 ? (
+            filteredProfiles.map((profile) => (
+              <ProfileCard 
+                key={profile.id} 
+                profile={profile} 
+                editMode={editMode}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-500 text-lg mb-4">
+                No professionals found in this category.
+              </div>
+              <div className="text-gray-400">
+                Try selecting a different category or check back later.
+              </div>
+            </div>
+          )}
+        </div>
+
+        {editMode && (
+          <div className="mt-8 text-center">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
+              + Add New Profile
+            </button>
+          </div>
+        )}
+      </section>
+    );
+  } catch (error) {
+    console.error('DirectoryGrid render error:', error);
+    // Fallback content
+    return (
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Featured Professionals
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+            Connect with verified experts and professionals in various fields
+          </p>
+          <div className="text-gray-500">
+            Content is loading. Please refresh the page if this persists.
+          </div>
+        </div>
+      </section>
+    );
+  }
 };
