@@ -277,6 +277,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      make_user_admin: {
+        Args: { user_email: string }
+        Returns: undefined
+      }
       update_verification_status: {
         Args: {
           request_id: string

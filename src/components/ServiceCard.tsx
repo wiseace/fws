@@ -7,6 +7,7 @@ import { MapPin, Phone, Mail, Lock, Star, Verified, User } from 'lucide-react';
 import { Service } from '@/types/database';
 import { useAuth } from '@/hooks/useAuth';
 import { ContactModal } from './ContactModal';
+import { ProfileModal } from './ProfileModal';
 
 interface ServiceCardProps {
   service: Service;
@@ -17,11 +18,12 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
   const { canAccessContactInfo, user } = useAuth();
   const [imageError, setImageError] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   const defaultImage = "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop";
 
   const handleViewProfile = () => {
-    window.location.href = `/provider/${service.user_id}`;
+    setShowProfileModal(true);
   };
 
   const handleContactClick = () => {
@@ -135,6 +137,16 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
         service={service}
         isOpen={showContactModal}
         onClose={() => setShowContactModal(false)}
+      />
+      
+      <ProfileModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        userId={service.user_id}
+        onContact={() => {
+          setShowProfileModal(false);
+          setShowContactModal(true);
+        }}
       />
     </>
   );

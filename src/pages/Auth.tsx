@@ -96,6 +96,13 @@ const Auth = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-blue-600">FindWho</CardTitle>
           <p className="text-gray-600">Connect with skilled professionals</p>
+          <Button 
+            variant="link" 
+            onClick={() => window.location.href = '/'}
+            className="text-blue-600 hover:text-blue-700"
+          >
+            ← Back to Homepage
+          </Button>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
