@@ -33,6 +33,58 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_requests: {
+        Row: {
+          contact_method: string | null
+          created_at: string | null
+          id: string
+          message: string | null
+          provider_id: string | null
+          seeker_id: string | null
+          service_id: string | null
+        }
+        Insert: {
+          contact_method?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          provider_id?: string | null
+          seeker_id?: string | null
+          service_id?: string | null
+        }
+        Update: {
+          contact_method?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          provider_id?: string | null
+          seeker_id?: string | null
+          service_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_requests_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_requests_seeker_id_fkey"
+            columns: ["seeker_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_requests_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           category: string
@@ -85,6 +137,7 @@ export type Database = {
       }
       users: {
         Row: {
+          can_access_contact: boolean | null
           created_at: string
           email: string
           id: string
@@ -92,11 +145,19 @@ export type Database = {
           name: string
           phone: string | null
           subscription_expiry: string | null
+          subscription_plan:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
           subscription_status: Database["public"]["Enums"]["subscription_status"]
           updated_at: string
           user_type: Database["public"]["Enums"]["user_type"]
+          verification_documents: Json | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
         }
         Insert: {
+          can_access_contact?: boolean | null
           created_at?: string
           email: string
           id: string
@@ -104,11 +165,19 @@ export type Database = {
           name: string
           phone?: string | null
           subscription_expiry?: string | null
+          subscription_plan?:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"]
+          verification_documents?: Json | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
         }
         Update: {
+          can_access_contact?: boolean | null
           created_at?: string
           email?: string
           id?: string
@@ -116,11 +185,84 @@ export type Database = {
           name?: string
           phone?: string | null
           subscription_expiry?: string | null
+          subscription_plan?:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"]
+          verification_documents?: Json | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
         }
         Relationships: []
+      }
+      verification_requests: {
+        Row: {
+          additional_info: string | null
+          created_at: string | null
+          full_name: string
+          id: string
+          id_document_url: string | null
+          phone_number: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          skill_proof_url: string | null
+          status: Database["public"]["Enums"]["verification_status"] | null
+          submitted_at: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          additional_info?: string | null
+          created_at?: string | null
+          full_name: string
+          id?: string
+          id_document_url?: string | null
+          phone_number: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          skill_proof_url?: string | null
+          status?: Database["public"]["Enums"]["verification_status"] | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          additional_info?: string | null
+          created_at?: string | null
+          full_name?: string
+          id?: string
+          id_document_url?: string | null
+          phone_number?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          skill_proof_url?: string | null
+          status?: Database["public"]["Enums"]["verification_status"] | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -131,10 +273,24 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      get_admin_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      update_verification_status: {
+        Args: {
+          request_id: string
+          new_status: Database["public"]["Enums"]["verification_status"]
+          notes?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
+      subscription_plan: "free" | "monthly" | "semi_annual" | "yearly"
       subscription_status: "free" | "monthly" | "semi_annual" | "yearly"
       user_type: "provider" | "seeker" | "admin"
+      verification_status: "not_verified" | "pending" | "verified" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -250,8 +406,10 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      subscription_plan: ["free", "monthly", "semi_annual", "yearly"],
       subscription_status: ["free", "monthly", "semi_annual", "yearly"],
       user_type: ["provider", "seeker", "admin"],
+      verification_status: ["not_verified", "pending", "verified", "rejected"],
     },
   },
 } as const
