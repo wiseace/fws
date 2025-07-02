@@ -448,9 +448,20 @@ const Dashboard = () => {
                       </p>
                     </div>
                   )}
-                  <Button onClick={() => window.location.href = '/pricing'} className="bg-blue-600 hover:bg-blue-700">
-                    Upgrade Subscription
-                  </Button>
+                  <div className="space-y-2">
+                    <Button onClick={() => window.location.href = '/pricing'} className="w-full bg-blue-600 hover:bg-blue-700">
+                      Upgrade Subscription
+                    </Button>
+                    {!profile?.is_verified && (
+                      <Button 
+                        variant="outline" 
+                        onClick={() => window.location.href = '/dashboard?tab=verification'}
+                        className="w-full"
+                      >
+                        Get Verified
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

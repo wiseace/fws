@@ -32,6 +32,9 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
             {user && (
               <a href="/dashboard" className="text-gray-700 hover:text-blue-600 transition-colors">Dashboard</a>
             )}
+            {profile?.user_type === 'admin' && (
+              <a href="/admin" className="text-red-600 hover:text-red-700 transition-colors font-medium">Admin</a>
+            )}
           </nav>
 
           {/* Actions */}
@@ -49,6 +52,12 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
                     <User className="w-4 h-4 mr-2" />
                     Dashboard
                   </DropdownMenuItem>
+                  {profile?.user_type === 'admin' && (
+                    <DropdownMenuItem onClick={() => window.location.href = '/admin'}>
+                      <User className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Sign Out
@@ -89,6 +98,9 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
               <a href="/browse" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Browse Services</a>
               {user && (
                 <a href="/dashboard" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Dashboard</a>
+              )}
+              {profile?.user_type === 'admin' && (
+                <a href="/admin" className="px-4 py-2 text-red-600 hover:bg-red-50 rounded font-medium">Admin Panel</a>
               )}
             </div>
           </div>

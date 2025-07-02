@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
+import Pricing from "./pages/Pricing";
 import Provider from "./pages/Provider";
 import ProviderProfile from "./pages/ProviderProfile";
 import NotFound from "./pages/NotFound";
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/browse" element={<Browse />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/provider/:id" element={<ProviderProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
