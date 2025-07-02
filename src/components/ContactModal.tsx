@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useToast } from '@/hooks/use-toast';
 import { Service } from '@/types/database';
 import { Loader2, Phone, Mail, MessageSquare, MapPin, Star, Verified } from 'lucide-react';
+import { SubscriptionGate } from './SubscriptionGate';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export const ContactModal = ({ isOpen, onClose, service }: ContactModalProps) =>
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [contactMethod, setContactMethod] = useState<'phone' | 'email' | 'message'>('message');
+  const [showSubscriptionGate, setShowSubscriptionGate] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,11 +40,7 @@ export const ContactModal = ({ isOpen, onClose, service }: ContactModalProps) =>
     }
 
     if (!canAccessContactInfo) {
-      toast({
-        title: "Subscription required",
-        description: "You need to be verified and have an active subscription to contact providers.",
-        variant: "destructive"
-      });
+      setShowSubscriptionGate(true);
       return;
     }
 
@@ -176,6 +174,12 @@ export const ContactModal = ({ isOpen, onClose, service }: ContactModalProps) =>
           </form>
         )}
       </DialogContent>
+      
+      <SubscriptionGate 
+        isOpen={showSubscriptionGate}
+        onClose={() => setShowSubscriptionGate(false)}
+        feature="Contact Information"
+      />
     </Dialog>
   );
 };

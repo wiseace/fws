@@ -12,6 +12,7 @@ import { ProfileModal } from './ProfileModal';
 interface ServiceCardProps {
   service: Service;
   onContactClick?: (service: Service) => void;
+  editMode?: boolean;
 }
 
 export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {

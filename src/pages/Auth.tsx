@@ -66,7 +66,9 @@ const Auth = () => {
     setLoading(true);
     
     try {
-      const { error } = await signUp(signUpEmail, signUpPassword, signUpName, userType);
+      // Map frontend userType to database user_type
+      const dbUserType = userType === 'provider' ? 'provider' : 'seeker';
+      const { error } = await signUp(signUpEmail, signUpPassword, signUpName, dbUserType);
       if (error) {
         toast({
           title: "Sign up failed",

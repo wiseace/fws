@@ -1,15 +1,17 @@
 
-const categories = ['All', 'Design', 'Technology', 'Consulting', 'Photography', 'Writing', 'Coaching'];
-
 interface CategoryFilterProps {
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
+  categories?: string[];
 }
 
-export const CategoryFilter = ({ selectedCategory, onCategoryChange }: CategoryFilterProps) => {
+export const CategoryFilter = ({ selectedCategory, onCategoryChange, categories }: CategoryFilterProps) => {
+  const defaultCategories = ['All', 'Design', 'Technology', 'Consulting', 'Photography', 'Writing', 'Coaching'];
+  const availableCategories = categories ? ['All', ...categories] : defaultCategories;
+  
   return (
     <div className="flex flex-wrap justify-center gap-2">
-      {categories.map((category) => (
+      {availableCategories.map((category) => (
         <button
           key={category}
           onClick={() => onCategoryChange(category)}
