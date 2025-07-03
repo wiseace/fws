@@ -273,6 +273,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      create_manual_admin_user: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_admin_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
