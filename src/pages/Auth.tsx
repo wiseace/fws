@@ -23,7 +23,7 @@ const Auth = () => {
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
   const [signUpName, setSignUpName] = useState('');
-  const [userType, setUserType] = useState<'provider' | 'seeker' | 'admin'>('seeker');
+  const [userType, setUserType] = useState<'provider' | 'seeker'>('seeker');
 
   // Redirect if already logged in
   if (user) {
@@ -175,7 +175,7 @@ const Auth = () => {
                 </div>
                 <div className="space-y-3">
                   <Label>I am a:</Label>
-                  <RadioGroup value={userType} onValueChange={(value: 'provider' | 'seeker' | 'admin') => setUserType(value)}>
+                  <RadioGroup value={userType} onValueChange={(value: 'provider' | 'seeker') => setUserType(value)}>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="seeker" id="seeker" />
                       <Label htmlFor="seeker">Service Seeker</Label>
@@ -183,10 +183,6 @@ const Auth = () => {
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="provider" id="provider" />
                       <Label htmlFor="provider">Service Provider</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="admin" id="admin" />
-                      <Label htmlFor="admin">Administrator</Label>
                     </div>
                   </RadioGroup>
                 </div>

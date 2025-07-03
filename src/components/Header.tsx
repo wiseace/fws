@@ -70,15 +70,6 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
               </Button>
             )}
 
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={onToggleEdit}
-              className={editMode ? "bg-blue-100 border-blue-300" : ""}
-            >
-              <Edit3 className="w-4 h-4 mr-2" />
-              {editMode ? 'Exit Edit' : 'Edit Mode'}
-            </Button>
 
             {/* Mobile menu button */}
             <button

@@ -8,7 +8,9 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
 import Dashboard from "./pages/Dashboard";
+import EnhancedDashboard from "./pages/EnhancedDashboard";
 import Admin from "./pages/Admin";
+import AdminCategories from "./pages/AdminCategories";
 import Pricing from "./pages/Pricing";
 import Provider from "./pages/Provider";
 import ProviderProfile from "./pages/ProviderProfile";
@@ -27,8 +29,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/browse" element={<Browse />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<EnhancedDashboard />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/provider/:id" element={<ProviderProfile />} />
             <Route path="*" element={<NotFound />} />
