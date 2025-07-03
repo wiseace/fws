@@ -227,7 +227,7 @@ const EnhancedDashboard = () => {
       category: service.category,
       description: service.description || '',
       location: service.location || '',
-      contact_info: service.contact_info || { phone: '', email: '' }
+      contact_info: (service.contact_info as any) || { phone: '', email: '' }
     });
     setIsServiceFormOpen(true);
   };
