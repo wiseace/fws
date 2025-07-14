@@ -34,6 +34,7 @@ import { MyServicesTab } from './tabs/MyServicesTab';
 import { ClientRequestsTab } from './tabs/ClientRequestsTab';
 import { VerificationTab } from './tabs/VerificationTab';
 import { ProfileTab } from './tabs/ProfileTab';
+import { SubscriptionCountdown } from '@/components/SubscriptionCountdown';
 
 interface DashboardStats {
   totalServices?: number;
@@ -599,6 +600,11 @@ export const RichDashboard = () => {
 
             {/* Sidebar */}
           <div className="space-y-6">
+            {/* Subscription Countdown - Only show for non-admin users */}
+            {profile?.user_type !== 'admin' && (
+              <SubscriptionCountdown profile={profile} />
+            )}
+
             {/* Enhanced Notifications */}
             <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-purple-50">
               <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-t-lg">
