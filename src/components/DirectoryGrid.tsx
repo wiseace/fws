@@ -101,36 +101,46 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
 
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">
+      <div className="text-center mb-12 animate-fade-in-up">
+        <h2 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
           Featured Services
         </h2>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Connect with verified service providers in your area
         </p>
       </div>
 
-      <CategoryFilter 
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        categories={categories}
-      />
+      <div className="animate-fade-in-up">
+        <CategoryFilter 
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          categories={categories}
+        />
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 animate-fade-in-up">
         {filteredServices && filteredServices.length > 0 ? (
-          filteredServices.map((service) => (
-            <ServiceCard 
+          filteredServices.map((service, index) => (
+            <div 
               key={service.id} 
-              service={service} 
-              editMode={editMode}
-            />
+              className="animate-fade-in-up"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <ServiceCard 
+                service={service} 
+                editMode={editMode}
+              />
+            </div>
           ))
         ) : (
-          <div className="col-span-full text-center py-12">
-            <div className="text-gray-500 text-lg mb-4">
+          <div className="col-span-full text-center py-12 animate-fade-in-up">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-primary/10 flex items-center justify-center">
+              <span className="text-4xl text-primary">🔍</span>
+            </div>
+            <div className="text-muted-foreground text-lg mb-4">
               No services found in this category.
             </div>
-            <div className="text-gray-400">
+            <div className="text-muted-foreground/70">
               Try selecting a different category or check back later.
             </div>
           </div>
@@ -138,9 +148,9 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
       </div>
 
       {editMode && user && (
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center animate-fade-in-up">
           <Button 
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-gradient-primary hover:opacity-90 transform hover:scale-105 transition-all"
             onClick={() => window.location.href = '/dashboard'}
           >
             + Add New Service
