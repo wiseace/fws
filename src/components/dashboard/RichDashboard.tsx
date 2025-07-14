@@ -30,6 +30,10 @@ import {
   Zap,
   Shield
 } from 'lucide-react';
+import { MyServicesTab } from './tabs/MyServicesTab';
+import { ClientRequestsTab } from './tabs/ClientRequestsTab';
+import { VerificationTab } from './tabs/VerificationTab';
+import { ProfileTab } from './tabs/ProfileTab';
 
 interface DashboardStats {
   totalServices?: number;
@@ -69,6 +73,7 @@ export const RichDashboard = () => {
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('services');
 
   useEffect(() => {
     if (user && profile) {
@@ -492,86 +497,61 @@ export const RichDashboard = () => {
                 <CardContent className="p-6">
                   {/* Tabbed Interface */}
                   <div className="space-y-6">
-                    {/* Tab Navigation */}
-                    <div className="flex flex-wrap gap-2 border-b">
-                      <Button 
-                        variant="ghost" 
-                        className="text-primary border-b-2 border-primary font-medium px-4 py-2"
-                      >
-                        My Services ({stats.totalServices || 0})
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        className="text-muted-foreground hover:text-primary px-4 py-2"
-                        onClick={() => window.location.href = '/dashboard?tab=requests'}
-                      >
-                        Client Requests
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        className="text-muted-foreground hover:text-primary px-4 py-2"
-                        onClick={() => window.location.href = '/dashboard?tab=verification'}
-                      >
-                        Verification
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        className="text-muted-foreground hover:text-primary px-4 py-2"
-                        onClick={() => window.location.href = '/provider-profile'}
-                      >
-                        Profile
-                      </Button>
-                    </div>
+                     {/* Tab Navigation */}
+                     <div className="flex flex-wrap gap-2 border-b">
+                       <Button 
+                         variant="ghost" 
+                         className={`px-4 py-2 ${
+                           activeTab === 'services' 
+                             ? 'text-primary border-b-2 border-primary font-medium' 
+                             : 'text-muted-foreground hover:text-primary'
+                         }`}
+                         onClick={() => setActiveTab('services')}
+                       >
+                         My Services ({stats.totalServices || 0})
+                       </Button>
+                       <Button 
+                         variant="ghost" 
+                         className={`px-4 py-2 ${
+                           activeTab === 'requests' 
+                             ? 'text-primary border-b-2 border-primary font-medium' 
+                             : 'text-muted-foreground hover:text-primary'
+                         }`}
+                         onClick={() => setActiveTab('requests')}
+                       >
+                         Client Requests
+                       </Button>
+                       <Button 
+                         variant="ghost" 
+                         className={`px-4 py-2 ${
+                           activeTab === 'verification' 
+                             ? 'text-primary border-b-2 border-primary font-medium' 
+                             : 'text-muted-foreground hover:text-primary'
+                         }`}
+                         onClick={() => setActiveTab('verification')}
+                       >
+                         Verification
+                       </Button>
+                       <Button 
+                         variant="ghost" 
+                         className={`px-4 py-2 ${
+                           activeTab === 'profile' 
+                             ? 'text-primary border-b-2 border-primary font-medium' 
+                             : 'text-muted-foreground hover:text-primary'
+                         }`}
+                         onClick={() => setActiveTab('profile')}
+                       >
+                         Profile
+                       </Button>
+                     </div>
 
-                    {/* Services Tab Content */}
-                    <div className="min-h-[300px]">
-                      {stats.totalServices === 0 ? (
-                        <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg">
-                          <div className="mb-4">
-                            <Star className="h-16 w-16 text-gray-400 mx-auto" />
-                          </div>
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2">No services yet</h3>
-                          <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                            Create your first service to start connecting with clients and showcase your expertise.
-                          </p>
-                          <Button 
-                            onClick={handleServiceModalOpen}
-                            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-                          >
-                            <PlusCircle className="h-4 w-4 mr-2" />
-                            CREATE YOUR FIRST SERVICE
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                              <div className="bg-gradient-to-r from-primary to-secondary text-white px-3 py-1 rounded-full text-sm font-medium">
-                                {stats.activeServices} Active
-                              </div>
-                              <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-                                {(stats.totalServices || 0) - (stats.activeServices || 0)} Inactive
-                              </div>
-                            </div>
-                            <Button 
-                              size="sm"
-                              onClick={handleServiceModalOpen}
-                              className="bg-primary hover:bg-primary/90"
-                            >
-                              <PlusCircle className="h-4 w-4 mr-2" />
-                              ADD SERVICE
-                            </Button>
-                          </div>
-                          
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <p className="text-blue-800 text-sm">
-                              🎉 Great start! You have {stats.totalServices} service{(stats.totalServices || 0) > 1 ? 's' : ''} created. 
-                              Keep optimizing your listings to attract more clients.
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                     {/* Tab Content */}
+                     <div className="min-h-[300px]">
+                       {activeTab === 'services' && <MyServicesTab />}
+                       {activeTab === 'requests' && <ClientRequestsTab />}
+                       {activeTab === 'verification' && <VerificationTab />}
+                       {activeTab === 'profile' && <ProfileTab />}
+                     </div>
 
                     {/* Onboarding Progress */}
                     {onboardingSteps.length > 0 && (
