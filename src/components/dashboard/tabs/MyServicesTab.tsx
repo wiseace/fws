@@ -33,7 +33,7 @@ export const MyServicesTab = () => {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const servicesPerPage = 5;
+  const servicesPerPage = 3;
 
   useEffect(() => {
     if (user) {

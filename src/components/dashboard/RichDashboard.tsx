@@ -534,52 +534,54 @@ export const RichDashboard = () => {
                   {/* Tabbed Interface */}
                   <div className="space-y-6">
                      {/* Tab Navigation */}
-                      <div className="flex flex-wrap gap-2 border-b pb-4">
-                       <Button 
-                         variant="ghost" 
-                         className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${
-                           activeTab === 'services' 
-                             ? 'bg-white text-primary border-primary border-b-0 font-medium -mb-px' 
-                             : 'text-muted-foreground hover:text-primary hover:bg-transparent'
-                         }`}
-                         onClick={() => setActiveTab('services')}
-                       >
-                         My Services ({stats.totalServices || 0})
-                       </Button>
-                       <Button 
-                         variant="ghost" 
-                         className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${
-                           activeTab === 'requests' 
-                             ? 'bg-white text-primary border-primary border-b-0 font-medium -mb-px' 
-                             : 'text-muted-foreground hover:text-primary hover:bg-transparent'
-                         }`}
-                         onClick={() => setActiveTab('requests')}
-                       >
-                         Client Requests
-                       </Button>
-                       <Button 
-                         variant="ghost" 
-                         className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${
-                           activeTab === 'verification' 
-                             ? 'bg-white text-primary border-primary border-b-0 font-medium -mb-px' 
-                             : 'text-muted-foreground hover:text-primary hover:bg-transparent'
-                         }`}
-                         onClick={() => setActiveTab('verification')}
-                       >
-                         Verification
-                       </Button>
-                       <Button 
-                         variant="ghost" 
-                         className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${
-                           activeTab === 'profile' 
-                             ? 'bg-white text-primary border-primary border-b-0 font-medium -mb-px' 
-                             : 'text-muted-foreground hover:text-primary hover:bg-transparent'
-                         }`}
-                         onClick={() => setActiveTab('profile')}
-                       >
-                         Profile
-                       </Button>
-                     </div>
+                      <div className="border-b border-gray-200 mb-6">
+                        <div className="flex flex-wrap gap-1 -mb-px">
+                         <Button 
+                           variant="ghost" 
+                           className={`px-4 py-3 rounded-t-md border-2 border-transparent border-b-2 ${
+                             activeTab === 'services' 
+                               ? 'bg-white text-primary border-primary border-b-primary font-medium' 
+                               : 'text-muted-foreground hover:text-primary hover:bg-transparent border-b-transparent'
+                           }`}
+                           onClick={() => setActiveTab('services')}
+                         >
+                           My Services ({stats.totalServices || 0})
+                         </Button>
+                         <Button 
+                           variant="ghost" 
+                           className={`px-4 py-3 rounded-t-md border-2 border-transparent border-b-2 ${
+                             activeTab === 'requests' 
+                               ? 'bg-white text-primary border-primary border-b-primary font-medium' 
+                               : 'text-muted-foreground hover:text-primary hover:bg-transparent border-b-transparent'
+                           }`}
+                           onClick={() => setActiveTab('requests')}
+                         >
+                           Client Requests
+                         </Button>
+                         <Button 
+                           variant="ghost" 
+                           className={`px-4 py-3 rounded-t-md border-2 border-transparent border-b-2 ${
+                             activeTab === 'verification' 
+                               ? 'bg-white text-primary border-primary border-b-primary font-medium' 
+                               : 'text-muted-foreground hover:text-primary hover:bg-transparent border-b-transparent'
+                           }`}
+                           onClick={() => setActiveTab('verification')}
+                         >
+                           Verification
+                         </Button>
+                         <Button 
+                           variant="ghost" 
+                           className={`px-4 py-3 rounded-t-md border-2 border-transparent border-b-2 ${
+                             activeTab === 'profile' 
+                               ? 'bg-white text-primary border-primary border-b-primary font-medium' 
+                               : 'text-muted-foreground hover:text-primary hover:bg-transparent border-b-transparent'
+                           }`}
+                           onClick={() => setActiveTab('profile')}
+                         >
+                           Profile
+                         </Button>
+                        </div>
+                      </div>
 
                      {/* Tab Content */}
                      <div className="min-h-[300px]">
