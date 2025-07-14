@@ -436,9 +436,9 @@ export const RichDashboard = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Content - Expanded */}
+          <div className="lg:col-span-3 space-y-8">
             {/* Quick Actions */}
             <Card className="shadow-lg border-0">
               <CardHeader>
@@ -724,29 +724,6 @@ export const RichDashboard = () => {
               </Card>
             )}
 
-            {/* Quick Links - Only show for non-provider users */}
-            {profile?.user_type !== 'provider' && (
-              <Card className="shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="h-5 w-5 text-primary" />
-                    Quick Links
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Button variant="ghost" className="w-full justify-start" onClick={() => window.location.href = '/browse'}>
-                      <Search className="h-4 w-4 mr-2" />
-                      Browse Services
-                    </Button>
-                    <Button variant="ghost" className="w-full justify-start" onClick={() => window.location.href = '/pricing'}>
-                      <Star className="h-4 w-4 mr-2" />
-                      Pricing Plans
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
       </div>
