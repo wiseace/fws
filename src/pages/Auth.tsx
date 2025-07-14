@@ -36,7 +36,8 @@ const Auth = () => {
       if (profile.user_type === 'admin') {
         window.location.href = '/admin';
       } else {
-        window.location.href = '/';
+        // Redirect all users (providers and seekers) to their dashboard
+        window.location.href = '/dashboard';
       }
     }
   }, [user, profile]);

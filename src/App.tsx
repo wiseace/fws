@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
 import Dashboard from "./pages/Dashboard";
 import EnhancedDashboard from "./pages/EnhancedDashboard";
+import { NewDashboard } from "./pages/NewDashboard";
 import Admin from "./pages/Admin";
 import AdminCategories from "./pages/AdminCategories";
 import AdminProfile from "./pages/AdminProfile";
@@ -30,7 +31,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/browse" element={<Browse />} />
-            <Route path="/dashboard" element={<EnhancedDashboard />} />
+            <Route path="/dashboard" element={<NewDashboard />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/admin/profile" element={<AdminProfile />} />

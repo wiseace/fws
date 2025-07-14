@@ -140,6 +140,88 @@ export type Database = {
           },
         ]
       }
+      user_notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_onboarding: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          step_name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          step_name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          step_name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_onboarding_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           can_access_contact: boolean | null
@@ -277,6 +359,10 @@ export type Database = {
       can_access_contact_info: {
         Args: { user_id: string }
         Returns: boolean
+      }
+      complete_onboarding_step: {
+        Args: { step_name: string }
+        Returns: undefined
       }
       create_manual_admin_user: {
         Args: Record<PropertyKey, never>
