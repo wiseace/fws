@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Menu, X, User, LogOut, Zap, Heart, ShoppingBag } from 'lucide-react';
+import { Menu, X, User, LogOut, LogIn, Zap, Heart, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -68,8 +68,9 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <span className="hidden md:inline text-gray-700 font-medium cursor-pointer hover:text-gray-900 transition-colors" onClick={() => window.location.href = '/auth'}>
-                Sign In
+              <span className="hidden md:inline text-gray-700 font-medium cursor-pointer hover:text-gray-900 transition-colors flex items-center space-x-1" onClick={() => window.location.href = '/auth'}>
+                <LogIn className="w-4 h-4" />
+                <span>Sign In</span>
               </span>
             )}
 
