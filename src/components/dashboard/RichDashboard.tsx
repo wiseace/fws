@@ -491,35 +491,11 @@ export const RichDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
-                  {/* Onboarding Progress */}
-                  {onboardingSteps.length > 0 && (
-                    <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
-                      <h4 className="font-semibold text-yellow-800 mb-3 flex items-center gap-2">
-                        <Target className="h-4 w-4" />
-                        Getting Started Progress
-                      </h4>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm text-yellow-700">
-                          {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
-                        </span>
-                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                          {Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100)}% Complete
-                        </Badge>
-                      </div>
-                      <Progress 
-                        value={(onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100} 
-                        className="h-2 mb-3"
-                      />
-                      <div className="grid grid-cols-2 gap-2">
-                        {onboardingSteps.map((step) => (
-                          <div key={step.id} className={`flex items-center gap-2 text-xs ${step.completed ? 'text-green-700' : 'text-yellow-700'}`}>
-                            {getStepIcon(step.step_name, step.completed)}
-                            <span>{getStepTitle(step.step_name)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">
+                      Use the navigation above to access your provider tools and manage your services.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             )}
