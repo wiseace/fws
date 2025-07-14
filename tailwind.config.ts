@@ -18,6 +18,22 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'serif': ['Playfair Display', 'Georgia', 'serif'],
+				'inter': ['Inter', 'system-ui', 'sans-serif'],
+				'playfair': ['Playfair Display', 'Georgia', 'serif']
+			},
+			fontSize: {
+				'h1': ['2rem', { lineHeight: '2.5rem', fontWeight: '600' }], // 32px
+				'h2': ['1.5rem', { lineHeight: '2rem', fontWeight: '500' }], // 24px
+				'h3': ['1.25rem', { lineHeight: '1.75rem', fontWeight: '500' }], // 20px
+				'h4': ['1.125rem', { lineHeight: '1.5rem', fontWeight: '500' }], // 18px
+				'body': ['1rem', { lineHeight: '1.5rem', fontWeight: '400' }], // 16px
+				'body-sm': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '400' }], // 14px
+				'caption': ['0.75rem', { lineHeight: '1rem', fontWeight: '400' }], // 12px
+				'caption-sm': ['0.8125rem', { lineHeight: '1.125rem', fontWeight: '400' }] // 13px
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

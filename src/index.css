@@ -139,6 +139,39 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+  }
+  
+  /* Typography Utilities */
+  .text-h1 {
+    @apply text-h1 font-playfair;
+  }
+  
+  .text-h2 {
+    @apply text-h2 font-playfair;
+  }
+  
+  .text-h3 {
+    @apply text-h3 font-playfair;
+  }
+  
+  .text-h4 {
+    @apply text-h4 font-inter font-medium;
+  }
+  
+  .text-body {
+    @apply text-body font-inter;
+  }
+  
+  .text-body-sm {
+    @apply text-body-sm font-inter;
+  }
+  
+  .text-caption {
+    @apply text-caption font-inter text-muted-foreground;
+  }
+  
+  .text-caption-sm {
+    @apply text-caption-sm font-inter text-muted-foreground;
   }
 }
