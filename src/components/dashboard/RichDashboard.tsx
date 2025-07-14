@@ -757,33 +757,29 @@ export const RichDashboard = () => {
               </Card>
             )}
 
-            {/* Quick Links */}
-            <Card className="shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  Quick Links
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Button variant="ghost" className="w-full justify-start" onClick={() => window.location.href = '/browse'}>
-                    <Search className="h-4 w-4 mr-2" />
-                    Browse Services
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start" onClick={() => window.location.href = '/pricing'}>
-                    <Star className="h-4 w-4 mr-2" />
-                    Pricing Plans
-                  </Button>
-                  {profile?.user_type === 'provider' && (
-                    <Button variant="ghost" className="w-full justify-start" onClick={() => window.location.href = '/provider-profile'}>
-                      <Settings className="h-4 w-4 mr-2" />
-                      Provider Settings
+            {/* Quick Links - Only show for non-provider users */}
+            {profile?.user_type !== 'provider' && (
+              <Card className="shadow-lg border-0">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                    Quick Links
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Button variant="ghost" className="w-full justify-start" onClick={() => window.location.href = '/browse'}>
+                      <Search className="h-4 w-4 mr-2" />
+                      Browse Services
                     </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                    <Button variant="ghost" className="w-full justify-start" onClick={() => window.location.href = '/pricing'}>
+                      <Star className="h-4 w-4 mr-2" />
+                      Pricing Plans
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
