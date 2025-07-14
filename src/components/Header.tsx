@@ -1,9 +1,10 @@
 
 import { useState } from 'react';
-import { Menu, X, User, LogOut, LogIn, Zap, Heart, ShoppingBag } from 'lucide-react';
+import { Menu, X, User, LogOut, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import findWhoSabiLogo from '@/assets/findwhosabi-service-placeholder.jpg';
 
 interface HeaderProps {
   editMode: boolean;
@@ -21,9 +22,8 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           <div className="flex justify-between items-center h-12">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="cursor-pointer flex items-center space-x-2" onClick={() => window.location.href = '/'}>
-              <Zap className="w-6 h-6 text-primary" />
-              <span className="text-xl font-bold text-gray-900">FindWhoSabi</span>
+            <div className="cursor-pointer" onClick={() => window.location.href = '/'}>
+              <img src={findWhoSabiLogo} alt="FindWhoSabi" className="h-8 w-auto" />
             </div>
           </div>
 
@@ -68,10 +68,10 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <span className="hidden md:inline text-gray-700 font-medium cursor-pointer hover:text-gray-900 transition-colors flex items-center space-x-1" onClick={() => window.location.href = '/auth'}>
+              <div className="hidden md:inline-flex items-center space-x-1 text-gray-700 font-medium cursor-pointer hover:text-gray-900 transition-colors" onClick={() => window.location.href = '/auth'}>
                 <LogIn className="w-4 h-4" />
                 <span>Sign In</span>
-              </span>
+              </div>
             )}
 
             {/* Mobile menu button */}
