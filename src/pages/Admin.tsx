@@ -392,7 +392,7 @@ const Admin = () => {
 
           {/* Enhanced Stats Cards with Rich UI */}
           {stats && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
               <Card 
                 className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
                 onClick={() => setActiveTab('users')}
@@ -468,15 +468,35 @@ const Admin = () => {
                   </div>
                 </CardContent>
               </Card>
+              
+              <Card 
+                className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => setActiveTab('contacts')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-teal-500 rounded-xl">
+                        <User className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-teal-700 mb-1">Contact Requests</p>
+                        <p className="text-3xl font-bold text-teal-900">{stats.total_contacts}</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )}
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="verifications">Verifications</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="contacts">Contact Requests</TabsTrigger>
               <TabsTrigger value="services">Services</TabsTrigger>
+              <TabsTrigger value="categories">Categories</TabsTrigger>
             </TabsList>
 
             <TabsContent value="verifications">
@@ -697,6 +717,23 @@ const Admin = () => {
                         </div>
                       </div>
                     ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="categories">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Categories Management</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-gray-600 mb-4">Manage service categories from the dedicated categories page.</p>
+                    <Button onClick={() => window.location.href = '/admin/categories'}>
+                      <span className="mr-2">📁</span>
+                      Go to Categories Management
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
