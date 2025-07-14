@@ -31,7 +31,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           <nav className="hidden md:flex space-x-8">
             <a href="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Home</a>
             <a href="/browse" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Services</a>
-            {user && profile?.user_type !== 'admin' && (
+            {user && (
               <a href="/dashboard" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Dashboard</a>
             )}
             {profile?.user_type === 'admin' && (
@@ -60,12 +60,10 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {profile?.user_type !== 'admin' && (
-                    <DropdownMenuItem onClick={() => window.location.href = '/dashboard'}>
-                      <User className="w-4 h-4 mr-2" />
-                      Dashboard
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem onClick={() => window.location.href = '/dashboard'}>
+                    <User className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </DropdownMenuItem>
                   {profile?.user_type === 'admin' && (
                     <DropdownMenuItem onClick={() => window.location.href = '/admin'}>
                       <User className="w-4 h-4 mr-2" />
@@ -101,7 +99,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
             <div className="flex flex-col space-y-2">
               <a href="/" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Home</a>
               <a href="/browse" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Browse Services</a>
-              {user && profile?.user_type !== 'admin' && (
+              {user && (
                 <a href="/dashboard" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Dashboard</a>
               )}
               {profile?.user_type === 'admin' && (
