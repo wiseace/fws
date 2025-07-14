@@ -68,6 +68,11 @@ All colors MUST be HSL.
     --card-success: 142 76% 36%;
     --card-info: 199 80% 50%;
     
+    /* Gradients for Homepage */
+    --gradient-primary: linear-gradient(135deg, hsl(199 100% 43%), hsl(47 100% 51%));
+    --gradient-secondary: linear-gradient(135deg, hsl(220 30% 97%), hsl(210 40% 96%));
+    --gradient-hero: linear-gradient(135deg, hsl(199 100% 43%), hsl(47 100% 51%), hsl(199 100% 35%));
+    
     /* Glassmorphism effects */
     --glass-background: 199 100% 43% / 0.1;
     --glass-border: 199 100% 43% / 0.2;
