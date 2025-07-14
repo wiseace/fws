@@ -113,7 +113,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setLoading(false);
+    if (error) {
+      setLoading(false);
+      return { error };
+    }
+    
+    // Get the user profile to check user type
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const profileData = await fetchProfile(user.id);
+      if (profileData?.user_type === 'admin') {
+        // Redirect admin users to admin panel
+        window.location.href = '/admin';
+        return { error: null };
+      }
+    }
+    
     return { error };
   };
 

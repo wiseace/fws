@@ -24,7 +24,9 @@ import {
   Users,
   CheckCircle,
   Clock,
-  Award
+  Award,
+  LayoutDashboard,
+  Shield
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -305,14 +307,30 @@ const EnhancedDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Welcome Section */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Welcome back, {profile?.name}! 👋
-            </h1>
-            <p className="text-gray-600 text-lg">
-              {profile?.user_type === 'provider' 
-                ? "Manage your services and connect with clients" 
-                : "Discover amazing services and connect with providers"}
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+                  <LayoutDashboard className="h-10 w-10 text-primary" />
+                  User Dashboard
+                </h1>
+                <h2 className="text-2xl text-gray-700 mb-1">Welcome back, {profile?.name}! 👋</h2>
+                <p className="text-gray-600 text-lg">
+                  {profile?.user_type === 'provider' 
+                    ? "Manage your services and connect with clients" 
+                    : "Discover amazing services and connect with providers"}
+                </p>
+              </div>
+              {profile?.user_type === 'admin' && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.location.href = '/admin'}
+                  className="flex items-center gap-2 border-red-200 text-red-700 hover:bg-red-50"
+                >
+                  <Shield className="h-4 w-4" />
+                  Admin Panel
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Stats Cards */}

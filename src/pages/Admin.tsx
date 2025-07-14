@@ -9,8 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { User, VerificationRequest, ContactRequest, Service } from '@/types/database';
-import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck } from 'lucide-react';
+import SystemExplanation from '@/components/SystemExplanation';
+import { User as UserType, VerificationRequest, ContactRequest, Service } from '@/types/database';
+import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
 const Admin = () => {
@@ -18,7 +19,7 @@ const Admin = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [verificationRequests, setVerificationRequests] = useState<VerificationRequest[]>([]);
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -213,18 +214,58 @@ const Admin = () => {
         <Header editMode={false} onToggleEdit={() => {}} />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="text-gray-600">Manage users, verifications, and system data</p>
-              </div>
-              <Button onClick={() => window.location.href = '/admin/categories'} className="bg-green-600 hover:bg-green-700">
-                <span className="mr-2">📁</span>
-                Manage Categories
+          {/* Admin Navigation */}
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <Shield className="h-8 w-8 text-primary" />
+                Admin Panel
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Comprehensive system administration and management dashboard
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = '/admin/profile'}
+                className="flex items-center gap-2"
+              >
+                <User className="h-4 w-4" />
+                Admin Profile
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = '/dashboard'}
+                className="flex items-center gap-2"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                User Dashboard
               </Button>
             </div>
           </div>
+
+          {/* Quick Info Card */}
+          <Card className="mb-8 bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-blue-900 mb-2">Admin Panel Overview</h2>
+                  <p className="text-blue-700">
+                    This is the <strong>Admin Panel</strong> - used for system administration, user management, and verification processing. 
+                    The <strong>User Dashboard</strong> is for personal service management and profile settings.
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => window.location.href = '/admin/categories'} 
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <span className="mr-2">📁</span>
+                  Manage Categories
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Stats Cards */}
           {stats && (
@@ -450,6 +491,11 @@ const Admin = () => {
               </Card>
             </TabsContent>
           </Tabs>
+
+          {/* System Explanation Section */}
+          <div className="mt-12">
+            <SystemExplanation />
+          </div>
         </div>
 
         <Footer editMode={false} />
