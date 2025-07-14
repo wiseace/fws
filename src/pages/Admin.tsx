@@ -313,447 +313,544 @@ const Admin = () => {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50">
-        <Header editMode={false} onToggleEdit={() => {}} />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Admin Navigation */}
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <Shield className="h-8 w-8 text-primary" />
-                Admin Panel
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Comprehensive system administration and management dashboard
-              </p>
+      <div className="min-h-screen bg-background">
+        {/* Full Width Modern Header */}
+        <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex h-16 items-center justify-between px-6">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-br from-primary to-primary-dark rounded-xl">
+                  <Shield className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
+                  <p className="text-xs text-muted-foreground">System Management Center</p>
+                </div>
+              </div>
             </div>
-            <div className="flex gap-3">
+            
+            <div className="flex items-center gap-3">
               <Button 
-                variant="outline" 
-                onClick={() => window.location.href = '/admin/profile'}
-                className="flex items-center gap-2"
+                variant="ghost" 
+                size="sm"
+                onClick={() => window.location.href = '/admin/categories'}
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
-                <User className="h-4 w-4" />
-                Admin Profile
+                <span className="text-sm">📁</span>
+                Categories
               </Button>
               <Button 
-                variant="outline" 
+                variant="ghost" 
+                size="sm"
                 onClick={() => window.location.href = '/dashboard'}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <LayoutDashboard className="h-4 w-4" />
                 User Dashboard
               </Button>
+              <Button 
+                size="sm"
+                onClick={() => {
+                  toast({
+                    title: "Refreshing data...",
+                    description: "Fetching latest admin data"
+                  });
+                  fetchAllData();
+                }}
+                className="bg-primary hover:bg-primary-dark shadow-sm"
+              >
+                🔄 Refresh
+              </Button>
             </div>
-          </div>
-
-          {/* Rich Admin Panel Overview */}
-          <div className="mb-8 space-y-6">
-            <Card className="bg-gradient-to-br from-blue-50 via-white to-blue-50 border-blue-200 shadow-sm">
-              <CardContent className="p-8">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <Shield className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-blue-900">Admin Panel Overview</h2>
-                        <p className="text-blue-600 text-sm">System administration and management dashboard</p>
-                      </div>
-                    </div>
-                    <div className="bg-white/80 p-4 rounded-lg border border-blue-100">
-                      <p className="text-blue-800 leading-relaxed">
-                        This is the <span className="font-semibold text-blue-900">Admin Panel</span> - used for system administration, user management, and verification processing. The <span className="font-semibold text-blue-900">User Dashboard</span> is for personal service management and profile settings.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-3 lg:flex-col xl:flex-row">
-                    <Button 
-                      onClick={() => window.location.href = '/admin/categories'} 
-                      className="bg-green-600 hover:bg-green-700 shadow-sm min-w-[180px]"
-                    >
-                      <span className="mr-2">📁</span>
-                      Manage Categories
-                    </Button>
-                    <Button 
-                      onClick={() => {
-                        console.log('Force refreshing admin data...');
-                        toast({
-                          title: "Refreshing data...",
-                          description: "Fetching latest admin data"
-                        });
-                        fetchAllData();
-                      }}
-                      variant="outline"
-                      className="border-blue-600 text-blue-600 hover:bg-blue-50 shadow-sm min-w-[180px]"
-                    >
-                      🔄 Force Refresh
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Enhanced Stats Cards with Rich UI */}
-          {stats && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
-              <Card 
-                className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
-                onClick={() => setActiveTab('users')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-blue-500 rounded-xl">
-                        <Users className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-blue-700 mb-1">Total Users</p>
-                        <p className="text-3xl font-bold text-blue-900">{stats.total_users}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card 
-                className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => setActiveTab('users')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-green-500 rounded-xl">
-                        <UserCheck className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-green-700 mb-1">Verified Users</p>
-                        <p className="text-3xl font-bold text-green-900">{stats.verified_users}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card 
-                className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => setActiveTab('verifications')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-orange-500 rounded-xl">
-                        <Shield className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-orange-700 mb-1">Pending Verifications</p>
-                        <p className="text-3xl font-bold text-orange-900">{stats.pending_verifications}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card 
-                className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => setActiveTab('services')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-purple-500 rounded-xl">
-                        <Eye className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-purple-700 mb-1">Total Services</p>
-                        <p className="text-3xl font-bold text-purple-900">{stats.total_services}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card 
-                className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => setActiveTab('contacts')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-teal-500 rounded-xl">
-                        <User className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-teal-700 mb-1">Contact Requests</p>
-                        <p className="text-3xl font-bold text-teal-900">{stats.total_contacts}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="verifications">Verifications</TabsTrigger>
-              <TabsTrigger value="users">Users</TabsTrigger>
-              <TabsTrigger value="contacts">Contact Requests</TabsTrigger>
-              <TabsTrigger value="services">Services</TabsTrigger>
-              <TabsTrigger value="categories">Categories</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="verifications">
-              <Card className="shadow-sm">
-                <CardHeader className="bg-gray-50 border-b">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-orange-600" />
-                      Verification Requests
-                    </CardTitle>
-                    <div className="text-sm text-gray-600">
-                      Debug: {verificationRequests.length} requests loaded | Admin: {profile?.user_type} | Auth: {user ? 'Yes' : 'No'}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="space-y-6">
-                    {verificationRequests.length === 0 ? (
-                      <div className="text-center py-12">
-                        <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">No verification requests found</h3>
-                        <p className="text-gray-600 max-w-md mx-auto">
-                          Verification requests will appear here when users submit them. 
-                          {!user && ' Please ensure you are logged in as an admin.'}
-                          {user && profile?.user_type !== 'admin' && ' Please check your admin permissions.'}
-                        </p>
-                        <Button 
-                          onClick={() => {
-                            console.log('Debug verification fetch...');
-                            fetchVerificationRequests();
-                          }}
-                          variant="outline" 
-                          className="mt-4"
-                        >
-                          🔍 Debug Refresh
-                        </Button>
-                      </div>
-                    ) : (
-                      verificationRequests.map((request) => (
-                        <Card key={request.id} className="border border-gray-200 hover:border-gray-300 transition-colors">
-                          <CardContent className="p-6">
-                            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
-                              <div className="space-y-3 flex-1">
-                                <div className="flex items-start justify-between">
-                                  <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">{request.full_name}</h3>
-                                    <p className="text-sm text-gray-600">{(request as any).user?.email}</p>
-                                  </div>
-                                  <Badge className={
-                                    request.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                                    request.status === 'verified' ? 'bg-green-100 text-green-800 border-green-200' :
-                                    'bg-red-100 text-red-800 border-red-200'
-                                  }>
-                                    {request.status?.toUpperCase()}
-                                  </Badge>
-                                </div>
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                  <div>
-                                    <span className="font-medium text-gray-700">Phone:</span>
-                                    <span className="ml-2 text-gray-600">{request.phone_number}</span>
-                                  </div>
-                                  <div>
-                                    <span className="font-medium text-gray-700">Submitted:</span>
-                                    <span className="ml-2 text-gray-600">
-                                      {request.submitted_at ? new Date(request.submitted_at).toLocaleDateString() : 'N/A'}
-                                    </span>
-                                  </div>
-                                </div>
-                                
-                                {request.additional_info && (
-                                  <div className="bg-gray-50 p-3 rounded-lg">
-                                    <span className="font-medium text-gray-700 block mb-1">Additional Information:</span>
-                                    <p className="text-sm text-gray-600">{request.additional_info}</p>
-                                  </div>
-                                )}
-                              </div>
-                              
-                              {request.status === 'pending' && (
-                                <div className="flex flex-col sm:flex-row gap-2 lg:flex-col xl:flex-row">
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleVerificationAction(request.id, 'verified')}
-                                    className="bg-green-600 hover:bg-green-700 text-white"
-                                  >
-                                    <CheckCircle className="w-4 h-4 mr-2" />
-                                    Approve
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() => handleVerificationAction(request.id, 'rejected')}
-                                  >
-                                    <XCircle className="w-4 h-4 mr-2" />
-                                    Reject
-                                  </Button>
-                                </div>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="users">
-              <Card>
-                <CardHeader>
-                  <CardTitle>User Management</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {users.map((user) => (
-                      <div key={user.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="font-semibold">{user.name}</h3>
-                            <p className="text-sm text-gray-600">{user.email}</p>
-                            <div className="flex space-x-2 mt-2">
-                              <Badge variant="outline">{user.user_type}</Badge>
-                              <Badge className={user.is_verified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                                {user.is_verified ? 'Verified' : 'Unverified'}
-                              </Badge>
-                              <Badge variant="secondary">{user.subscription_plan}</Badge>
-                            </div>
-                          </div>
-                           <div className="flex space-x-2">
-                            <select
-                              value={user.user_type}
-                              onChange={(e) => handleRoleChange(user.id, e.target.value as any)}
-                              className="border rounded px-2 py-1 text-sm"
-                              disabled={user.email === 'hi@ariyo.dev'}
-                            >
-                              <option value="seeker">Seeker</option>
-                              <option value="provider">Provider</option>
-                              <option value="admin">Admin</option>
-                            </select>
-                            {user.email === 'hi@ariyo.dev' ? (
-                              <div className="flex items-center text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded border">
-                                <Shield className="w-3 h-3 mr-1" />
-                                Protected
-                              </div>
-                            ) : (
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleDeleteUser(user.id)}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="contacts">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Contact Requests</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {contactRequests.length === 0 ? (
-                      <p className="text-gray-600">No contact requests found.</p>
-                    ) : (
-                      contactRequests.map((request) => (
-                        <div key={request.id} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-semibold">
-                                {(request as any).seeker?.name} → {(request as any).provider?.name}
-                              </h3>
-                              <p className="text-sm text-gray-600">Service: {(request as any).service?.service_name}</p>
-                              <p className="text-sm text-gray-600">Method: {request.contact_method}</p>
-                              {request.message && (
-                                <p className="text-sm mt-2">{request.message}</p>
-                              )}
-                              <p className="text-xs text-gray-500 mt-2">
-                                {new Date(request.created_at).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="services">
-              <Card>
-                <CardHeader>
-                  <CardTitle>All Services</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {services.map((service) => (
-                      <div key={service.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold">{service.service_name}</h3>
-                            <p className="text-sm text-gray-600">Provider: {(service as any).user?.name}</p>
-                            <p className="text-sm text-gray-600">Category: {service.category}</p>
-                            <p className="text-sm text-gray-600">Location: {service.location}</p>
-                            <Badge className={service.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                              {service.is_active ? 'Active' : 'Inactive'}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="categories">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Categories Management</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <p className="text-gray-600 mb-4">Manage service categories from the dedicated categories page.</p>
-                    <Button onClick={() => window.location.href = '/admin/categories'}>
-                      <span className="mr-2">📁</span>
-                      Go to Categories Management
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-
-          {/* System Explanation Section */}
-          <div className="mt-12">
-            <SystemExplanation />
           </div>
         </div>
 
-        <Footer editMode={false} />
+        {/* Full Width Content Area */}
+        <div className="w-full">
+          {/* Modern Stats Grid */}
+          {stats && (
+            <div className="px-6 py-8 bg-gradient-to-br from-background via-muted/30 to-background">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-2">
+                <Card 
+                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-primary/10 via-primary/5 to-background" 
+                  onClick={() => setActiveTab('users')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="p-3 bg-gradient-to-br from-primary to-primary-dark rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
+                          <Users className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Total Users</p>
+                          <p className="text-3xl font-bold text-foreground">{stats.total_users}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -translate-y-10 translate-x-10"></div>
+                  </CardContent>
+                </Card>
+                
+                <Card 
+                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-brand-success/10 via-brand-success/5 to-background"
+                  onClick={() => setActiveTab('users')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="p-3 bg-gradient-to-br from-brand-success to-brand-success-dark rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
+                          <UserCheck className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Verified Users</p>
+                          <p className="text-3xl font-bold text-foreground">{stats.verified_users}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-brand-success/5 rounded-full -translate-y-10 translate-x-10"></div>
+                  </CardContent>
+                </Card>
+                
+                <Card 
+                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-warning/10 via-warning/5 to-background"
+                  onClick={() => setActiveTab('verifications')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="p-3 bg-gradient-to-br from-warning to-warning-dark rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
+                          <Shield className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Pending Verifications</p>
+                          <p className="text-3xl font-bold text-foreground">{stats.pending_verifications}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-warning/5 rounded-full -translate-y-10 translate-x-10"></div>
+                  </CardContent>
+                </Card>
+                
+                <Card 
+                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-secondary/10 via-secondary/5 to-background"
+                  onClick={() => setActiveTab('services')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="p-3 bg-gradient-to-br from-secondary to-secondary-dark rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
+                          <Eye className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Total Services</p>
+                          <p className="text-3xl font-bold text-foreground">{stats.total_services}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-secondary/5 rounded-full -translate-y-10 translate-x-10"></div>
+                  </CardContent>
+                </Card>
+                
+                <Card 
+                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-primary-light/10 via-primary-light/5 to-background"
+                  onClick={() => setActiveTab('contacts')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="p-3 bg-gradient-to-br from-primary-light to-primary rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
+                          <User className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Contact Requests</p>
+                          <p className="text-3xl font-bold text-foreground">{stats.total_contacts}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-primary-light/5 rounded-full -translate-y-10 translate-x-10"></div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Modern Tabs Interface */}
+          <div className="px-6 pb-8">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              <div className="flex items-center justify-center">
+                <TabsList className="grid grid-cols-5 w-full max-w-2xl bg-muted/50 border shadow-sm">
+                  <TabsTrigger value="verifications" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Verifications</TabsTrigger>
+                  <TabsTrigger value="users" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Users</TabsTrigger>
+                  <TabsTrigger value="contacts" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Contacts</TabsTrigger>
+                  <TabsTrigger value="services" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Services</TabsTrigger>
+                  <TabsTrigger value="categories" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Categories</TabsTrigger>
+                </TabsList>
+              </div>
+
+              <TabsContent value="verifications" className="space-y-6">
+                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
+                  <CardHeader className="bg-gradient-to-r from-warning/10 to-warning/5 border-b border-border/50">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-3">
+                        <div className="p-2 bg-gradient-to-br from-warning to-warning-dark rounded-lg">
+                          <Shield className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <span className="text-foreground">Verification Requests</span>
+                          <p className="text-sm text-muted-foreground font-normal mt-1">
+                            Review and approve user verification submissions
+                          </p>
+                        </div>
+                      </CardTitle>
+                      <Badge variant="outline" className="bg-background/80">
+                        {verificationRequests.length} pending
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="space-y-6">
+                      {verificationRequests.length === 0 ? (
+                        <div className="text-center py-16">
+                          <div className="p-4 bg-muted/50 rounded-full w-fit mx-auto mb-6">
+                            <Shield className="h-12 w-12 text-muted-foreground" />
+                          </div>
+                          <h3 className="text-xl font-semibold text-foreground mb-3">No verification requests</h3>
+                          <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                            Verification requests will appear here when users submit their documents for review.
+                          </p>
+                          <Button 
+                            onClick={fetchVerificationRequests}
+                            variant="outline" 
+                            className="gap-2"
+                          >
+                            🔄 Refresh Data
+                          </Button>
+                        </div>
+                      ) : (
+                        verificationRequests.map((request) => (
+                          <Card key={request.id} className="group hover:shadow-md transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm">
+                            <CardContent className="p-6">
+                              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+                                <div className="space-y-4 flex-1">
+                                  <div className="flex items-start justify-between">
+                                    <div className="space-y-2">
+                                      <h3 className="text-lg font-semibold text-foreground">{request.full_name}</h3>
+                                      <p className="text-sm text-muted-foreground">{(request as any).user?.email}</p>
+                                    </div>
+                                    <Badge 
+                                      className={
+                                        request.status === 'pending' 
+                                          ? 'bg-warning/20 text-warning-dark border-warning/30' 
+                                          : request.status === 'verified' 
+                                          ? 'bg-brand-success/20 text-brand-success-dark border-brand-success/30' 
+                                          : 'bg-destructive/20 text-destructive-dark border-destructive/30'
+                                      }
+                                    >
+                                      {request.status?.toUpperCase()}
+                                    </Badge>
+                                  </div>
+                                  
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
+                                    <div>
+                                      <span className="text-sm font-medium text-foreground">Phone:</span>
+                                      <span className="ml-2 text-sm text-muted-foreground">{request.phone_number}</span>
+                                    </div>
+                                    <div>
+                                      <span className="text-sm font-medium text-foreground">Submitted:</span>
+                                      <span className="ml-2 text-sm text-muted-foreground">
+                                        {request.submitted_at ? new Date(request.submitted_at).toLocaleDateString() : 'N/A'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  
+                                  {request.additional_info && (
+                                    <div className="p-4 bg-muted/30 rounded-lg border border-border/30">
+                                      <span className="text-sm font-medium text-foreground block mb-2">Additional Information:</span>
+                                      <p className="text-sm text-muted-foreground leading-relaxed">{request.additional_info}</p>
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                {request.status === 'pending' && (
+                                  <div className="flex flex-col sm:flex-row gap-3 lg:flex-col xl:flex-row">
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleVerificationAction(request.id, 'verified')}
+                                      className="bg-gradient-to-r from-brand-success to-brand-success-dark hover:from-brand-success-dark hover:to-brand-success text-white shadow-md hover:shadow-lg transition-all"
+                                    >
+                                      <CheckCircle className="w-4 h-4 mr-2" />
+                                      Approve
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => handleVerificationAction(request.id, 'rejected')}
+                                      className="shadow-md hover:shadow-lg transition-all"
+                                    >
+                                      <XCircle className="w-4 h-4 mr-2" />
+                                      Reject
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="users" className="space-y-6">
+                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
+                  <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/50">
+                    <CardTitle className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-br from-primary to-primary-dark rounded-lg">
+                        <Users className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="text-foreground">User Management</span>
+                        <p className="text-sm text-muted-foreground font-normal mt-1">
+                          Manage user roles and permissions
+                        </p>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="space-y-4">
+                      {users.map((user) => (
+                        <Card key={user.id} className="group hover:shadow-md transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm">
+                          <CardContent className="p-6">
+                            <div className="flex justify-between items-start">
+                              <div className="space-y-3 flex-1">
+                                <div>
+                                  <h3 className="text-lg font-semibold text-foreground">{user.name}</h3>
+                                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                                    {user.user_type}
+                                  </Badge>
+                                  <Badge 
+                                    className={
+                                      user.is_verified 
+                                        ? 'bg-brand-success/20 text-brand-success-dark border-brand-success/30' 
+                                        : 'bg-muted text-muted-foreground border-border'
+                                    }
+                                  >
+                                    {user.is_verified ? 'Verified' : 'Unverified'}
+                                  </Badge>
+                                  <Badge variant="secondary" className="bg-secondary/20 text-secondary-dark border-secondary/30">
+                                    {user.subscription_plan}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <select
+                                  value={user.user_type}
+                                  onChange={(e) => handleRoleChange(user.id, e.target.value as any)}
+                                  className="border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                                  disabled={user.email === 'hi@ariyo.dev'}
+                                >
+                                  <option value="seeker">Seeker</option>
+                                  <option value="provider">Provider</option>
+                                  <option value="admin">Admin</option>
+                                </select>
+                                {user.email === 'hi@ariyo.dev' ? (
+                                  <div className="flex items-center gap-2 text-xs bg-warning/10 text-warning-dark px-3 py-2 rounded-lg border border-warning/30">
+                                    <Shield className="w-3 h-3" />
+                                    Protected
+                                  </div>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => handleDeleteUser(user.id)}
+                                    className="shadow-md hover:shadow-lg transition-all"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="contacts" className="space-y-6">
+                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
+                  <CardHeader className="bg-gradient-to-r from-primary-light/10 to-primary-light/5 border-b border-border/50">
+                    <CardTitle className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-br from-primary-light to-primary rounded-lg">
+                        <User className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="text-foreground">Contact Requests</span>
+                        <p className="text-sm text-muted-foreground font-normal mt-1">
+                          Monitor service contact activity
+                        </p>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="space-y-4">
+                      {contactRequests.length === 0 ? (
+                        <div className="text-center py-16">
+                          <div className="p-4 bg-muted/50 rounded-full w-fit mx-auto mb-6">
+                            <User className="h-12 w-12 text-muted-foreground" />
+                          </div>
+                          <h3 className="text-xl font-semibold text-foreground mb-3">No contact requests</h3>
+                          <p className="text-muted-foreground">Contact requests will appear here when users reach out to providers.</p>
+                        </div>
+                      ) : (
+                        contactRequests.map((request) => (
+                          <Card key={request.id} className="group hover:shadow-md transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm">
+                            <CardContent className="p-6">
+                              <div className="space-y-4">
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <h3 className="text-lg font-semibold text-foreground">
+                                      {(request as any).seeker?.name} → {(request as any).provider?.name}
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      Service: <span className="font-medium">{(request as any).service?.service_name}</span>
+                                    </p>
+                                  </div>
+                                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                                    {request.contact_method}
+                                  </Badge>
+                                </div>
+                                {request.message && (
+                                  <div className="p-4 bg-muted/30 rounded-lg border border-border/30">
+                                    <p className="text-sm text-foreground leading-relaxed">{request.message}</p>
+                                  </div>
+                                )}
+                                <div className="text-xs text-muted-foreground">
+                                  {new Date(request.created_at).toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="services" className="space-y-6">
+                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
+                  <CardHeader className="bg-gradient-to-r from-secondary/10 to-secondary/5 border-b border-border/50">
+                    <CardTitle className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-br from-secondary to-secondary-dark rounded-lg">
+                        <Eye className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="text-foreground">All Services</span>
+                        <p className="text-sm text-muted-foreground font-normal mt-1">
+                          Overview of all platform services
+                        </p>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="space-y-4">
+                      {services.map((service) => (
+                        <Card key={service.id} className="group hover:shadow-md transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm">
+                          <CardContent className="p-6">
+                            <div className="flex justify-between items-start">
+                              <div className="space-y-3 flex-1">
+                                <div>
+                                  <h3 className="text-lg font-semibold text-foreground">{service.service_name}</h3>
+                                  <p className="text-sm text-muted-foreground">
+                                    Provider: <span className="font-medium">{(service as any).user?.name}</span>
+                                  </p>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <span className="text-muted-foreground">Category:</span>
+                                    <span className="ml-2 font-medium text-foreground">{service.category}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-muted-foreground">Location:</span>
+                                    <span className="ml-2 font-medium text-foreground">{service.location}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <Badge 
+                                className={
+                                  service.is_active 
+                                    ? 'bg-brand-success/20 text-brand-success-dark border-brand-success/30' 
+                                    : 'bg-destructive/20 text-destructive-dark border-destructive/30'
+                                }
+                              >
+                                {service.is_active ? 'Active' : 'Inactive'}
+                              </Badge>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="categories" className="space-y-6">
+                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
+                  <CardHeader className="bg-gradient-to-r from-secondary/10 to-secondary/5 border-b border-border/50">
+                    <CardTitle className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-br from-secondary to-secondary-dark rounded-lg">
+                        <span className="text-lg">📁</span>
+                      </div>
+                      <div>
+                        <span className="text-foreground">Categories Management</span>
+                        <p className="text-sm text-muted-foreground font-normal mt-1">
+                          Manage service categories and icons
+                        </p>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="text-center py-16">
+                      <div className="p-4 bg-muted/50 rounded-full w-fit mx-auto mb-6">
+                        <span className="text-4xl">📁</span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-foreground mb-3">Categories Management</h3>
+                      <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                        Access the dedicated categories management page to create, edit, and organize service categories.
+                      </p>
+                      <Button 
+                        onClick={() => window.location.href = '/admin/categories'}
+                        className="bg-gradient-to-r from-secondary to-secondary-dark hover:from-secondary-dark hover:to-secondary text-white shadow-md hover:shadow-lg transition-all gap-2"
+                      >
+                        <span>📁</span>
+                        Manage Categories
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Modern Footer Section */}
+          <div className="mt-16 px-6">
+            <div className="border-t border-border/50 pt-8">
+              <SystemExplanation />
+            </div>
+          </div>
+        </div>
       </div>
     </ProtectedRoute>
   );
