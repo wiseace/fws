@@ -144,50 +144,32 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
         <div className="text-center">
           <p className="text-xs text-muted-foreground mb-3 font-medium">Time Remaining</p>
           
-          {/* Main time units */}
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            {timeRemaining.months > 0 && (
-              <div className="text-center">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-3 shadow-sm">
-                  <div className="text-xl font-bold">{timeRemaining.months}</div>
-                </div>
-                <div className="text-xs text-muted-foreground font-medium mt-1">
-                  Month{timeRemaining.months !== 1 ? 's' : ''}
-                </div>
+          {/* Countdown Timer - Dark Theme Style */}
+          <div className="bg-gray-900 rounded-lg p-4 mb-3">
+            <div className="flex items-center justify-center divide-x divide-gray-600">
+              {/* Days */}
+              <div className="text-center px-3 first:pl-0 last:pr-0">
+                <div className="text-2xl font-bold text-white">{String(timeRemaining.days).padStart(2, '0')}</div>
+                <div className="text-xs text-gray-400 mt-1">Days</div>
               </div>
-            )}
-            
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-3 shadow-sm">
-                <div className="text-xl font-bold">{timeRemaining.days}</div>
+              
+              {/* Hours */}
+              <div className="text-center px-3">
+                <div className="text-2xl font-bold text-white">{String(timeRemaining.hours).padStart(2, '0')}</div>
+                <div className="text-xs text-gray-400 mt-1">Hours</div>
               </div>
-              <div className="text-xs text-muted-foreground font-medium mt-1">
-                Day{timeRemaining.days !== 1 ? 's' : ''}
+              
+              {/* Minutes */}
+              <div className="text-center px-3">
+                <div className="text-2xl font-bold text-white">{String(timeRemaining.minutes).padStart(2, '0')}</div>
+                <div className="text-xs text-gray-400 mt-1">Minutes</div>
               </div>
-            </div>
-          </div>
-
-          {/* Live countdown */}
-          <div className="grid grid-cols-3 gap-2 mb-3">
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-lg p-2 shadow-sm">
-                <div className="text-sm font-bold">{String(timeRemaining.hours).padStart(2, '0')}</div>
+              
+              {/* Seconds */}
+              <div className="text-center px-3">
+                <div className="text-2xl font-bold text-white">{String(timeRemaining.seconds).padStart(2, '0')}</div>
+                <div className="text-xs text-gray-400 mt-1">Seconds</div>
               </div>
-              <div className="text-xs text-muted-foreground font-medium mt-1">Hours</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-lg p-2 shadow-sm">
-                <div className="text-sm font-bold">{String(timeRemaining.minutes).padStart(2, '0')}</div>
-              </div>
-              <div className="text-xs text-muted-foreground font-medium mt-1">Minutes</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg p-2 shadow-sm animate-pulse">
-                <div className="text-sm font-bold">{String(timeRemaining.seconds).padStart(2, '0')}</div>
-              </div>
-              <div className="text-xs text-muted-foreground font-medium mt-1">Seconds</div>
             </div>
           </div>
 
