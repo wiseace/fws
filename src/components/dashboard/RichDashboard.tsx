@@ -215,6 +215,27 @@ export const RichDashboard = () => {
     fetchDashboardData(); // Refresh the dashboard data
   };
 
+  const handleOnboardingStepClick = (stepName: string, completed: boolean) => {
+    if (completed) return; // Don't do anything if already completed
+    
+    switch (stepName) {
+      case 'profile_completion':
+        setActiveTab('profile');
+        break;
+      case 'verification_submission':
+        setActiveTab('verification');
+        break;
+      case 'first_service_creation':
+        handleServiceModalOpen();
+        break;
+      case 'profile_optimization':
+        setActiveTab('profile');
+        break;
+      default:
+        break;
+    }
+  };
+
   const getStepIcon = (stepName: string, completed: boolean) => {
     const iconClass = completed ? 'text-green-600' : 'text-gray-400';
     switch (stepName) {
@@ -409,42 +430,38 @@ export const RichDashboard = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {profile?.user_type === 'provider' ? (
                     <>
-                      <Button 
-                        variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => {
-                          if (checkAndShowVerificationToast('create services')) {
-                            window.location.href = '/dashboard';
-                          }
-                        }}
-                      >
-                        <PlusCircle className="h-6 w-6" />
-                        Add Service
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/provider-profile'}
-                      >
-                        <Settings className="h-6 w-6" />
-                        Edit Profile
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/dashboard'}
-                      >
-                        <Eye className="h-6 w-6" />
-                        View Requests
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/browse'}
-                      >
-                        <Search className="h-6 w-6" />
-                        Browse
-                      </Button>
+                       <Button 
+                         variant="outline" 
+                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                         onClick={handleServiceModalOpen}
+                       >
+                         <PlusCircle className="h-6 w-6" />
+                         ADD SERVICE
+                       </Button>
+                       <Button 
+                         variant="outline" 
+                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                         onClick={() => setActiveTab('profile')}
+                       >
+                         <Settings className="h-6 w-6" />
+                         EDIT PROFILE
+                       </Button>
+                       <Button 
+                         variant="outline" 
+                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                         onClick={() => setActiveTab('requests')}
+                       >
+                         <Eye className="h-6 w-6" />
+                         VIEW REQUESTS
+                       </Button>
+                       <Button 
+                         variant="outline" 
+                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                         onClick={() => window.location.href = '/browse'}
+                       >
+                         <Search className="h-6 w-6" />
+                         BROWSE
+                       </Button>
                     </>
                   ) : (
                     <>
@@ -573,14 +590,20 @@ export const RichDashboard = () => {
                           value={(onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100} 
                           className="h-2 mb-3"
                         />
-                        <div className="grid grid-cols-2 gap-2">
-                          {onboardingSteps.map((step) => (
-                            <div key={step.id} className={`flex items-center gap-2 text-xs ${step.completed ? 'text-green-700' : 'text-yellow-700'}`}>
-                              {getStepIcon(step.step_name, step.completed)}
-                              <span>{getStepTitle(step.step_name)}</span>
-                            </div>
-                          ))}
-                        </div>
+                         <div className="grid grid-cols-2 gap-2">
+                           {onboardingSteps.map((step) => (
+                             <button 
+                               key={step.id} 
+                               onClick={() => handleOnboardingStepClick(step.step_name, step.completed)}
+                               className={`flex items-center gap-2 text-xs p-2 rounded-md transition-colors hover:bg-yellow-100 ${
+                                 step.completed ? 'text-green-700' : 'text-yellow-700 cursor-pointer'
+                               }`}
+                             >
+                               {getStepIcon(step.step_name, step.completed)}
+                               <span>{getStepTitle(step.step_name)}</span>
+                             </button>
+                           ))}
+                         </div>
                       </div>
                     )}
                   </div>
