@@ -168,125 +168,156 @@ export const MyServicesTab = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Stats and Add Button */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="bg-gradient-to-r from-primary to-secondary text-white px-3 py-1 rounded-full text-sm font-medium">
-            {activeServices} Active
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-xl p-6 border border-primary/20">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-bold text-foreground">My Services</h2>
+            <p className="text-muted-foreground">Manage and track your service offerings</p>
           </div>
-          <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-            {services.length - activeServices} Inactive
+          <Button 
+            onClick={() => handleServiceModalOpen()}
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white shadow-lg"
+            size="lg"
+          >
+            <PlusCircle className="h-5 w-5 mr-2" />
+            Create Service
+          </Button>
+        </div>
+        
+        {/* Stats Row */}
+        <div className="flex items-center gap-4 mt-6">
+          <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg shadow-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <span className="font-semibold">{activeServices} Active</span>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-slate-400 to-slate-500 text-white px-4 py-2 rounded-lg shadow-sm">
+            <span className="font-semibold">{services.length - activeServices} Inactive</span>
+          </div>
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow-sm">
+            <span className="font-semibold">{services.length} Total</span>
           </div>
         </div>
-        <Button 
-          onClick={() => handleServiceModalOpen()}
-          className="bg-primary hover:bg-primary/90"
-        >
-          <PlusCircle className="h-4 w-4 mr-2" />
-          ADD SERVICE
-        </Button>
       </div>
 
       {/* Search Box */}
       {services.length > 0 && (
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
           <Input
             type="text"
             placeholder="Search services by name, category, description, or location..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="pl-10"
+            className="pl-11 h-12 bg-background/50 backdrop-blur-sm border-primary/20 focus:border-primary/40 text-base"
           />
         </div>
       )}
 
       {/* Content */}
       {services.length === 0 ? (
-        <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg">
-          <div className="mb-4">
-            <Star className="h-16 w-16 text-gray-400 mx-auto" />
+        <div className="text-center py-16 bg-gradient-to-br from-background to-muted/20 rounded-xl border border-border/50">
+          <div className="mb-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center mx-auto">
+              <Star className="h-10 w-10 text-primary" />
+            </div>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No services yet</h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          <h3 className="text-2xl font-bold text-foreground mb-3">No services yet</h3>
+          <p className="text-muted-foreground mb-8 max-w-lg mx-auto text-lg">
             Create your first service to start connecting with clients and showcase your expertise.
           </p>
           <Button 
             onClick={() => handleServiceModalOpen()}
-            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white shadow-lg"
+            size="lg"
           >
-            <PlusCircle className="h-4 w-4 mr-2" />
-            CREATE YOUR FIRST SERVICE
+            <PlusCircle className="h-5 w-5 mr-2" />
+            Create Your First Service
           </Button>
         </div>
       ) : filteredServices.length === 0 ? (
-        <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg">
-          <div className="mb-4">
-            <Search className="h-16 w-16 text-gray-400 mx-auto" />
+        <div className="text-center py-16 bg-gradient-to-br from-background to-muted/20 rounded-xl border border-border/50">
+          <div className="mb-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-full flex items-center justify-center mx-auto">
+              <Search className="h-10 w-10 text-orange-500" />
+            </div>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No services found</h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          <h3 className="text-2xl font-bold text-foreground mb-3">No services found</h3>
+          <p className="text-muted-foreground mb-8 max-w-lg mx-auto text-lg">
             No services match your search criteria. Try adjusting your search terms.
           </p>
         </div>
       ) : (
         <>
-          {/* Services List */}
-          <div className="space-y-4">
+          {/* Services Grid */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             {currentServices.map((service) => (
-              <Card key={service.id} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="font-semibold text-lg text-foreground">{service.service_name}</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant={service.is_active ? "default" : "secondary"}>
-                              {service.category}
-                            </Badge>
-                            <Badge variant={service.is_active ? "default" : "secondary"}>
-                              {service.is_active ? "Active" : "Inactive"}
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="flex space-x-1">
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
-                            onClick={() => handleServiceModalOpen(service)}
-                            className="hover:bg-primary hover:text-white"
+              <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br from-background to-muted/10 border border-border/50 hover:border-primary/30 overflow-hidden">
+                <CardContent className="p-0">
+                  {/* Service Image/Header */}
+                  <div className="relative h-32 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border-b border-border/50">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20"></div>
+                    <div className="relative p-4 h-full flex items-center">
+                      <div className="flex-1">
+                        <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                          {service.service_name}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge 
+                            variant={service.is_active ? "default" : "secondary"}
+                            className={service.is_active ? "bg-emerald-500 hover:bg-emerald-600" : "bg-slate-400 hover:bg-slate-500"}
                           >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
-                            onClick={() => handleDelete(service.id)}
-                            className="hover:bg-destructive hover:text-white"
+                            {service.category}
+                          </Badge>
+                          <Badge 
+                            variant={service.is_active ? "default" : "secondary"}
+                            className={service.is_active ? "bg-emerald-500 hover:bg-emerald-600 animate-pulse" : "bg-slate-400 hover:bg-slate-500"}
                           >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                            {service.is_active ? "● Active" : "○ Inactive"}
+                          </Badge>
                         </div>
                       </div>
-                      
-                      {service.description && (
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                          {service.description}
-                        </p>
+                      <div className="flex flex-col space-y-1">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={() => handleServiceModalOpen(service)}
+                          className="hover:bg-primary hover:text-white transition-all duration-200 h-8 w-8 p-0"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={() => handleDelete(service.id)}
+                          className="hover:bg-destructive hover:text-white transition-all duration-200 h-8 w-8 p-0"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Service Content */}
+                  <div className="p-6">
+                    {service.description && (
+                      <p className="text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
+                        {service.description}
+                      </p>
+                    )}
+                    
+                    <div className="flex items-center justify-between text-sm">
+                      {service.location && (
+                        <div className="flex items-center text-muted-foreground">
+                          <MapPin className="h-4 w-4 mr-2 text-primary" />
+                          <span className="font-medium">{service.location}</span>
+                        </div>
                       )}
-                      
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        {service.location && (
-                          <div className="flex items-center">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            {service.location}
-                          </div>
-                        )}
-                        <span>
-                          Created: {new Date(service.created_at).toLocaleDateString()}
-                        </span>
+                      <div className="text-muted-foreground">
+                        <span className="font-medium">Created</span> {new Date(service.created_at).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
@@ -297,9 +328,9 @@ export const MyServicesTab = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {startIndex + 1} to {Math.min(endIndex, filteredServices.length)} of {filteredServices.length} services
+            <div className="flex items-center justify-between bg-gradient-to-r from-background to-muted/20 p-4 rounded-lg border border-border/50">
+              <p className="text-sm text-muted-foreground font-medium">
+                Showing <span className="text-foreground font-bold">{startIndex + 1}</span> to <span className="text-foreground font-bold">{Math.min(endIndex, filteredServices.length)}</span> of <span className="text-foreground font-bold">{filteredServices.length}</span> services
               </p>
               <div className="flex items-center gap-2">
                 <Button
@@ -307,18 +338,20 @@ export const MyServicesTab = () => {
                   size="sm"
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
+                  className="hover:bg-primary hover:text-white transition-all duration-200"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   Previous
                 </Button>
-                <span className="text-sm text-muted-foreground">
-                  Page {currentPage} of {totalPages}
-                </span>
+                <div className="bg-primary text-white px-3 py-1 rounded-md text-sm font-medium">
+                  {currentPage} of {totalPages}
+                </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}
+                  className="hover:bg-primary hover:text-white transition-all duration-200"
                 >
                   Next
                   <ChevronRight className="h-4 w-4" />
