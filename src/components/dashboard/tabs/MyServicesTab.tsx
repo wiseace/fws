@@ -33,7 +33,7 @@ export const MyServicesTab = () => {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const servicesPerPage = 3;
+  const servicesPerPage = 4;
 
   useEffect(() => {
     if (user) {
@@ -188,16 +188,16 @@ export const MyServicesTab = () => {
         
         {/* Stats Row */}
         <div className="flex items-center gap-4 mt-6">
-          <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg shadow-sm">
+          <div className="bg-brand-success text-white px-4 py-2 rounded-lg shadow-sm">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               <span className="font-semibold">{activeServices} Active</span>
             </div>
           </div>
-          <div className="bg-gradient-to-r from-slate-400 to-slate-500 text-white px-4 py-2 rounded-lg shadow-sm">
+          <div className="bg-primary-light text-white px-4 py-2 rounded-lg shadow-sm">
             <span className="font-semibold">{services.length - activeServices} Inactive</span>
           </div>
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow-sm">
+          <div className="bg-primary text-white px-4 py-2 rounded-lg shadow-sm">
             <span className="font-semibold">{services.length} Total</span>
           </div>
         </div>
@@ -279,13 +279,13 @@ export const MyServicesTab = () => {
                         <div className="flex items-center gap-2 mt-2">
                           <Badge 
                             variant={service.is_active ? "default" : "secondary"}
-                            className={service.is_active ? "bg-emerald-500 hover:bg-emerald-600" : "bg-slate-400 hover:bg-slate-500"}
+                            className={service.is_active ? "bg-secondary hover:bg-secondary-dark text-white" : "bg-primary-light hover:bg-primary-dark text-white"}
                           >
                             {service.category}
                           </Badge>
                           <Badge 
                             variant={service.is_active ? "default" : "secondary"}
-                            className={service.is_active ? "bg-emerald-500 hover:bg-emerald-600 animate-pulse" : "bg-slate-400 hover:bg-slate-500"}
+                            className={service.is_active ? "bg-brand-success hover:bg-brand-success text-white animate-pulse" : "bg-primary-light hover:bg-primary-dark text-white"}
                           >
                             {service.is_active ? "● Active" : "○ Inactive"}
                           </Badge>
