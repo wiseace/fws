@@ -24,7 +24,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
               <img 
                 src="/lovable-uploads/5c3bbf64-dfc4-4329-84c4-6574ad648cfd.png" 
                 alt="FindWhoSabi Logo" 
-                className="h-12 w-auto"
+                className="h-6 sm:h-8 w-auto transition-all duration-200"
               />
             </div>
           </div>
