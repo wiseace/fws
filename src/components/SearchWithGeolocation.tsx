@@ -120,14 +120,14 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
 
         {/* Category Filter */}
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="border-gray-200">
+          <SelectTrigger className="border-gray-200 text-foreground font-medium data-[state=open]:ring-2 data-[state=open]:ring-primary">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="all" className="font-medium">All Categories</SelectItem>
             {categories && categories.length > 0 ? (
               categories.map((category) => (
-                <SelectItem key={category.id} value={category.name}>
+                <SelectItem key={category.id} value={category.name} className="font-medium">
                   {category.name}
                 </SelectItem>
               ))
@@ -176,7 +176,7 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
         {/* Search Button */}
         <Button 
           onClick={handleSearch}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
         >
           Search
         </Button>
