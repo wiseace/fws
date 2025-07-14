@@ -39,6 +39,13 @@ export const ProfileTab = () => {
 
       await refreshProfile();
       
+      // Mark profile completion step as complete if profile is now complete
+      if (name && phone && profile?.email) {
+        await supabase.rpc('complete_onboarding_step', {
+          step_name: 'profile_completion'
+        });
+      }
+      
       toast({
         title: "Profile updated",
         description: "Your profile has been updated successfully."

@@ -213,6 +213,24 @@ export const RichDashboard = () => {
 
   const handleServiceCreated = () => {
     fetchDashboardData(); // Refresh the dashboard data
+    markOnboardingStepComplete('first_service_creation');
+  };
+
+  const markOnboardingStepComplete = async (stepName: string) => {
+    try {
+      const { error } = await supabase.rpc('complete_onboarding_step', {
+        step_name: stepName
+      });
+      
+      if (error) {
+        console.error('Error completing onboarding step:', error);
+      } else {
+        // Refresh onboarding data
+        fetchOnboardingSteps();
+      }
+    } catch (error) {
+      console.error('Error completing onboarding step:', error);
+    }
   };
 
   const handleOnboardingStepClick = (stepName: string, completed: boolean) => {
@@ -578,18 +596,18 @@ export const RichDashboard = () => {
                           <Target className="h-4 w-4" />
                           Getting Started Progress
                         </h4>
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-sm text-yellow-700">
-                            {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
-                          </span>
-                          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                            {Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100)}% Complete
-                          </Badge>
-                        </div>
-                        <Progress 
-                          value={(onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100} 
-                          className="h-2 mb-3"
-                        />
+                         <div className="flex items-center justify-between mb-3">
+                           <span className="text-sm text-yellow-700">
+                             {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
+                           </span>
+                           <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                             {onboardingSteps.length > 0 ? Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100) : 0}% Complete
+                           </Badge>
+                         </div>
+                         <Progress 
+                           value={onboardingSteps.length > 0 ? (onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100 : 0} 
+                           className="h-2 mb-3"
+                         />
                          <div className="grid grid-cols-2 gap-2">
                            {onboardingSteps.map((step) => (
                              <button 
