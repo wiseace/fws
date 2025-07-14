@@ -20,9 +20,15 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent cursor-pointer flex items-center gap-2" onClick={() => window.location.href = '/'}>
-              <span className="text-primary">✨</span>
-              FINDWHOSABI
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.href = '/'}>
+              <img 
+                src="/lovable-uploads/9af80b6f-2452-4317-a6c9-0d8c6cacd4b1.png" 
+                alt="Findwhosabi Logo" 
+                className="h-10 w-auto"
+              />
+              <span className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                Findwhosabi
+              </span>
             </div>
           </div>
 

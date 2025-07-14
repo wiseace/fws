@@ -37,7 +37,7 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
             editMode={editMode}
             type="text"
             className="text-5xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg animate-fade-in-up"
-            defaultValue="Find Skilled Professionals Near You"
+            defaultValue="Find skilled professionals near you"
           />
           
           <EditableElement
