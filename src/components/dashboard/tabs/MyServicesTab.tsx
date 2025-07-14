@@ -286,8 +286,8 @@ export const MyServicesTab = () => {
                           <Badge 
                             variant="outline"
                             className={service.is_active 
-                              ? "bg-brand-success/20 border-brand-success text-brand-success hover:bg-brand-success hover:text-white animate-pulse transition-all" 
-                              : "bg-primary-light/20 border-primary-light text-primary-light hover:bg-primary-light hover:text-white transition-all"
+                              ? "bg-brand-success/30 border-brand-success text-white font-semibold shadow-sm hover:bg-brand-success hover:text-white animate-pulse transition-all" 
+                              : "bg-primary-light/30 border-primary-light text-white font-semibold shadow-sm hover:bg-primary-light hover:text-white transition-all"
                             }
                           >
                             {service.is_active ? "● Active" : "○ Inactive"}
