@@ -335,83 +335,117 @@ const Admin = () => {
             </div>
           </div>
 
-          {/* Quick Info Card */}
-          <Card className="mb-8 bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold text-blue-900 mb-2">Admin Panel Overview</h2>
-                  <p className="text-blue-700">
-                    This is the <strong>Admin Panel</strong> - used for system administration, user management, and verification processing. 
-                    The <strong>User Dashboard</strong> is for personal service management and profile settings.
-                  </p>
+          {/* Rich Admin Panel Overview */}
+          <div className="mb-8 space-y-6">
+            <Card className="bg-gradient-to-br from-blue-50 via-white to-blue-50 border-blue-200 shadow-sm">
+              <CardContent className="p-8">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Shield className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-blue-900">Admin Panel Overview</h2>
+                        <p className="text-blue-600 text-sm">System administration and management dashboard</p>
+                      </div>
+                    </div>
+                    <div className="bg-white/80 p-4 rounded-lg border border-blue-100">
+                      <p className="text-blue-800 leading-relaxed">
+                        This is the <span className="font-semibold text-blue-900">Admin Panel</span> - used for system administration, user management, and verification processing. The <span className="font-semibold text-blue-900">User Dashboard</span> is for personal service management and profile settings.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3 lg:flex-col xl:flex-row">
+                    <Button 
+                      onClick={() => window.location.href = '/admin/categories'} 
+                      className="bg-green-600 hover:bg-green-700 shadow-sm min-w-[180px]"
+                    >
+                      <span className="mr-2">📁</span>
+                      Manage Categories
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        console.log('Force refreshing admin data...');
+                        toast({
+                          title: "Refreshing data...",
+                          description: "Fetching latest admin data"
+                        });
+                        fetchAllData();
+                      }}
+                      variant="outline"
+                      className="border-blue-600 text-blue-600 hover:bg-blue-50 shadow-sm min-w-[180px]"
+                    >
+                      🔄 Force Refresh
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-3">
-                  <Button 
-                    onClick={() => window.location.href = '/admin/categories'} 
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    <span className="mr-2">📁</span>
-                    Manage Categories
-                  </Button>
-                  <Button 
-                    onClick={() => {
-                      console.log('Force refreshing admin data...');
-                      fetchAllData();
-                    }}
-                    variant="outline"
-                    className="border-blue-600 text-blue-600 hover:bg-blue-50"
-                  >
-                    🔄 Force Refresh
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
 
-          {/* Stats Cards */}
+          {/* Enhanced Stats Cards with Rich UI */}
           {stats && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card>
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <Users className="h-8 w-8 text-blue-600" />
-                    <div className="ml-4">
-                      <p className="text-sm text-gray-600">Total Users</p>
-                      <p className="text-2xl font-bold">{stats.total_users}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-blue-500 rounded-xl">
+                        <Users className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-blue-700 mb-1">Total Users</p>
+                        <p className="text-3xl font-bold text-blue-900">{stats.total_users}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              
+              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <UserCheck className="h-8 w-8 text-green-600" />
-                    <div className="ml-4">
-                      <p className="text-sm text-gray-600">Verified Users</p>
-                      <p className="text-2xl font-bold">{stats.verified_users}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-green-500 rounded-xl">
+                        <UserCheck className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-green-700 mb-1">Verified Users</p>
+                        <p className="text-3xl font-bold text-green-900">{stats.verified_users}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              
+              <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <Shield className="h-8 w-8 text-orange-600" />
-                    <div className="ml-4">
-                      <p className="text-sm text-gray-600">Pending Verifications</p>
-                      <p className="text-2xl font-bold">{stats.pending_verifications}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-orange-500 rounded-xl">
+                        <Shield className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-orange-700 mb-1">Pending Verifications</p>
+                        <p className="text-3xl font-bold text-orange-900">{stats.pending_verifications}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              
+              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <Eye className="h-8 w-8 text-purple-600" />
-                    <div className="ml-4">
-                      <p className="text-sm text-gray-600">Total Services</p>
-                      <p className="text-2xl font-bold">{stats.total_services}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-purple-500 rounded-xl">
+                        <Eye className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-purple-700 mb-1">Total Services</p>
+                        <p className="text-3xl font-bold text-purple-900">{stats.total_services}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -428,55 +462,104 @@ const Admin = () => {
             </TabsList>
 
             <TabsContent value="verifications">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Verification Requests</CardTitle>
+              <Card className="shadow-sm">
+                <CardHeader className="bg-gray-50 border-b">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5 text-orange-600" />
+                      Verification Requests
+                    </CardTitle>
+                    <div className="text-sm text-gray-600">
+                      Debug: {verificationRequests.length} requests loaded | Admin: {profile?.user_type} | Auth: {user ? 'Yes' : 'No'}
+                    </div>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
+                <CardContent className="p-6">
+                  <div className="space-y-6">
                     {verificationRequests.length === 0 ? (
-                      <p className="text-gray-600">No verification requests found.</p>
+                      <div className="text-center py-12">
+                        <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No verification requests found</h3>
+                        <p className="text-gray-600 max-w-md mx-auto">
+                          Verification requests will appear here when users submit them. 
+                          {!user && ' Please ensure you are logged in as an admin.'}
+                          {user && profile?.user_type !== 'admin' && ' Please check your admin permissions.'}
+                        </p>
+                        <Button 
+                          onClick={() => {
+                            console.log('Debug verification fetch...');
+                            fetchVerificationRequests();
+                          }}
+                          variant="outline" 
+                          className="mt-4"
+                        >
+                          🔍 Debug Refresh
+                        </Button>
+                      </div>
                     ) : (
                       verificationRequests.map((request) => (
-                        <div key={request.id} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-semibold">{request.full_name}</h3>
-                              <p className="text-sm text-gray-600">{(request as any).user?.email}</p>
-                              <p className="text-sm text-gray-600">Phone: {request.phone_number}</p>
-                              <Badge className={
-                                request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                request.status === 'verified' ? 'bg-green-100 text-green-800' :
-                                'bg-red-100 text-red-800'
-                              }>
-                                {request.status}
-                              </Badge>
-                              {request.additional_info && (
-                                <p className="text-sm mt-2">{request.additional_info}</p>
+                        <Card key={request.id} className="border border-gray-200 hover:border-gray-300 transition-colors">
+                          <CardContent className="p-6">
+                            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+                              <div className="space-y-3 flex-1">
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <h3 className="text-lg font-semibold text-gray-900">{request.full_name}</h3>
+                                    <p className="text-sm text-gray-600">{(request as any).user?.email}</p>
+                                  </div>
+                                  <Badge className={
+                                    request.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                    request.status === 'verified' ? 'bg-green-100 text-green-800 border-green-200' :
+                                    'bg-red-100 text-red-800 border-red-200'
+                                  }>
+                                    {request.status?.toUpperCase()}
+                                  </Badge>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <span className="font-medium text-gray-700">Phone:</span>
+                                    <span className="ml-2 text-gray-600">{request.phone_number}</span>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-gray-700">Submitted:</span>
+                                    <span className="ml-2 text-gray-600">
+                                      {request.submitted_at ? new Date(request.submitted_at).toLocaleDateString() : 'N/A'}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                {request.additional_info && (
+                                  <div className="bg-gray-50 p-3 rounded-lg">
+                                    <span className="font-medium text-gray-700 block mb-1">Additional Information:</span>
+                                    <p className="text-sm text-gray-600">{request.additional_info}</p>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {request.status === 'pending' && (
+                                <div className="flex flex-col sm:flex-row gap-2 lg:flex-col xl:flex-row">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleVerificationAction(request.id, 'verified')}
+                                    className="bg-green-600 hover:bg-green-700 text-white"
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => handleVerificationAction(request.id, 'rejected')}
+                                  >
+                                    <XCircle className="w-4 h-4 mr-2" />
+                                    Reject
+                                  </Button>
+                                </div>
                               )}
                             </div>
-                            {request.status === 'pending' && (
-                              <div className="flex space-x-2">
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleVerificationAction(request.id, 'verified')}
-                                  className="bg-green-600 hover:bg-green-700"
-                                >
-                                  <CheckCircle className="w-4 h-4 mr-1" />
-                                  Approve
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => handleVerificationAction(request.id, 'rejected')}
-                                >
-                                  <XCircle className="w-4 h-4 mr-1" />
-                                  Reject
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                          </CardContent>
+                        </Card>
                       ))
                     )}
                   </div>
