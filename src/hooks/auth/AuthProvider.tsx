@@ -34,28 +34,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Immediate profile fetch for better UX
-          try {
-            const profileData = await fetchProfile(session.user.id);
-            if (profileData) {
-              setProfile(profileData);
-              const canAccess = await checkContactAccess(session.user.id);
-              setCanAccessContactInfo(canAccess);
-            } else {
-              // If no profile found, user might have been deleted
-              console.log('No profile found for user, signing out...');
-              await supabase.auth.signOut();
-              window.location.href = '/auth';
-              return;
+          // Defer profile loading to avoid blocking auth state
+          setTimeout(async () => {
+            try {
+              const profileData = await fetchProfile(session.user.id);
+              console.log('Profile data loaded:', profileData);
+              if (profileData) {
+                setProfile(profileData);
+                console.log('Profile set, user type:', profileData.user_type);
+                const canAccess = await checkContactAccess(session.user.id);
+                setCanAccessContactInfo(canAccess);
+              } else {
+                // If no profile found, user might have been deleted
+                console.log('No profile found for user, signing out...');
+                await supabase.auth.signOut();
+                window.location.href = '/auth';
+                return;
+              }
+            } catch (error) {
+              console.error('Error fetching profile:', error);
             }
-          } catch (error) {
-            console.error('Error fetching profile:', error);
-          }
+            setLoading(false);
+          }, 0);
         } else {
           setProfile(null);
           setCanAccessContactInfo(false);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
@@ -106,24 +111,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setLoading(false);
+        return { error };
+      }
+      
+      // Don't redirect here, let the auth state change handle it
+      return { error: null };
+    } catch (error) {
       setLoading(false);
       return { error };
     }
-    
-    // Get the user profile to check user type
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const profileData = await fetchProfile(user.id);
-      if (profileData?.user_type === 'admin') {
-        // Redirect admin users to admin panel
-        window.location.href = '/admin';
-        return { error: null };
-      }
-    }
-    
-    return { error };
   };
 
   const signUp = async (email: string, password: string, name: string, userType: 'provider' | 'seeker' | 'admin') => {

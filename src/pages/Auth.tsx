@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ import { PasswordValidator, isPasswordValid } from '@/components/PasswordValidat
 import { Link } from 'react-router-dom';
 
 const Auth = () => {
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, profile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   
@@ -31,10 +31,15 @@ const Auth = () => {
   const [showPasswordValidator, setShowPasswordValidator] = useState(false);
 
   // Redirect if already logged in
-  if (user) {
-    window.location.href = '/';
-    return null;
-  }
+  useEffect(() => {
+    if (user && profile) {
+      if (profile.user_type === 'admin') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = '/';
+      }
+    }
+  }, [user, profile]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,12 +53,13 @@ const Auth = () => {
           description: error.message,
           variant: "destructive"
         });
+        setLoading(false);
       } else {
         toast({
           title: "Welcome back!",
           description: "You have been signed in successfully."
         });
-        window.location.href = '/';
+        // Don't redirect here, let useEffect handle it based on user type
       }
     } catch (error) {
       toast({

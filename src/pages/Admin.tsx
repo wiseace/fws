@@ -26,7 +26,9 @@ const Admin = () => {
   const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
+    console.log('Admin useEffect - profile:', profile);
     if (profile?.user_type === 'admin') {
+      console.log('Loading admin data...');
       fetchAllData();
     }
   }, [profile]);
