@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import SystemExplanation from '@/components/SystemExplanation';
+
 import { User as UserType, VerificationRequest, ContactRequest, Service } from '@/types/database';
 import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
@@ -367,99 +367,89 @@ const Admin = () => {
             </div>
           </div>
 
-          {/* Fixed Stats Grid with Better Contrast */}
+          {/* Enhanced Stats Grid */}
           {stats && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
               <Card 
-                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white" 
+                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105" 
                 onClick={() => setActiveTab('users')}
               >
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-3">
-                      <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
-                        <Users className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-blue-700 mb-1">Total Users</p>
-                        <p className="text-3xl font-bold text-blue-900">{stats.total_users}</p>
-                      </div>
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-md">
+                      <Users className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-blue-700 mb-2">Total Users</p>
+                      <p className="text-4xl font-bold text-blue-900">{stats.total_users}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
               <Card 
-                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white"
+                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
                 onClick={() => setActiveTab('users')}
               >
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-3">
-                      <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
-                        <UserCheck className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-green-700 mb-1">Verified Users</p>
-                        <p className="text-3xl font-bold text-green-900">{stats.verified_users}</p>
-                      </div>
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-md">
+                      <UserCheck className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-green-700 mb-2">Verified Users</p>
+                      <p className="text-4xl font-bold text-green-900">{stats.verified_users}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
               <Card 
-                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white"
+                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
                 onClick={() => setActiveTab('verifications')}
               >
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-3">
-                      <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
-                        <Shield className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-orange-700 mb-1">Pending Verifications</p>
-                        <p className="text-3xl font-bold text-orange-900">{stats.pending_verifications}</p>
-                      </div>
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-4 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-md">
+                      <Shield className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-orange-700 mb-2">Pending Verifications</p>
+                      <p className="text-4xl font-bold text-orange-900">{stats.pending_verifications}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
               <Card 
-                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white"
+                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
                 onClick={() => setActiveTab('services')}
               >
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-3">
-                      <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
-                        <Eye className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-purple-700 mb-1">Total Services</p>
-                        <p className="text-3xl font-bold text-purple-900">{stats.total_services}</p>
-                      </div>
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-md">
+                      <Eye className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-purple-700 mb-2">Total Services</p>
+                      <p className="text-4xl font-bold text-purple-900">{stats.total_services}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
               <Card 
-                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white"
+                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
                 onClick={() => setActiveTab('contacts')}
               >
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-3">
-                      <div className="p-3 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
-                        <User className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-teal-700 mb-1">Contact Requests</p>
-                        <p className="text-3xl font-bold text-teal-900">{stats.total_contacts}</p>
-                      </div>
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-4 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl shadow-md">
+                      <User className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-teal-700 mb-2">Contact Requests</p>
+                      <p className="text-4xl font-bold text-teal-900">{stats.total_contacts}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -837,12 +827,6 @@ const Admin = () => {
             </Tabs>
           </div>
 
-          {/* Modern Footer Section */}
-          <div className="mt-16">
-            <div className="border-t border-border/50 pt-8">
-              <SystemExplanation />
-            </div>
-          </div>
         </div>
 
         <Footer editMode={false} />
