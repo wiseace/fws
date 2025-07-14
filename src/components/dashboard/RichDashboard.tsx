@@ -30,6 +30,10 @@ import {
   Zap,
   Shield
 } from 'lucide-react';
+import { MyServicesTab } from './tabs/MyServicesTab';
+import { ClientRequestsTab } from './tabs/ClientRequestsTab';
+import { VerificationTab } from './tabs/VerificationTab';
+import { ProfileTab } from './tabs/ProfileTab';
 
 interface DashboardStats {
   totalServices?: number;
@@ -65,6 +69,7 @@ export const RichDashboard = () => {
   const [stats, setStats] = useState<DashboardStats>({});
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStep[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [activeTab, setActiveTab] = useState('services');
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -491,10 +496,93 @@ export const RichDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">
-                      Use the navigation above to access your provider tools and manage your services.
-                    </p>
+                  {/* Tabbed Interface */}
+                  <div className="space-y-6">
+                     {/* Tab Navigation */}
+                     <div className="flex flex-wrap gap-2 border-b">
+                       <Button 
+                         variant="ghost" 
+                         className={`px-4 py-2 ${
+                           activeTab === 'services' 
+                             ? 'text-primary border-b-2 border-primary font-medium' 
+                             : 'text-muted-foreground hover:text-primary'
+                         }`}
+                         onClick={() => setActiveTab('services')}
+                       >
+                         My Services ({stats.totalServices || 0})
+                       </Button>
+                       <Button 
+                         variant="ghost" 
+                         className={`px-4 py-2 ${
+                           activeTab === 'requests' 
+                             ? 'text-primary border-b-2 border-primary font-medium' 
+                             : 'text-muted-foreground hover:text-primary'
+                         }`}
+                         onClick={() => setActiveTab('requests')}
+                       >
+                         Client Requests
+                       </Button>
+                       <Button 
+                         variant="ghost" 
+                         className={`px-4 py-2 ${
+                           activeTab === 'verification' 
+                             ? 'text-primary border-b-2 border-primary font-medium' 
+                             : 'text-muted-foreground hover:text-primary'
+                         }`}
+                         onClick={() => setActiveTab('verification')}
+                       >
+                         Verification
+                       </Button>
+                       <Button 
+                         variant="ghost" 
+                         className={`px-4 py-2 ${
+                           activeTab === 'profile' 
+                             ? 'text-primary border-b-2 border-primary font-medium' 
+                             : 'text-muted-foreground hover:text-primary'
+                         }`}
+                         onClick={() => setActiveTab('profile')}
+                       >
+                         Profile
+                       </Button>
+                     </div>
+
+                     {/* Tab Content */}
+                     <div className="min-h-[300px]">
+                       {activeTab === 'services' && <MyServicesTab />}
+                       {activeTab === 'requests' && <ClientRequestsTab />}
+                       {activeTab === 'verification' && <VerificationTab />}
+                       {activeTab === 'profile' && <ProfileTab />}
+                     </div>
+
+                    {/* Onboarding Progress */}
+                    {onboardingSteps.length > 0 && (
+                      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
+                        <h4 className="font-semibold text-yellow-800 mb-3 flex items-center gap-2">
+                          <Target className="h-4 w-4" />
+                          Getting Started Progress
+                        </h4>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm text-yellow-700">
+                            {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
+                          </span>
+                          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                            {Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100)}% Complete
+                          </Badge>
+                        </div>
+                        <Progress 
+                          value={(onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100} 
+                          className="h-2 mb-3"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          {onboardingSteps.map((step) => (
+                            <div key={step.id} className={`flex items-center gap-2 text-xs ${step.completed ? 'text-green-700' : 'text-yellow-700'}`}>
+                              {getStepIcon(step.step_name, step.completed)}
+                              <span>{getStepTitle(step.step_name)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
