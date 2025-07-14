@@ -125,16 +125,29 @@ const Admin = () => {
   };
 
   const fetchVerificationRequests = async () => {
-    const { data, error } = await supabase
-      .from('verification_requests')
-      .select(`
-        *,
-        user:users(name, email)
-      `)
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    if (data) setVerificationRequests(data as any);
+    console.log('Fetching verification requests...');
+    try {
+      const { data, error } = await supabase
+        .from('verification_requests')
+        .select(`
+          *,
+          user:users(name, email)
+        `)
+        .order('created_at', { ascending: false });
+      
+      console.log('Verification requests response:', { data, error });
+      
+      if (error) {
+        console.error('Error fetching verification requests:', error);
+        throw error;
+      }
+      if (data) {
+        console.log('Setting verification requests:', data);
+        setVerificationRequests(data as any);
+      }
+    } catch (error) {
+      console.error('Exception in fetchVerificationRequests:', error);
+    }
   };
 
   const fetchContactRequests = async () => {
