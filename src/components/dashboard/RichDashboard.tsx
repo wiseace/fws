@@ -305,7 +305,7 @@ export const RichDashboard = () => {
                 <div className="p-2 bg-gradient-to-r from-primary to-secondary rounded-lg">
                   <LayoutDashboard className="h-8 w-8 text-white" />
                 </div>
-                {getGreeting()}, {profile?.name}! 👋
+                {getGreeting()}, {profile?.name}!
               </h1>
               <p className="text-xl text-muted-foreground">
                 {profile?.user_type === 'provider' 
@@ -316,7 +316,7 @@ export const RichDashboard = () => {
             <div className="flex items-center gap-4">
               {/* Subscription Countdown - Show for non-admin users */}
               {profile?.user_type !== 'admin' && (
-                <div className="w-80">
+                <div className="w-72 transform hover:scale-105 transition-transform duration-200">
                   <SubscriptionCountdown profile={profile} />
                 </div>
               )}

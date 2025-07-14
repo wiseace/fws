@@ -124,86 +124,87 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
   }
 
   return (
-    <Card className={`border-2 shadow-lg transition-all duration-300 ${getUrgencyClass()}`}>
-      <CardHeader className={`bg-gradient-to-r ${getPlanColor(profile.subscription_plan)} text-white rounded-t-lg`}>
-        <CardTitle className="flex items-center justify-between text-lg">
+    <Card className={`border shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm ${getUrgencyClass()}`}>
+      <CardHeader className={`bg-gradient-to-r ${getPlanColor(profile.subscription_plan)} text-white rounded-t-lg py-3`}>
+        <CardTitle className="flex items-center justify-between text-base">
           <div className="flex items-center gap-2">
             {getPlanIcon(profile.subscription_plan)}
-            <span className="capitalize">{profile.subscription_plan} Plan</span>
+            <span className="capitalize font-medium">{profile.subscription_plan} Plan</span>
           </div>
           <Badge 
             variant="secondary" 
-            className="bg-white/20 text-white border-white/30 font-semibold"
+            className="bg-white/20 text-white border-white/30 text-xs px-2 py-1"
           >
             Active
           </Badge>
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="p-6 space-y-4">
+      <CardContent className="p-4 space-y-3">
         <div className="text-center">
-          <p className="text-sm text-muted-foreground mb-3">Time Remaining</p>
+          <p className="text-xs text-muted-foreground mb-3 font-medium">Time Remaining</p>
           
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          {/* Main time units */}
+          <div className="grid grid-cols-2 gap-3 mb-3">
             {timeRemaining.months > 0 && (
               <div className="text-center">
-                <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-lg p-3 mb-1">
-                  <div className="text-2xl font-bold">{timeRemaining.months}</div>
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-3 shadow-sm">
+                  <div className="text-xl font-bold">{timeRemaining.months}</div>
                 </div>
-                <div className="text-xs text-muted-foreground font-medium">
+                <div className="text-xs text-muted-foreground font-medium mt-1">
                   Month{timeRemaining.months !== 1 ? 's' : ''}
                 </div>
               </div>
             )}
             
             <div className="text-center">
-              <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg p-3 mb-1">
-                <div className="text-2xl font-bold">{timeRemaining.days}</div>
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-3 shadow-sm">
+                <div className="text-xl font-bold">{timeRemaining.days}</div>
               </div>
-              <div className="text-xs text-muted-foreground font-medium">
+              <div className="text-xs text-muted-foreground font-medium mt-1">
                 Day{timeRemaining.days !== 1 ? 's' : ''}
               </div>
             </div>
           </div>
 
-          {/* Real-time countdown for smaller units */}
-          <div className="grid grid-cols-3 gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
+          {/* Live countdown */}
+          <div className="grid grid-cols-3 gap-2 mb-3">
             <div className="text-center">
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-md p-2 mb-1">
-                <div className="text-lg font-bold">{String(timeRemaining.hours).padStart(2, '0')}</div>
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-lg p-2 shadow-sm">
+                <div className="text-sm font-bold">{String(timeRemaining.hours).padStart(2, '0')}</div>
               </div>
-              <div className="text-xs text-muted-foreground font-medium">Hours</div>
+              <div className="text-xs text-muted-foreground font-medium mt-1">Hours</div>
             </div>
             
             <div className="text-center">
-              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-md p-2 mb-1">
-                <div className="text-lg font-bold">{String(timeRemaining.minutes).padStart(2, '0')}</div>
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-lg p-2 shadow-sm">
+                <div className="text-sm font-bold">{String(timeRemaining.minutes).padStart(2, '0')}</div>
               </div>
-              <div className="text-xs text-muted-foreground font-medium">Minutes</div>
+              <div className="text-xs text-muted-foreground font-medium mt-1">Minutes</div>
             </div>
             
             <div className="text-center">
-              <div className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-md p-2 mb-1 animate-pulse">
-                <div className="text-lg font-bold">{String(timeRemaining.seconds).padStart(2, '0')}</div>
+              <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg p-2 shadow-sm animate-pulse">
+                <div className="text-sm font-bold">{String(timeRemaining.seconds).padStart(2, '0')}</div>
               </div>
-              <div className="text-xs text-muted-foreground font-medium">Seconds</div>
+              <div className="text-xs text-muted-foreground font-medium mt-1">Seconds</div>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+          <div className="w-full bg-gray-200 rounded-full h-1.5 mb-2">
             <div 
-              className={`bg-gradient-to-r ${getPlanColor(profile.subscription_plan)} h-2 rounded-full transition-all duration-500`}
+              className={`bg-gradient-to-r ${getPlanColor(profile.subscription_plan)} h-1.5 rounded-full transition-all duration-500 shadow-sm`}
               style={{ width: `${getProgressPercentage()}%` }}
             />
           </div>
 
           {profile.subscription_expiry && (
             <p className="text-xs text-muted-foreground">
-              Expires on {new Date(profile.subscription_expiry).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+              Expires {new Date(profile.subscription_expiry).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
               })}
             </p>
           )}
@@ -211,12 +212,12 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
 
         {/* Warning for expiring subscriptions */}
         {(timeRemaining.months * 30 + timeRemaining.weeks * 7 + timeRemaining.days) <= 7 && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
-            <p className="text-red-700 text-sm font-medium">
-              ⚠️ Your subscription expires soon!
+          <div className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-lg p-2 text-center">
+            <p className="text-red-700 text-xs font-medium">
+              ⚠️ Subscription expires soon!
             </p>
             <p className="text-red-600 text-xs mt-1">
-              Renew now to continue enjoying premium features
+              Renew to continue premium features
             </p>
           </div>
         )}
