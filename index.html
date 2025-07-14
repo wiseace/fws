@@ -4,18 +4,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FindWho - Professional Directory</title>
+    
+    <!-- Cache Control Headers for Immediate Updates -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <title>FINDWHOSABI - Professional Directory</title>
     <meta name="description" content="Discover talented professionals, experts, and service providers. Connect with verified experts in various fields." />
-    <meta name="author" content="FindWho Team" />
+    <meta name="author" content="FINDWHOSABI Team" />
 
-    <meta property="og:title" content="FindWho - Professional Directory" />
+    <meta property="og:title" content="FINDWHOSABI - Professional Directory" />
     <meta property="og:description" content="Discover talented professionals, experts, and service providers. Connect with verified experts in various fields." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@findwho" />
+    <meta name="twitter:site" content="@findwhosabi" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <!-- Version timestamp for cache busting -->
+    <meta name="version" content="<?= time(); ?>" />
+    <script>
+      // Force reload if cached version detected
+      if (performance.navigation.type === performance.navigation.TYPE_BACK_FORWARD) {
+        location.reload(true);
+      }
+      
+      // Disable caching for dynamic content
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+    </script>
   </head>
 
   <body>

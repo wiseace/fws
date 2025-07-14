@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent caching for immediate updates across all browsers */
+* {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */

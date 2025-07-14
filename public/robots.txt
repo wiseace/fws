@@ -1,3 +1,4 @@
+# Robots.txt for FINDWHOSABI
 User-agent: Googlebot
 Allow: /
 
@@ -12,3 +13,10 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Cache control for immediate updates
+Cache-Control: no-cache, no-store, must-revalidate
+Pragma: no-cache
+Expires: 0
+
+Sitemap: https://findwhosabi.com/sitemap.xml
