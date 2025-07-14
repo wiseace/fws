@@ -28,8 +28,71 @@ const Admin = () => {
   useEffect(() => {
     if (profile?.user_type === 'admin') {
       fetchAllData();
+      setupRealtimeListeners();
     }
   }, [profile]);
+
+  const setupRealtimeListeners = () => {
+    // Listen for changes to all admin-relevant tables
+    const usersChannel = supabase
+      .channel('admin-users-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'users' },
+        () => {
+          console.log('Users changed, refreshing...');
+          fetchUsers();
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    const verificationChannel = supabase
+      .channel('admin-verification-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'verification_requests' },
+        () => {
+          console.log('Verification requests changed, refreshing...');
+          fetchVerificationRequests();
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    const servicesChannel = supabase
+      .channel('admin-services-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'services' },
+        () => {
+          console.log('Services changed, refreshing...');
+          fetchServices();
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    const contactsChannel = supabase
+      .channel('admin-contacts-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'contact_requests' },
+        () => {
+          console.log('Contact requests changed, refreshing...');
+          fetchContactRequests();
+        }
+      )
+      .subscribe();
+
+    // Cleanup function
+    return () => {
+      usersChannel.unsubscribe();
+      verificationChannel.unsubscribe();
+      servicesChannel.unsubscribe();
+      contactsChannel.unsubscribe();
+    };
+  };
 
   const fetchAllData = async () => {
     setLoading(true);

@@ -38,8 +38,55 @@ const Dashboard = () => {
   useEffect(() => {
     if (user && !authLoading) {
       initializeDashboard();
+      setupRealtimeListeners();
     }
   }, [user, authLoading]);
+
+  const setupRealtimeListeners = () => {
+    if (!user) return;
+
+    // Listen for changes to user's services
+    const servicesChannel = supabase
+      .channel('user-services-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'services',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => {
+          console.log('User services changed, refreshing...');
+          fetchUserServices();
+        }
+      )
+      .subscribe();
+
+    // Listen for changes to user profile
+    const profileChannel = supabase
+      .channel('user-profile-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'users',
+          filter: `id=eq.${user.id}`
+        },
+        () => {
+          console.log('User profile changed, refreshing...');
+          refreshProfile();
+        }
+      )
+      .subscribe();
+
+    // Cleanup function
+    return () => {
+      servicesChannel.unsubscribe();
+      profileChannel.unsubscribe();
+    };
+  };
 
   const initializeDashboard = async () => {
     try {

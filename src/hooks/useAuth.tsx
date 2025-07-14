@@ -82,16 +82,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Defer profile fetching to avoid blocking auth state
-          setTimeout(async () => {
+          // Immediate profile fetch for better UX
+          try {
             const profileData = await fetchProfile(session.user.id);
             if (profileData) {
               setProfile(profileData);
               const canAccess = await checkContactAccess(session.user.id);
               setCanAccessContactInfo(canAccess);
+            } else {
+              // If no profile found, user might have been deleted
+              console.log('No profile found for user, signing out...');
+              await supabase.auth.signOut();
+              window.location.href = '/auth';
+              return;
             }
-            setLoading(false);
-          }, 100);
+          } catch (error) {
+            console.error('Error fetching profile:', error);
+          }
+          setLoading(false);
         } else {
           setProfile(null);
           setCanAccessContactInfo(false);
@@ -107,8 +115,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    // Set up realtime listener for user profile changes
+    const realtimeChannel = supabase
+      .channel('auth-user-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'users',
+          filter: `id=eq.${user?.id || ''}`
+        },
+        (payload) => {
+          console.log('User profile changed:', payload);
+          if (payload.eventType === 'DELETE') {
+            // User was deleted, sign out immediately
+            supabase.auth.signOut();
+            window.location.href = '/auth';
+          } else if (payload.eventType === 'UPDATE') {
+            // User data updated, refresh profile
+            refreshProfile();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+      realtimeChannel.unsubscribe();
+    };
+  }, [user?.id]);
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
