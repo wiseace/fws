@@ -18,6 +18,7 @@ const Admin = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('verifications');
   
   const [users, setUsers] = useState<UserType[]>([]);
   const [verificationRequests, setVerificationRequests] = useState<VerificationRequest[]>([]);
@@ -392,7 +393,10 @@ const Admin = () => {
           {/* Enhanced Stats Cards with Rich UI */}
           {stats && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-sm hover:shadow-md transition-shadow">
+              <Card 
+                className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
+                onClick={() => setActiveTab('users')}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -408,7 +412,10 @@ const Admin = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-sm hover:shadow-md transition-shadow">
+              <Card 
+                className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => setActiveTab('users')}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -424,7 +431,10 @@ const Admin = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-sm hover:shadow-md transition-shadow">
+              <Card 
+                className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => setActiveTab('verifications')}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -440,7 +450,10 @@ const Admin = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-sm hover:shadow-md transition-shadow">
+              <Card 
+                className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => setActiveTab('services')}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -458,7 +471,7 @@ const Admin = () => {
             </div>
           )}
 
-          <Tabs defaultValue="verifications" className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="verifications">Verifications</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
