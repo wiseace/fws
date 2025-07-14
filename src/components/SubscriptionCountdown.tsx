@@ -13,6 +13,8 @@ interface TimeRemaining {
   weeks: number;
   days: number;
   hours: number;
+  minutes: number;
+  seconds: number;
   expired: boolean;
 }
 
@@ -22,12 +24,14 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
     weeks: 0,
     days: 0,
     hours: 0,
+    minutes: 0,
+    seconds: 0,
     expired: false
   });
 
   const calculateTimeRemaining = (): TimeRemaining => {
     if (!profile.subscription_expiry || profile.subscription_plan === 'free') {
-      return { months: 0, weeks: 0, days: 0, hours: 0, expired: true };
+      return { months: 0, weeks: 0, days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
     }
 
     const expiryDate = new Date(profile.subscription_expiry);
@@ -35,11 +39,15 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
     const diffMs = expiryDate.getTime() - now.getTime();
 
     if (diffMs <= 0) {
-      return { months: 0, weeks: 0, days: 0, hours: 0, expired: true };
+      return { months: 0, weeks: 0, days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
     }
 
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const totalSeconds = Math.floor(diffMs / 1000);
+    const days = Math.floor(totalSeconds / (60 * 60 * 24));
+    const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    const seconds = totalSeconds % 60;
+    
     const months = Math.floor(days / 30);
     const remainingDays = days % 30;
     const weeks = Math.floor(remainingDays / 7);
@@ -50,6 +58,8 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
       weeks,
       days: finalDays,
       hours,
+      minutes,
+      seconds,
       expired: false
     };
   };
@@ -60,7 +70,7 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
     };
 
     updateTimer(); // Initial calculation
-    const interval = setInterval(updateTimer, 1000 * 60 * 60); // Update every hour
+    const interval = setInterval(updateTimer, 1000); // Update every second
 
     return () => clearInterval(interval);
   }, [profile.subscription_expiry, profile.subscription_plan]);
@@ -134,7 +144,7 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
         <div className="text-center">
           <p className="text-sm text-muted-foreground mb-3">Time Remaining</p>
           
-          <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             {timeRemaining.months > 0 && (
               <div className="text-center">
                 <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-lg p-3 mb-1">
@@ -146,17 +156,6 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
               </div>
             )}
             
-            {timeRemaining.weeks > 0 && (
-              <div className="text-center">
-                <div className="bg-gradient-to-r from-secondary to-secondary/80 text-white rounded-lg p-3 mb-1">
-                  <div className="text-2xl font-bold">{timeRemaining.weeks}</div>
-                </div>
-                <div className="text-xs text-muted-foreground font-medium">
-                  Week{timeRemaining.weeks !== 1 ? 's' : ''}
-                </div>
-              </div>
-            )}
-            
             <div className="text-center">
               <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg p-3 mb-1">
                 <div className="text-2xl font-bold">{timeRemaining.days}</div>
@@ -164,6 +163,30 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
               <div className="text-xs text-muted-foreground font-medium">
                 Day{timeRemaining.days !== 1 ? 's' : ''}
               </div>
+            </div>
+          </div>
+
+          {/* Real-time countdown for smaller units */}
+          <div className="grid grid-cols-3 gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
+            <div className="text-center">
+              <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-md p-2 mb-1">
+                <div className="text-lg font-bold">{String(timeRemaining.hours).padStart(2, '0')}</div>
+              </div>
+              <div className="text-xs text-muted-foreground font-medium">Hours</div>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-md p-2 mb-1">
+                <div className="text-lg font-bold">{String(timeRemaining.minutes).padStart(2, '0')}</div>
+              </div>
+              <div className="text-xs text-muted-foreground font-medium">Minutes</div>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-md p-2 mb-1 animate-pulse">
+                <div className="text-lg font-bold">{String(timeRemaining.seconds).padStart(2, '0')}</div>
+              </div>
+              <div className="text-xs text-muted-foreground font-medium">Seconds</div>
             </div>
           </div>
 
