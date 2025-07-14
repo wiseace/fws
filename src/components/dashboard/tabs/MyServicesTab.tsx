@@ -278,14 +278,17 @@ export const MyServicesTab = () => {
                         </h3>
                         <div className="flex items-center gap-2 mt-2">
                           <Badge 
-                            variant={service.is_active ? "default" : "secondary"}
-                            className={service.is_active ? "bg-secondary hover:bg-secondary-dark text-white" : "bg-primary-light hover:bg-primary-dark text-white"}
+                            variant="outline"
+                            className="bg-transparent border-white text-white hover:bg-white hover:text-primary transition-all"
                           >
                             {service.category}
                           </Badge>
                           <Badge 
-                            variant={service.is_active ? "default" : "secondary"}
-                            className={service.is_active ? "bg-brand-success hover:bg-brand-success text-white animate-pulse" : "bg-primary-light hover:bg-primary-dark text-white"}
+                            variant="outline"
+                            className={service.is_active 
+                              ? "bg-brand-success/20 border-brand-success text-brand-success hover:bg-brand-success hover:text-white animate-pulse transition-all" 
+                              : "bg-primary-light/20 border-primary-light text-primary-light hover:bg-primary-light hover:text-white transition-all"
+                            }
                           >
                             {service.is_active ? "● Active" : "○ Inactive"}
                           </Badge>
