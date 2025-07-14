@@ -325,8 +325,8 @@ const Admin = () => {
                 <Shield className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-h1 font-bold text-foreground">Admin Dashboard</h1>
-                <p className="text-body text-muted-foreground mt-1">
+                <h1 className="heading-1">Admin Dashboard</h1>
+                <p className="body-text text-muted-foreground mt-1">
                   System Management & Analytics Center
                 </p>
               </div>
@@ -380,8 +380,8 @@ const Admin = () => {
                       <Users className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <p className="text-caption font-medium text-blue-700 mb-2">Total Users</p>
-                      <p className="text-h1 font-bold text-blue-900">{stats.total_users}</p>
+                      <p className="caption-text font-medium text-blue-700 mb-2">Total Users</p>
+                      <p className="text-[2rem] font-bold text-blue-900">{stats.total_users}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -397,8 +397,8 @@ const Admin = () => {
                       <UserCheck className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <p className="text-caption font-medium text-green-700 mb-2">Verified Users</p>
-                      <p className="text-h1 font-bold text-green-900">{stats.verified_users}</p>
+                      <p className="caption-text font-medium text-green-700 mb-2">Verified Users</p>
+                      <p className="text-[2rem] font-bold text-green-900">{stats.verified_users}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -414,8 +414,8 @@ const Admin = () => {
                       <Shield className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <p className="text-caption font-medium text-orange-700 mb-2">Pending Verifications</p>
-                      <p className="text-h1 font-bold text-orange-900">{stats.pending_verifications}</p>
+                      <p className="caption-text font-medium text-orange-700 mb-2">Pending Verifications</p>
+                      <p className="text-[2rem] font-bold text-orange-900">{stats.pending_verifications}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -431,8 +431,8 @@ const Admin = () => {
                       <Eye className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <p className="text-caption font-medium text-purple-700 mb-2">Total Services</p>
-                      <p className="text-h1 font-bold text-purple-900">{stats.total_services}</p>
+                      <p className="caption-text font-medium text-purple-700 mb-2">Total Services</p>
+                      <p className="text-[2rem] font-bold text-purple-900">{stats.total_services}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -448,8 +448,8 @@ const Admin = () => {
                       <User className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <p className="text-caption font-medium text-teal-700 mb-2">Contact Requests</p>
-                      <p className="text-h1 font-bold text-teal-900">{stats.total_contacts}</p>
+                      <p className="caption-text font-medium text-teal-700 mb-2">Contact Requests</p>
+                      <p className="text-[2rem] font-bold text-teal-900">{stats.total_contacts}</p>
                     </div>
                   </div>
                 </CardContent>

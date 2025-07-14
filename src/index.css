@@ -143,35 +143,35 @@ All colors MUST be HSL.
   }
   
   /* Typography Utilities */
-  .text-h1 {
-    @apply text-h1 font-playfair;
+  h1, .heading-1 {
+    @apply text-[2rem] leading-[2.5rem] font-semibold font-playfair;
   }
   
-  .text-h2 {
-    @apply text-h2 font-playfair;
+  h2, .heading-2 {
+    @apply text-[1.5rem] leading-[2rem] font-medium font-playfair;
   }
   
-  .text-h3 {
-    @apply text-h3 font-playfair;
+  h3, .heading-3 {
+    @apply text-[1.25rem] leading-[1.75rem] font-medium font-playfair;
   }
   
-  .text-h4 {
-    @apply text-h4 font-inter font-medium;
+  h4, .heading-4 {
+    @apply text-[1.125rem] leading-[1.5rem] font-medium font-inter;
   }
   
-  .text-body {
-    @apply text-body font-inter;
+  .body-text {
+    @apply text-[1rem] leading-[1.5rem] font-normal font-inter;
   }
   
-  .text-body-sm {
-    @apply text-body-sm font-inter;
+  .body-small {
+    @apply text-[0.875rem] leading-[1.25rem] font-normal font-inter;
   }
   
-  .text-caption {
-    @apply text-caption font-inter text-muted-foreground;
+  .caption-text {
+    @apply text-[0.75rem] leading-[1rem] font-normal font-inter text-muted-foreground;
   }
   
-  .text-caption-sm {
-    @apply text-caption-sm font-inter text-muted-foreground;
+  .caption-small {
+    @apply text-[0.8125rem] leading-[1.125rem] font-normal font-inter text-muted-foreground;
   }
 }
