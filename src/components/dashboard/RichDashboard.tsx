@@ -537,10 +537,10 @@ export const RichDashboard = () => {
                      <div className="flex flex-wrap gap-2 border-b">
                        <Button 
                          variant="ghost" 
-                         className={`px-4 py-2 ${
+                         className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${
                            activeTab === 'services' 
-                             ? 'text-primary border-b-2 border-primary font-medium' 
-                             : 'text-muted-foreground hover:text-primary'
+                             ? 'bg-white text-primary border-primary border-b-0 font-medium -mb-px' 
+                             : 'text-muted-foreground hover:text-primary hover:bg-transparent'
                          }`}
                          onClick={() => setActiveTab('services')}
                        >
@@ -548,10 +548,10 @@ export const RichDashboard = () => {
                        </Button>
                        <Button 
                          variant="ghost" 
-                         className={`px-4 py-2 ${
+                         className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${
                            activeTab === 'requests' 
-                             ? 'text-primary border-b-2 border-primary font-medium' 
-                             : 'text-muted-foreground hover:text-primary'
+                             ? 'bg-white text-primary border-primary border-b-0 font-medium -mb-px' 
+                             : 'text-muted-foreground hover:text-primary hover:bg-transparent'
                          }`}
                          onClick={() => setActiveTab('requests')}
                        >
@@ -559,10 +559,10 @@ export const RichDashboard = () => {
                        </Button>
                        <Button 
                          variant="ghost" 
-                         className={`px-4 py-2 ${
+                         className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${
                            activeTab === 'verification' 
-                             ? 'text-primary border-b-2 border-primary font-medium' 
-                             : 'text-muted-foreground hover:text-primary'
+                             ? 'bg-white text-primary border-primary border-b-0 font-medium -mb-px' 
+                             : 'text-muted-foreground hover:text-primary hover:bg-transparent'
                          }`}
                          onClick={() => setActiveTab('verification')}
                        >
@@ -570,10 +570,10 @@ export const RichDashboard = () => {
                        </Button>
                        <Button 
                          variant="ghost" 
-                         className={`px-4 py-2 ${
+                         className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${
                            activeTab === 'profile' 
-                             ? 'text-primary border-b-2 border-primary font-medium' 
-                             : 'text-muted-foreground hover:text-primary'
+                             ? 'bg-white text-primary border-primary border-b-0 font-medium -mb-px' 
+                             : 'text-muted-foreground hover:text-primary hover:bg-transparent'
                          }`}
                          onClick={() => setActiveTab('profile')}
                        >
@@ -589,41 +589,6 @@ export const RichDashboard = () => {
                        {activeTab === 'profile' && <ProfileTab />}
                      </div>
 
-                    {/* Onboarding Progress */}
-                    {onboardingSteps.length > 0 && (
-                      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
-                        <h4 className="font-semibold text-yellow-800 mb-3 flex items-center gap-2">
-                          <Target className="h-4 w-4" />
-                          Getting Started Progress
-                        </h4>
-                         <div className="flex items-center justify-between mb-3">
-                           <span className="text-sm text-yellow-700">
-                             {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
-                           </span>
-                           <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                             {onboardingSteps.length > 0 ? Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100) : 0}% Complete
-                           </Badge>
-                         </div>
-                         <Progress 
-                           value={onboardingSteps.length > 0 ? (onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100 : 0} 
-                           className="h-2 mb-3"
-                         />
-                         <div className="grid grid-cols-2 gap-2">
-                           {onboardingSteps.map((step) => (
-                             <button 
-                               key={step.id} 
-                               onClick={() => handleOnboardingStepClick(step.step_name, step.completed)}
-                               className={`flex items-center gap-2 text-xs p-2 rounded-md transition-colors hover:bg-yellow-100 ${
-                                 step.completed ? 'text-green-700' : 'text-yellow-700 cursor-pointer'
-                               }`}
-                             >
-                               {getStepIcon(step.step_name, step.completed)}
-                               <span>{getStepTitle(step.step_name)}</span>
-                             </button>
-                           ))}
-                         </div>
-                      </div>
-                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -738,6 +703,51 @@ export const RichDashboard = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Getting Started Progress Card - Provider Only */}
+            {profile?.user_type === 'provider' && onboardingSteps.length > 0 && (
+              <Card className="shadow-lg border-0 bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-yellow-800">
+                    <Target className="h-5 w-5" />
+                    Getting Started Progress
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-yellow-700">
+                        {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
+                      </span>
+                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                        {onboardingSteps.length > 0 ? Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100) : 0}% Complete
+                      </Badge>
+                    </div>
+                    <Progress 
+                      value={onboardingSteps.length > 0 ? (onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100 : 0} 
+                      className="h-2"
+                    />
+                    <div className="grid grid-cols-1 gap-2">
+                      {onboardingSteps.map((step) => (
+                        <button 
+                          key={step.id} 
+                          onClick={() => handleOnboardingStepClick(step.step_name, step.completed)}
+                          className={`flex items-center gap-3 text-sm p-3 rounded-md transition-colors hover:bg-yellow-100 text-left ${
+                            step.completed ? 'text-green-700 bg-green-50' : 'text-yellow-700 cursor-pointer bg-white'
+                          }`}
+                        >
+                          {getStepIcon(step.step_name, step.completed)}
+                          <span className="font-medium">{getStepTitle(step.step_name)}</span>
+                          {step.completed && (
+                            <CheckCircle className="h-4 w-4 text-green-600 ml-auto" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Quick Links */}
             <Card className="shadow-lg border-0">
