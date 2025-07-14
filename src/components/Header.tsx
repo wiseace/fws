@@ -4,7 +4,7 @@ import { Menu, X, User, LogOut, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import findWhoSabiLogo from '@/assets/findwhosabi-service-placeholder.jpg';
+import findWhoSabiLogo from '@/assets/findwhosabi-logo.png';
 
 interface HeaderProps {
   editMode: boolean;
