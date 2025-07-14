@@ -177,6 +177,18 @@ export const RichDashboard = () => {
     );
   };
 
+  const checkAndShowVerificationToast = (action: string) => {
+    if (!profile?.is_verified) {
+      toast({
+        title: "Verification Required",
+        description: `You need to complete verification to ${action}. Please submit your verification documents first.`,
+        variant: "destructive"
+      });
+      return false;
+    }
+    return true;
+  };
+
   const getStepIcon = (stepName: string, completed: boolean) => {
     const iconClass = completed ? 'text-green-600' : 'text-gray-400';
     switch (stepName) {
@@ -374,7 +386,11 @@ export const RichDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/dashboard?tab=services'}
+                        onClick={() => {
+                          if (checkAndShowVerificationToast('create services')) {
+                            window.location.href = '/dashboard?tab=services';
+                          }
+                        }}
                       >
                         <PlusCircle className="h-6 w-6" />
                         Add Service
@@ -444,104 +460,222 @@ export const RichDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Provider Onboarding Progress */}
-            {profile?.user_type === 'provider' && onboardingSteps.length > 0 && (
-              <Card className="shadow-lg border-0">
-                <CardHeader>
+            {/* Rich Tabbed Experience for Providers */}
+            {profile?.user_type === 'provider' && (
+              <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-blue-50">
+                <CardHeader className="bg-gradient-to-r from-primary to-secondary text-white rounded-t-lg">
                   <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-primary" />
-                    Getting Started
+                    <Target className="h-5 w-5" />
+                    Provider Hub
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm text-muted-foreground">
-                        {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
-                      </span>
-                      <Badge variant="secondary">
-                        {Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100)}% Complete
-                      </Badge>
+                <CardContent className="p-6">
+                  {/* Tabbed Interface */}
+                  <div className="space-y-6">
+                    {/* Tab Navigation */}
+                    <div className="flex flex-wrap gap-2 border-b">
+                      <Button 
+                        variant="ghost" 
+                        className="text-primary border-b-2 border-primary font-medium px-4 py-2"
+                      >
+                        My Services ({stats.totalServices || 0})
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="text-muted-foreground hover:text-primary px-4 py-2"
+                        onClick={() => window.location.href = '/dashboard?tab=requests'}
+                      >
+                        Client Requests
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="text-muted-foreground hover:text-primary px-4 py-2"
+                        onClick={() => window.location.href = '/dashboard?tab=verification'}
+                      >
+                        Verification
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="text-muted-foreground hover:text-primary px-4 py-2"
+                        onClick={() => window.location.href = '/provider-profile'}
+                      >
+                        Profile
+                      </Button>
                     </div>
-                    <Progress 
-                      value={(onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100} 
-                      className="h-2"
-                    />
-                    <div className="space-y-3">
-                      {onboardingSteps.map((step) => (
-                        <div key={step.id} className={`flex items-center gap-3 p-3 rounded-lg border ${step.completed ? 'bg-green-50 border-green-200' : 'bg-gray-50'}`}>
-                          {getStepIcon(step.step_name, step.completed)}
-                          <div className="flex-1">
-                            <p className={`font-medium ${step.completed ? 'text-green-800' : 'text-gray-900'}`}>
-                              {getStepTitle(step.step_name)}
-                            </p>
-                            {step.completed && step.completed_at && (
-                              <p className="text-xs text-green-600">
-                                Completed {new Date(step.completed_at).toLocaleDateString()}
-                              </p>
-                            )}
+
+                    {/* Services Tab Content */}
+                    <div className="min-h-[300px]">
+                      {stats.totalServices === 0 ? (
+                        <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg">
+                          <div className="mb-4">
+                            <Star className="h-16 w-16 text-gray-400 mx-auto" />
                           </div>
-                          {step.completed ? (
-                            <CheckCircle className="h-5 w-5 text-green-600" />
-                          ) : (
-                            <ArrowRight className="h-5 w-5 text-gray-400" />
-                          )}
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">No services yet</h3>
+                          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                            Create your first service to start connecting with clients and showcase your expertise.
+                          </p>
+                          <Button 
+                            onClick={() => {
+                              if (!profile?.is_verified) {
+                                toast({
+                                  title: "Verification Required",
+                                  description: "Please complete your verification before creating services.",
+                                  variant: "destructive"
+                                });
+                                return;
+                              }
+                              window.location.href = '/dashboard?tab=services';
+                            }}
+                            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                          >
+                            <PlusCircle className="h-4 w-4 mr-2" />
+                            CREATE YOUR FIRST SERVICE
+                          </Button>
                         </div>
-                      ))}
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="bg-gradient-to-r from-primary to-secondary text-white px-3 py-1 rounded-full text-sm font-medium">
+                                {stats.activeServices} Active
+                              </div>
+                              <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                                {(stats.totalServices || 0) - (stats.activeServices || 0)} Inactive
+                              </div>
+                            </div>
+                            <Button 
+                              size="sm"
+                              onClick={() => {
+                                if (!profile?.is_verified) {
+                                  toast({
+                                    title: "Verification Required",
+                                    description: "Please complete your verification before creating services.",
+                                    variant: "destructive"
+                                  });
+                                  return;
+                                }
+                                window.location.href = '/dashboard?tab=services';
+                              }}
+                              className="bg-primary hover:bg-primary/90"
+                            >
+                              <PlusCircle className="h-4 w-4 mr-2" />
+                              ADD SERVICE
+                            </Button>
+                          </div>
+                          
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <p className="text-blue-800 text-sm">
+                              🎉 Great start! You have {stats.totalServices} service{(stats.totalServices || 0) > 1 ? 's' : ''} created. 
+                              Keep optimizing your listings to attract more clients.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Onboarding Progress */}
+                    {onboardingSteps.length > 0 && (
+                      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
+                        <h4 className="font-semibold text-yellow-800 mb-3 flex items-center gap-2">
+                          <Target className="h-4 w-4" />
+                          Getting Started Progress
+                        </h4>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm text-yellow-700">
+                            {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
+                          </span>
+                          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                            {Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100)}% Complete
+                          </Badge>
+                        </div>
+                        <Progress 
+                          value={(onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100} 
+                          className="h-2 mb-3"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          {onboardingSteps.map((step) => (
+                            <div key={step.id} className={`flex items-center gap-2 text-xs ${step.completed ? 'text-green-700' : 'text-yellow-700'}`}>
+                              {getStepIcon(step.step_name, step.completed)}
+                              <span>{getStepTitle(step.step_name)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             )}
           </div>
 
-          {/* Sidebar */}
+            {/* Sidebar */}
           <div className="space-y-6">
-            {/* Notifications */}
-            <Card className="shadow-lg border-0">
-              <CardHeader>
+            {/* Enhanced Notifications */}
+            <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-purple-50">
+              <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-t-lg">
                 <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5 text-primary" />
+                  <Bell className="h-5 w-5" />
                   Notifications
                   {notifications.filter(n => !n.read).length > 0 && (
-                    <Badge variant="destructive" className="ml-auto">
+                    <Badge variant="secondary" className="ml-auto bg-white text-purple-600">
                       {notifications.filter(n => !n.read).length}
                     </Badge>
                   )}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
+              <CardContent className="p-4">
+                <div className="space-y-3 max-h-80 overflow-y-auto">
                   {notifications.length > 0 ? (
                     notifications.map((notification) => (
                       <div 
                         key={notification.id}
-                        className={`p-3 rounded-lg border cursor-pointer hover:bg-gray-50 ${
-                          !notification.read ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'
+                        className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
+                          !notification.read 
+                            ? 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 shadow-sm' 
+                            : 'bg-white border-gray-200 hover:bg-gray-50'
                         }`}
                         onClick={() => !notification.read && markNotificationAsRead(notification.id)}
                       >
-                        <div className="flex items-start gap-2">
-                          {notification.type === 'success' && <CheckCircle className="h-4 w-4 text-green-600 mt-1" />}
-                          {notification.type === 'warning' && <AlertCircle className="h-4 w-4 text-yellow-600 mt-1" />}
-                          {notification.type === 'error' && <AlertCircle className="h-4 w-4 text-red-600 mt-1" />}
-                          {notification.type === 'info' && <Bell className="h-4 w-4 text-blue-600 mt-1" />}
-                          <div className="flex-1">
-                            <p className="font-medium text-sm">{notification.title}</p>
-                            <p className="text-xs text-muted-foreground">{notification.message}</p>
-                            <p className="text-xs text-muted-foreground mt-1">
+                        <div className="flex items-start gap-3">
+                          <div className={`p-1 rounded-full ${
+                            notification.type === 'success' ? 'bg-green-100' :
+                            notification.type === 'warning' ? 'bg-yellow-100' :
+                            notification.type === 'error' ? 'bg-red-100' : 'bg-blue-100'
+                          }`}>
+                            {notification.type === 'success' && <CheckCircle className="h-4 w-4 text-green-600" />}
+                            {notification.type === 'warning' && <AlertCircle className="h-4 w-4 text-yellow-600" />}
+                            {notification.type === 'error' && <AlertCircle className="h-4 w-4 text-red-600" />}
+                            {notification.type === 'info' && <Bell className="h-4 w-4 text-blue-600" />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm text-gray-900 truncate">{notification.title}</p>
+                            <p className="text-xs text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
+                            <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
                               {new Date(notification.created_at).toLocaleDateString()}
                             </p>
                           </div>
+                          {!notification.read && (
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-1"></div>
+                          )}
                         </div>
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm text-muted-foreground text-center py-4">
-                      No notifications yet
-                    </p>
+                    <div className="text-center py-8">
+                      <Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                      <p className="text-sm text-gray-500">No notifications yet</p>
+                      <p className="text-xs text-gray-400 mt-1">We'll notify you about important updates</p>
+                    </div>
                   )}
                 </div>
+                {notifications.length > 3 && (
+                  <div className="mt-3 pt-3 border-t">
+                    <Button variant="ghost" size="sm" className="w-full text-purple-600 hover:text-purple-700">
+                      View All Notifications
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

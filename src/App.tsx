@@ -36,7 +36,8 @@ const App = () => (
             <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/admin/profile" element={<AdminProfile />} />
             <Route path="/pricing" element={<Pricing />} />
-            <Route path="/provider/:id" element={<ProviderProfile />} />
+            <Route path="/provider/:id" element={<Provider />} />
+            <Route path="/provider-profile" element={<ProviderProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
