@@ -4,7 +4,7 @@ import { Menu, X, User, LogOut, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import findWhoSabiLogo from '@/assets/findwhosabi-logo.png';
+const findWhoSabiLogo = '/lovable-uploads/60f0692e-43cf-498a-bf01-0e645aa4348e.png';
 
 interface HeaderProps {
   editMode: boolean;
@@ -23,7 +23,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="cursor-pointer" onClick={() => window.location.href = '/'}>
-              <img src={findWhoSabiLogo} alt="FindWhoSabi" className="h-8 w-auto" />
+              <img src={findWhoSabiLogo} alt="FindWhoSabi" className="h-10 w-auto" />
             </div>
           </div>
 
