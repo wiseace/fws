@@ -233,6 +233,21 @@ export default function AdminProfile() {
               </CardContent>
             </Card>
 
+            {/* Super Admin Protection Notice */}
+            <Card className="shadow-lg border-l-4 border-l-red-400 bg-red-50">
+              <CardContent className="p-4">
+                <h3 className="font-medium text-red-800 mb-2">Super Administrator</h3>
+                <p className="text-sm text-red-700 mb-3">
+                  You are the primary system administrator. Your account has special protections and cannot be deleted by other administrators.
+                </p>
+                <ul className="text-xs text-red-600 space-y-1">
+                  <li>• Account deletion protection</li>
+                  <li>• Full system access rights</li>
+                  <li>• Permanent administrator status</li>
+                </ul>
+              </CardContent>
+            </Card>
+
             <Card className="shadow-lg border-l-4 border-l-blue-400 bg-blue-50">
               <CardContent className="p-4">
                 <h3 className="font-medium text-blue-800 mb-2">Admin Privileges</h3>

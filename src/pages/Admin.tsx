@@ -467,23 +467,31 @@ const Admin = () => {
                               <Badge variant="secondary">{user.subscription_plan}</Badge>
                             </div>
                           </div>
-                          <div className="flex space-x-2">
+                           <div className="flex space-x-2">
                             <select
                               value={user.user_type}
                               onChange={(e) => handleRoleChange(user.id, e.target.value as any)}
                               className="border rounded px-2 py-1 text-sm"
+                              disabled={user.email === 'hi@ariyo.dev'}
                             >
                               <option value="seeker">Seeker</option>
                               <option value="provider">Provider</option>
                               <option value="admin">Admin</option>
                             </select>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleDeleteUser(user.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {user.email === 'hi@ariyo.dev' ? (
+                              <div className="flex items-center text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded border">
+                                <Shield className="w-3 h-3 mr-1" />
+                                Protected
+                              </div>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleDeleteUser(user.id)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </div>
