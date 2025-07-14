@@ -126,17 +126,14 @@ export const MyServicesTab = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
+      {/* Stats and Add Button */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-bold">My Services ({services.length})</h2>
-          <div className="flex items-center gap-2">
-            <div className="bg-gradient-to-r from-primary to-secondary text-white px-3 py-1 rounded-full text-sm font-medium">
-              {activeServices} Active
-            </div>
-            <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-              {services.length - activeServices} Inactive
-            </div>
+        <div className="flex items-center gap-2">
+          <div className="bg-gradient-to-r from-primary to-secondary text-white px-3 py-1 rounded-full text-sm font-medium">
+            {activeServices} Active
+          </div>
+          <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+            {services.length - activeServices} Inactive
           </div>
         </div>
         <Button 
