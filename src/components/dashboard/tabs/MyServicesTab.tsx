@@ -258,11 +258,22 @@ export const MyServicesTab = () => {
               <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br from-background to-muted/10 border border-border/50 hover:border-primary/30 overflow-hidden">
                 <CardContent className="p-0">
                   {/* Service Image/Header */}
-                  <div className="relative h-32 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border-b border-border/50">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20"></div>
+                  <div className={`relative h-32 border-b border-border/50 ${
+                    service.image_url 
+                      ? 'bg-cover bg-center' 
+                      : 'bg-primary'
+                  }`}
+                  style={service.image_url ? { backgroundImage: `url(${service.image_url})` } : {}}>
+                    {service.image_url && (
+                      <div className="absolute inset-0 bg-black/50"></div>
+                    )}
                     <div className="relative p-4 h-full flex items-center">
                       <div className="flex-1">
-                        <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                        <h3 className={`font-bold text-xl transition-colors line-clamp-1 ${
+                          service.image_url 
+                            ? 'text-white group-hover:text-gray-200' 
+                            : 'text-white group-hover:text-gray-200'
+                        }`}>
                           {service.service_name}
                         </h3>
                         <div className="flex items-center gap-2 mt-2">
