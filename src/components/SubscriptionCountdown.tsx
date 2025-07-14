@@ -77,16 +77,16 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
 
   const getPlanColor = (plan: string) => {
     switch (plan) {
-      case 'monthly': return 'from-blue-500 to-blue-600';
-      case 'semi_annual': return 'from-purple-500 to-purple-600';
-      case 'yearly': return 'from-amber-500 to-amber-600';
-      default: return 'from-gray-500 to-gray-600';
+      case 'monthly': return 'from-primary to-primary-dark';
+      case 'semi_annual': return 'from-primary-light to-primary';
+      case 'yearly': return 'from-secondary to-secondary-dark';
+      default: return 'from-primary-light to-primary';
     }
   };
 
   const getPlanIcon = (plan: string) => {
     switch (plan) {
-      case 'yearly': return <Crown className="h-5 w-5 text-amber-200" />;
+      case 'yearly': return <Crown className="h-5 w-5 text-secondary-lighter" />;
       default: return <Calendar className="h-5 w-5 text-white/80" />;
     }
   };
@@ -174,7 +174,7 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+          <div className="w-full bg-muted rounded-full h-1.5 mb-2">
             <div 
               className={`bg-gradient-to-r ${getPlanColor(profile.subscription_plan)} h-1.5 rounded-full transition-all duration-500 shadow-sm`}
               style={{ width: `${getProgressPercentage()}%` }}
