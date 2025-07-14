@@ -28,11 +28,13 @@ const Admin = () => {
   useEffect(() => {
     if (profile?.user_type === 'admin') {
       fetchAllData();
-      setupRealtimeListeners();
     }
   }, [profile]);
 
-  const setupRealtimeListeners = () => {
+  // Separate effect for real-time listeners
+  useEffect(() => {
+    if (profile?.user_type !== 'admin') return;
+
     // Listen for changes to all admin-relevant tables
     const usersChannel = supabase
       .channel('admin-users-changes')
@@ -85,14 +87,13 @@ const Admin = () => {
       )
       .subscribe();
 
-    // Cleanup function
     return () => {
       usersChannel.unsubscribe();
       verificationChannel.unsubscribe();
       servicesChannel.unsubscribe();
       contactsChannel.unsubscribe();
     };
-  };
+  }, [profile?.user_type]);
 
   const fetchAllData = async () => {
     setLoading(true);

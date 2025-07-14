@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { User } from '@/types/database';
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (!user) return;
     
     const profileData = await fetchProfile(user.id);
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const canAccess = await checkContactAccess(user.id);
       setCanAccessContactInfo(canAccess);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     // Set up auth state listener
@@ -99,12 +99,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           } catch (error) {
             console.error('Error fetching profile:', error);
           }
-          setLoading(false);
         } else {
           setProfile(null);
           setCanAccessContactInfo(false);
-          setLoading(false);
         }
+        setLoading(false);
       }
     );
 
@@ -115,16 +114,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     });
 
-    // Set up realtime listener for user profile changes
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []); // Remove user dependency to prevent infinite loops
+
+  // Separate effect for realtime user changes
+  useEffect(() => {
+    if (!user?.id) return;
+
     const realtimeChannel = supabase
-      .channel('auth-user-changes')
+      .channel(`auth-user-changes-${user.id}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'users',
-          filter: `id=eq.${user?.id || ''}`
+          filter: `id=eq.${user.id}`
         },
         (payload) => {
           console.log('User profile changed:', payload);
@@ -141,10 +148,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
       realtimeChannel.unsubscribe();
     };
-  }, [user?.id]);
+  }, [user?.id, refreshProfile]);
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);

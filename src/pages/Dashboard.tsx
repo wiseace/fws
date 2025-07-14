@@ -38,16 +38,16 @@ const Dashboard = () => {
   useEffect(() => {
     if (user && !authLoading) {
       initializeDashboard();
-      setupRealtimeListeners();
     }
   }, [user, authLoading]);
 
-  const setupRealtimeListeners = () => {
-    if (!user) return;
+  // Separate effect for real-time listeners
+  useEffect(() => {
+    if (!user?.id) return;
 
     // Listen for changes to user's services
     const servicesChannel = supabase
-      .channel('user-services-changes')
+      .channel(`user-services-changes-${user.id}`)
       .on(
         'postgres_changes',
         {
@@ -63,30 +63,10 @@ const Dashboard = () => {
       )
       .subscribe();
 
-    // Listen for changes to user profile
-    const profileChannel = supabase
-      .channel('user-profile-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'users',
-          filter: `id=eq.${user.id}`
-        },
-        () => {
-          console.log('User profile changed, refreshing...');
-          refreshProfile();
-        }
-      )
-      .subscribe();
-
-    // Cleanup function
     return () => {
       servicesChannel.unsubscribe();
-      profileChannel.unsubscribe();
     };
-  };
+  }, [user?.id]);
 
   const initializeDashboard = async () => {
     try {
