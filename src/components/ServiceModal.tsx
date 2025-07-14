@@ -16,9 +16,10 @@ interface ServiceModalProps {
   onClose: () => void;
   onServiceCreated?: () => void;
   editingService?: Service | null;
+  service?: Service | null;
 }
 
-export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService }: ServiceModalProps) => {
+export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService, service }: ServiceModalProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -36,8 +37,9 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
   useEffect(() => {
     if (isOpen) {
       fetchCategories();
-      if (editingService) {
-        populateForm(editingService);
+      const serviceToEdit = editingService || service;
+      if (serviceToEdit) {
+        populateForm(serviceToEdit);
       }
     }
   }, [isOpen, editingService]);
@@ -100,11 +102,12 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
     };
 
     try {
-      if (editingService) {
+      const serviceToEdit = editingService || service;
+      if (serviceToEdit) {
         const { error } = await supabase
           .from('services')
           .update(serviceData)
-          .eq('id', editingService.id);
+          .eq('id', serviceToEdit.id);
           
         if (error) throw error;
         
@@ -151,7 +154,7 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {editingService ? 'Edit Service' : 'Create New Service'}
+            {(editingService || service) ? 'Edit Service' : 'Create New Service'}
           </DialogTitle>
         </DialogHeader>
         
@@ -260,7 +263,7 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
               disabled={loading}
             >
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {editingService ? 'Update Service' : 'Create Service'}
+              {(editingService || service) ? 'Update Service' : 'Create Service'}
             </Button>
           </div>
         </form>
