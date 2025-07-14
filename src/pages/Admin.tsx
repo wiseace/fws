@@ -471,358 +471,494 @@ const Admin = () => {
               </div>
 
               <TabsContent value="verifications" className="space-y-6">
-                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
-                  <CardHeader className="bg-gradient-to-r from-warning/10 to-warning/5 border-b border-border/50">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-br from-warning to-warning-dark rounded-lg">
-                          <Shield className="h-5 w-5 text-white" />
-                        </div>
-                        <div>
-                          <span className="text-foreground">Verification Requests</span>
-                          <p className="text-sm text-muted-foreground font-normal mt-1">
-                            Review and approve user verification submissions
-                          </p>
-                        </div>
-                      </CardTitle>
-                      <Badge variant="outline" className="bg-background/80">
-                        {verificationRequests.length} pending
-                      </Badge>
+                <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-3xl p-8 shadow-xl border border-amber-200">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="p-4 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg">
+                        <Shield className="h-8 w-8 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-bold text-gray-900">Verification Requests</h2>
+                        <p className="text-gray-600 mt-1">Review and approve user verification submissions</p>
+                      </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <div className="space-y-6">
-                      {verificationRequests.length === 0 ? (
-                        <div className="text-center py-16">
-                          <div className="p-4 bg-muted/50 rounded-full w-fit mx-auto mb-6">
-                            <Shield className="h-12 w-12 text-muted-foreground" />
-                          </div>
-                          <h3 className="text-xl font-semibold text-foreground mb-3">No verification requests</h3>
-                          <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                            Verification requests will appear here when users submit their documents for review.
-                          </p>
-                          <Button 
-                            onClick={fetchVerificationRequests}
-                            variant="outline" 
-                            className="gap-2"
-                          >
-                            🔄 Refresh Data
-                          </Button>
+                    <div className="flex items-center gap-3">
+                      <div className="px-4 py-2 bg-white rounded-xl shadow-md border border-amber-200">
+                        <span className="text-sm font-semibold text-gray-700">{verificationRequests.length} pending</span>
+                      </div>
+                      <Button 
+                        onClick={fetchVerificationRequests}
+                        className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-6"
+                      >
+                        🔄 Refresh
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    {verificationRequests.length === 0 ? (
+                      <div className="text-center py-20 bg-white rounded-2xl shadow-lg border border-amber-100">
+                        <div className="p-6 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full w-fit mx-auto mb-6">
+                          <Shield className="h-16 w-16 text-amber-600" />
                         </div>
-                      ) : (
-                        verificationRequests.map((request) => (
-                          <Card key={request.id} className="group hover:shadow-md transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm">
-                            <CardContent className="p-6">
-                              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
-                                <div className="space-y-4 flex-1">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">No Verification Requests</h3>
+                        <p className="text-gray-600 max-w-md mx-auto mb-8">
+                          Verification requests will appear here when users submit their documents for review.
+                        </p>
+                        <Button 
+                          onClick={fetchVerificationRequests}
+                          className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-8 py-3"
+                        >
+                          🔄 Check for New Requests
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="grid gap-6">
+                        {verificationRequests.map((request) => (
+                          <div key={request.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-amber-100 overflow-hidden group">
+                            <div className="p-6">
+                              <div className="flex flex-col lg:flex-row gap-6">
+                                <div className="flex-1 space-y-6">
                                   <div className="flex items-start justify-between">
-                                    <div className="space-y-2">
-                                      <h3 className="text-lg font-semibold text-foreground">{request.full_name}</h3>
-                                      <p className="text-sm text-muted-foreground">{(request as any).user?.email}</p>
+                                    <div className="flex items-center gap-4">
+                                      <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center">
+                                        <User className="h-8 w-8 text-amber-600" />
+                                      </div>
+                                      <div>
+                                        <h3 className="text-xl font-bold text-gray-900">{request.full_name}</h3>
+                                        <p className="text-gray-600">{(request as any).user?.email}</p>
+                                      </div>
                                     </div>
-                                    <Badge 
-                                      className={
-                                        request.status === 'pending' 
-                                          ? 'bg-warning/20 text-warning-dark border-warning/30' 
-                                          : request.status === 'verified' 
-                                          ? 'bg-brand-success/20 text-brand-success-dark border-brand-success/30' 
-                                          : 'bg-destructive/20 text-destructive-dark border-destructive/30'
-                                      }
-                                    >
+                                    <div className={`px-4 py-2 rounded-xl font-semibold text-sm shadow-md ${
+                                      request.status === 'pending' 
+                                        ? 'bg-gradient-to-r from-yellow-100 to-amber-100 text-amber-800 border border-amber-200' 
+                                        : request.status === 'verified' 
+                                        ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200' 
+                                        : 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border border-red-200'
+                                    }`}>
                                       {request.status?.toUpperCase()}
-                                    </Badge>
+                                    </div>
                                   </div>
                                   
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
-                                    <div>
-                                      <span className="text-sm font-medium text-foreground">Phone:</span>
-                                      <span className="ml-2 text-sm text-muted-foreground">{request.phone_number}</span>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-2xl">📱</span>
+                                        <span className="text-sm font-semibold text-gray-700">Phone Number</span>
+                                      </div>
+                                      <p className="text-gray-900 font-medium">{request.phone_number}</p>
                                     </div>
-                                    <div>
-                                      <span className="text-sm font-medium text-foreground">Submitted:</span>
-                                      <span className="ml-2 text-sm text-muted-foreground">
-                                        {request.submitted_at ? new Date(request.submitted_at).toLocaleDateString() : 'N/A'}
-                                      </span>
+                                    <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-2xl">📅</span>
+                                        <span className="text-sm font-semibold text-gray-700">Submitted Date</span>
+                                      </div>
+                                      <p className="text-gray-900 font-medium">
+                                        {request.submitted_at ? new Date(request.submitted_at).toLocaleDateString('en-US', {
+                                          year: 'numeric',
+                                          month: 'long',
+                                          day: 'numeric'
+                                        }) : 'N/A'}
+                                      </p>
                                     </div>
                                   </div>
                                   
                                   {request.additional_info && (
-                                    <div className="p-4 bg-muted/30 rounded-lg border border-border/30">
-                                      <span className="text-sm font-medium text-foreground block mb-2">Additional Information:</span>
-                                      <p className="text-sm text-muted-foreground leading-relaxed">{request.additional_info}</p>
+                                    <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                                      <div className="flex items-center gap-2 mb-3">
+                                        <span className="text-2xl">💬</span>
+                                        <span className="text-sm font-semibold text-blue-800">Additional Information</span>
+                                      </div>
+                                      <p className="text-gray-800 leading-relaxed">{request.additional_info}</p>
                                     </div>
                                   )}
                                 </div>
                                 
                                 {request.status === 'pending' && (
-                                  <div className="flex flex-col sm:flex-row gap-3 lg:flex-col xl:flex-row">
+                                  <div className="flex flex-col gap-3 lg:w-48">
                                     <Button
-                                      size="sm"
+                                      size="lg"
                                       onClick={() => handleVerificationAction(request.id, 'verified')}
-                                      className="bg-gradient-to-r from-brand-success to-brand-success-dark hover:from-brand-success-dark hover:to-brand-success text-white shadow-md hover:shadow-lg transition-all"
+                                      className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl font-semibold"
                                     >
-                                      <CheckCircle className="w-4 h-4 mr-2" />
+                                      <CheckCircle className="w-5 h-5 mr-2" />
                                       Approve
                                     </Button>
                                     <Button
-                                      size="sm"
-                                      variant="destructive"
+                                      size="lg"
                                       onClick={() => handleVerificationAction(request.id, 'rejected')}
-                                      className="shadow-md hover:shadow-lg transition-all"
+                                      className="bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl font-semibold"
                                     >
-                                      <XCircle className="w-4 h-4 mr-2" />
+                                      <XCircle className="w-5 h-5 mr-2" />
                                       Reject
                                     </Button>
                                   </div>
                                 )}
                               </div>
-                            </CardContent>
-                          </Card>
-                        ))
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="users" className="space-y-6">
-                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
-                  <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/50">
-                    <CardTitle className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-br from-primary to-primary-dark rounded-lg">
-                        <Users className="h-5 w-5 text-white" />
+                <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl p-8 shadow-xl border border-blue-200">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                        <Users className="h-8 w-8 text-white" />
                       </div>
                       <div>
-                        <span className="text-foreground">User Management</span>
-                        <p className="text-sm text-muted-foreground font-normal mt-1">
-                          Manage user roles and permissions
-                        </p>
+                        <h2 className="text-3xl font-bold text-gray-900">User Management</h2>
+                        <p className="text-gray-600 mt-1">Manage user roles, permissions, and accounts</p>
                       </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <div className="space-y-4">
-                      {users.map((user) => (
-                        <Card key={user.id} className="group hover:shadow-md transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm">
-                          <CardContent className="p-6">
-                            <div className="flex justify-between items-start">
-                              <div className="space-y-3 flex-1">
+                    </div>
+                    <div className="px-4 py-2 bg-white rounded-xl shadow-md border border-blue-200">
+                      <span className="text-sm font-semibold text-gray-700">{users.length} total users</span>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6">
+                    {users.map((user) => (
+                      <div key={user.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-100 overflow-hidden group">
+                        <div className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-6 flex-1">
+                              <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center">
+                                <User className="h-10 w-10 text-blue-600" />
+                              </div>
+                              
+                              <div className="flex-1 space-y-4">
                                 <div>
-                                  <h3 className="text-lg font-semibold text-foreground">{user.name}</h3>
-                                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                                  <h3 className="text-xl font-bold text-gray-900">{user.name}</h3>
+                                  <p className="text-gray-600">{user.email}</p>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                                    {user.user_type}
-                                  </Badge>
-                                  <Badge 
-                                    className={
-                                      user.is_verified 
-                                        ? 'bg-brand-success/20 text-brand-success-dark border-brand-success/30' 
-                                        : 'bg-muted text-muted-foreground border-border'
-                                    }
-                                  >
-                                    {user.is_verified ? 'Verified' : 'Unverified'}
-                                  </Badge>
-                                  <Badge variant="secondary" className="bg-secondary/20 text-secondary-dark border-secondary/30">
-                                    {user.subscription_plan}
-                                  </Badge>
+                                
+                                <div className="flex flex-wrap gap-3">
+                                  <div className={`px-4 py-2 rounded-xl font-semibold text-sm shadow-md ${
+                                    user.user_type === 'admin' 
+                                      ? 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border border-red-200'
+                                      : user.user_type === 'provider'
+                                      ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200'
+                                      : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200'
+                                  }`}>
+                                    {user.user_type === 'admin' ? '👑 Admin' : user.user_type === 'provider' ? '🏢 Provider' : '👤 Seeker'}
+                                  </div>
+                                  
+                                  <div className={`px-4 py-2 rounded-xl font-semibold text-sm shadow-md ${
+                                    user.is_verified 
+                                      ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200' 
+                                      : 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border border-gray-200'
+                                  }`}>
+                                    {user.is_verified ? '✅ Verified' : '⏳ Unverified'}
+                                  </div>
+                                  
+                                  <div className={`px-4 py-2 rounded-xl font-semibold text-sm shadow-md ${
+                                    user.subscription_plan === 'free'
+                                      ? 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border border-gray-200'
+                                      : 'bg-gradient-to-r from-yellow-100 to-amber-100 text-amber-800 border border-amber-200'
+                                  }`}>
+                                    {user.subscription_plan === 'free' ? '🆓 Free' : '💎 Premium'}
+                                  </div>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-3">
+                            </div>
+                            
+                            <div className="flex items-center gap-4">
+                              <div className="flex flex-col gap-3">
+                                <label className="text-sm font-semibold text-gray-700">Role</label>
                                 <select
                                   value={user.user_type}
                                   onChange={(e) => handleRoleChange(user.id, e.target.value as any)}
-                                  className="border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                                  className="border-2 border-blue-200 rounded-xl px-4 py-2 text-sm bg-white text-gray-800 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors shadow-md min-w-[120px]"
                                   disabled={user.email === 'hi@ariyo.dev'}
                                 >
-                                  <option value="seeker">Seeker</option>
-                                  <option value="provider">Provider</option>
-                                  <option value="admin">Admin</option>
+                                  <option value="seeker">👤 Seeker</option>
+                                  <option value="provider">🏢 Provider</option>
+                                  <option value="admin">👑 Admin</option>
                                 </select>
-                                {user.email === 'hi@ariyo.dev' ? (
-                                  <div className="flex items-center gap-2 text-xs bg-warning/10 text-warning-dark px-3 py-2 rounded-lg border border-warning/30">
-                                    <Shield className="w-3 h-3" />
-                                    Protected
-                                  </div>
-                                ) : (
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() => handleDeleteUser(user.id)}
-                                    className="shadow-md hover:shadow-lg transition-all"
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                )}
                               </div>
+                              
+                              {user.email === 'hi@ariyo.dev' ? (
+                                <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 rounded-xl border border-amber-200 shadow-md">
+                                  <Shield className="w-4 h-4" />
+                                  <span className="text-sm font-semibold">Protected</span>
+                                </div>
+                              ) : (
+                                <Button
+                                  size="lg"
+                                  onClick={() => handleDeleteUser(user.id)}
+                                  className="bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete
+                                </Button>
+                              )}
                             </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="contacts" className="space-y-6">
-                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
-                  <CardHeader className="bg-gradient-to-r from-primary-light/10 to-primary-light/5 border-b border-border/50">
-                    <CardTitle className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-br from-primary-light to-primary rounded-lg">
-                        <User className="h-5 w-5 text-white" />
+                <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-3xl p-8 shadow-xl border border-green-200">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="p-4 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl shadow-lg">
+                        <User className="h-8 w-8 text-white" />
                       </div>
                       <div>
-                        <span className="text-foreground">Contact Requests</span>
-                        <p className="text-sm text-muted-foreground font-normal mt-1">
-                          Monitor service contact activity
+                        <h2 className="text-3xl font-bold text-gray-900">Contact Requests</h2>
+                        <p className="text-gray-600 mt-1">Monitor service contact activity and user engagement</p>
+                      </div>
+                    </div>
+                    <div className="px-4 py-2 bg-white rounded-xl shadow-md border border-green-200">
+                      <span className="text-sm font-semibold text-gray-700">{contactRequests.length} total contacts</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    {contactRequests.length === 0 ? (
+                      <div className="text-center py-20 bg-white rounded-2xl shadow-lg border border-green-100">
+                        <div className="p-6 bg-gradient-to-br from-green-100 to-teal-100 rounded-full w-fit mx-auto mb-6">
+                          <User className="h-16 w-16 text-green-600" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">No Contact Requests</h3>
+                        <p className="text-gray-600 max-w-md mx-auto">
+                          Contact requests will appear here when users reach out to providers for services.
                         </p>
                       </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <div className="space-y-4">
-                      {contactRequests.length === 0 ? (
-                        <div className="text-center py-16">
-                          <div className="p-4 bg-muted/50 rounded-full w-fit mx-auto mb-6">
-                            <User className="h-12 w-12 text-muted-foreground" />
-                          </div>
-                          <h3 className="text-xl font-semibold text-foreground mb-3">No contact requests</h3>
-                          <p className="text-muted-foreground">Contact requests will appear here when users reach out to providers.</p>
-                        </div>
-                      ) : (
-                        contactRequests.map((request) => (
-                          <Card key={request.id} className="group hover:shadow-md transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm">
-                            <CardContent className="p-6">
-                              <div className="space-y-4">
-                                <div className="flex items-start justify-between">
-                                  <div>
-                                    <h3 className="text-lg font-semibold text-foreground">
-                                      {(request as any).seeker?.name} → {(request as any).provider?.name}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground mt-1">
-                                      Service: <span className="font-medium">{(request as any).service?.service_name}</span>
-                                    </p>
-                                  </div>
-                                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                                    {request.contact_method}
-                                  </Badge>
+                    ) : (
+                      <div className="grid gap-6">
+                        {contactRequests.map((request) => (
+                          <div key={request.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-green-100 overflow-hidden group">
+                            <div className="p-6">
+                              <div className="flex items-start gap-6">
+                                <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-teal-100 rounded-2xl flex items-center justify-center">
+                                  <span className="text-2xl">💬</span>
                                 </div>
-                                {request.message && (
-                                  <div className="p-4 bg-muted/30 rounded-lg border border-border/30">
-                                    <p className="text-sm text-foreground leading-relaxed">{request.message}</p>
+                                
+                                <div className="flex-1 space-y-4">
+                                  <div className="flex items-start justify-between">
+                                    <div>
+                                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                        <span className="text-blue-600">{(request as any).seeker?.name}</span>
+                                        <span className="text-gray-400 mx-2">→</span>
+                                        <span className="text-green-600">{(request as any).provider?.name}</span>
+                                      </h3>
+                                      <div className="flex items-center gap-4">
+                                        <div className="px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-lg border border-blue-200 text-sm font-semibold">
+                                          🔧 {(request as any).service?.service_name}
+                                        </div>
+                                        <div className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 rounded-lg border border-purple-200 text-sm font-semibold">
+                                          📧 {request.contact_method}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="text-right">
+                                      <p className="text-sm text-gray-600 font-medium">
+                                        {new Date(request.created_at).toLocaleDateString('en-US', { 
+                                          month: 'short',
+                                          day: 'numeric',
+                                          year: 'numeric'
+                                        })}
+                                      </p>
+                                      <p className="text-xs text-gray-500">
+                                        {new Date(request.created_at).toLocaleTimeString('en-US', { 
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })}
+                                      </p>
+                                    </div>
                                   </div>
-                                )}
-                                <div className="text-xs text-muted-foreground">
-                                  {new Date(request.created_at).toLocaleDateString('en-US', { 
-                                    year: 'numeric', 
-                                    month: 'long', 
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
+                                  
+                                  {request.message && (
+                                    <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-lg">💭</span>
+                                        <span className="text-sm font-semibold text-gray-700">Message</span>
+                                      </div>
+                                      <p className="text-gray-800 leading-relaxed">{request.message}</p>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
-                            </CardContent>
-                          </Card>
-                        ))
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="services" className="space-y-6">
-                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
-                  <CardHeader className="bg-gradient-to-r from-secondary/10 to-secondary/5 border-b border-border/50">
-                    <CardTitle className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-br from-secondary to-secondary-dark rounded-lg">
-                        <Eye className="h-5 w-5 text-white" />
+                <div className="bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50 rounded-3xl p-8 shadow-xl border border-purple-200">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="p-4 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
+                        <Eye className="h-8 w-8 text-white" />
                       </div>
                       <div>
-                        <span className="text-foreground">All Services</span>
-                        <p className="text-sm text-muted-foreground font-normal mt-1">
-                          Overview of all platform services
-                        </p>
+                        <h2 className="text-3xl font-bold text-gray-900">All Services</h2>
+                        <p className="text-gray-600 mt-1">Overview of all platform services and providers</p>
                       </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <div className="space-y-4">
-                      {services.map((service) => (
-                        <Card key={service.id} className="group hover:shadow-md transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm">
-                          <CardContent className="p-6">
-                            <div className="flex justify-between items-start">
-                              <div className="space-y-3 flex-1">
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="px-4 py-2 bg-white rounded-xl shadow-md border border-purple-200">
+                        <span className="text-sm font-semibold text-gray-700">{services.length} total services</span>
+                      </div>
+                      <div className="px-4 py-2 bg-white rounded-xl shadow-md border border-green-200">
+                        <span className="text-sm font-semibold text-green-700">{services.filter(s => s.is_active).length} active</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6">
+                    {services.map((service) => (
+                      <div key={service.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-100 overflow-hidden group">
+                        <div className="p-6">
+                          <div className="flex items-start gap-6">
+                            <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center">
+                              <span className="text-3xl">🛠️</span>
+                            </div>
+                            
+                            <div className="flex-1 space-y-4">
+                              <div className="flex items-start justify-between">
                                 <div>
-                                  <h3 className="text-lg font-semibold text-foreground">{service.service_name}</h3>
-                                  <p className="text-sm text-muted-foreground">
-                                    Provider: <span className="font-medium">{(service as any).user?.name}</span>
-                                  </p>
+                                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{service.service_name}</h3>
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <span className="text-lg">👤</span>
+                                    <span className="text-gray-600 text-lg">Provider: </span>
+                                    <span className="font-semibold text-purple-700">{(service as any).user?.name}</span>
+                                  </div>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                  <div>
-                                    <span className="text-muted-foreground">Category:</span>
-                                    <span className="ml-2 font-medium text-foreground">{service.category}</span>
-                                  </div>
-                                  <div>
-                                    <span className="text-muted-foreground">Location:</span>
-                                    <span className="ml-2 font-medium text-foreground">{service.location}</span>
-                                  </div>
+                                
+                                <div className={`px-6 py-3 rounded-xl font-bold text-lg shadow-md ${
+                                  service.is_active 
+                                    ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200' 
+                                    : 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border border-red-200'
+                                }`}>
+                                  {service.is_active ? '🟢 Active' : '🔴 Inactive'}
                                 </div>
                               </div>
-                              <Badge 
-                                className={
-                                  service.is_active 
-                                    ? 'bg-brand-success/20 text-brand-success-dark border-brand-success/30' 
-                                    : 'bg-destructive/20 text-destructive-dark border-destructive/30'
-                                }
-                              >
-                                {service.is_active ? 'Active' : 'Inactive'}
-                              </Badge>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-2xl">📂</span>
+                                    <span className="text-sm font-semibold text-gray-700">Category</span>
+                                  </div>
+                                  <p className="text-gray-900 font-medium">{service.category}</p>
+                                </div>
+                                
+                                <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-2xl">📍</span>
+                                    <span className="text-sm font-semibold text-gray-700">Location</span>
+                                  </div>
+                                  <p className="text-gray-900 font-medium">{service.location || 'Not specified'}</p>
+                                </div>
+                                
+                                <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-2xl">📅</span>
+                                    <span className="text-sm font-semibold text-gray-700">Created</span>
+                                  </div>
+                                  <p className="text-gray-900 font-medium">
+                                    {new Date(service.created_at).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      year: 'numeric'
+                                    })}
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              {service.description && (
+                                <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-2xl">📝</span>
+                                    <span className="text-sm font-semibold text-blue-800">Description</span>
+                                  </div>
+                                  <p className="text-gray-800 leading-relaxed">{service.description}</p>
+                                </div>
+                              )}
                             </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="categories" className="space-y-6">
-                <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
-                  <CardHeader className="bg-gradient-to-r from-secondary/10 to-secondary/5 border-b border-border/50">
-                    <CardTitle className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-br from-secondary to-secondary-dark rounded-lg">
-                        <span className="text-lg">📁</span>
+                <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 rounded-3xl p-8 shadow-xl border border-rose-200">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="p-4 bg-gradient-to-br from-rose-500 to-orange-600 rounded-2xl shadow-lg">
+                        <span className="text-white text-2xl">📁</span>
                       </div>
                       <div>
-                        <span className="text-foreground">Categories Management</span>
-                        <p className="text-sm text-muted-foreground font-normal mt-1">
-                          Manage service categories and icons
-                        </p>
+                        <h2 className="text-3xl font-bold text-gray-900">Categories Management</h2>
+                        <p className="text-gray-600 mt-1">Organize and manage service categories</p>
                       </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <div className="text-center py-16">
-                      <div className="p-4 bg-muted/50 rounded-full w-fit mx-auto mb-6">
-                        <span className="text-4xl">📁</span>
-                      </div>
-                      <h3 className="text-xl font-semibold text-foreground mb-3">Categories Management</h3>
-                      <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                        Access the dedicated categories management page to create, edit, and organize service categories.
-                      </p>
+                    </div>
+                  </div>
+
+                  <div className="text-center py-20 bg-white rounded-2xl shadow-lg border border-rose-100">
+                    <div className="p-8 bg-gradient-to-br from-rose-100 to-orange-100 rounded-full w-fit mx-auto mb-8">
+                      <span className="text-6xl">📂</span>
+                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-4">Categories Management Center</h3>
+                    <p className="text-gray-600 mb-10 max-w-lg mx-auto text-lg leading-relaxed">
+                      Access the dedicated categories management page to create, edit, and organize service categories with icons and descriptions.
+                    </p>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                       <Button 
                         onClick={() => window.location.href = '/admin/categories'}
-                        className="bg-gradient-to-r from-secondary to-secondary-dark hover:from-secondary-dark hover:to-secondary text-white shadow-md hover:shadow-lg transition-all gap-2"
+                        className="bg-gradient-to-r from-rose-500 to-orange-600 hover:from-rose-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-8 py-4 text-lg font-semibold"
                       >
-                        <span>📁</span>
+                        <span className="mr-2 text-xl">📁</span>
                         Manage Categories
                       </Button>
+                      
+                      <div className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl border border-gray-300">
+                        <span className="text-2xl">⚡</span>
+                        <span className="text-sm font-semibold text-gray-700">Quick Access</span>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                    
+                    <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                      <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                        <div className="text-3xl mb-3">➕</div>
+                        <h4 className="font-bold text-gray-900 mb-2">Create Categories</h4>
+                        <p className="text-gray-600 text-sm">Add new service categories with custom icons</p>
+                      </div>
+                      
+                      <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                        <div className="text-3xl mb-3">✏️</div>
+                        <h4 className="font-bold text-gray-900 mb-2">Edit Categories</h4>
+                        <p className="text-gray-600 text-sm">Modify existing categories and descriptions</p>
+                      </div>
+                      
+                      <div className="p-6 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-200">
+                        <div className="text-3xl mb-3">🗂️</div>
+                        <h4 className="font-bold text-gray-900 mb-2">Organize</h4>
+                        <p className="text-gray-600 text-sm">Structure and arrange category hierarchy</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
