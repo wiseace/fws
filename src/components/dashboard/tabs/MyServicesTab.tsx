@@ -4,9 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { ServiceModal } from '@/components/ServiceModal';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, Star, Edit, Trash2, MapPin } from 'lucide-react';
+import { PlusCircle, Star, Edit, Trash2, MapPin, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Service {
   id: string;
@@ -26,9 +27,13 @@ export const MyServicesTab = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [services, setServices] = useState<Service[]>([]);
+  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const servicesPerPage = 5;
 
   useEffect(() => {
     if (user) {
@@ -55,6 +60,7 @@ export const MyServicesTab = () => {
           contact_info: service.contact_info as { phone?: string; email?: string; }
         })) as Service[];
         setServices(typedServices);
+        setFilteredServices(typedServices);
       }
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -86,6 +92,25 @@ export const MyServicesTab = () => {
     fetchServices();
     setIsServiceModalOpen(false);
     setEditingService(null);
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page when searching
+    
+    if (!query.trim()) {
+      setFilteredServices(services);
+      return;
+    }
+
+    const filtered = services.filter(service =>
+      service.service_name.toLowerCase().includes(query.toLowerCase()) ||
+      service.category.toLowerCase().includes(query.toLowerCase()) ||
+      service.description?.toLowerCase().includes(query.toLowerCase()) ||
+      service.location?.toLowerCase().includes(query.toLowerCase())
+    );
+    
+    setFilteredServices(filtered);
   };
 
   const handleDelete = async (serviceId: string) => {
@@ -123,6 +148,24 @@ export const MyServicesTab = () => {
   }
 
   const activeServices = services.filter(s => s.is_active).length;
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredServices.length / servicesPerPage);
+  const startIndex = (currentPage - 1) * servicesPerPage;
+  const endIndex = startIndex + servicesPerPage;
+  const currentServices = filteredServices.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -145,6 +188,20 @@ export const MyServicesTab = () => {
         </Button>
       </div>
 
+      {/* Search Box */}
+      {services.length > 0 && (
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            type="text"
+            placeholder="Search services by name, category, description, or location..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      )}
+
       {/* Content */}
       {services.length === 0 ? (
         <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg">
@@ -163,63 +220,113 @@ export const MyServicesTab = () => {
             CREATE YOUR FIRST SERVICE
           </Button>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
-            <Card key={service.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-semibold text-lg">{service.service_name}</h3>
-                  <div className="flex space-x-1">
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      onClick={() => handleServiceModalOpen(service)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      onClick={() => handleDelete(service.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                
-                <Badge 
-                  variant={service.is_active ? "default" : "secondary"} 
-                  className="mb-3"
-                >
-                  {service.category}
-                </Badge>
-                
-                {service.description && (
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {service.description}
-                  </p>
-                )}
-                
-                {service.location && (
-                  <div className="flex items-center text-xs text-gray-500 mb-3">
-                    <MapPin className="h-3 w-3 mr-1" />
-                    {service.location}
-                  </div>
-                )}
-                
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <Badge variant={service.is_active ? "default" : "secondary"}>
-                    {service.is_active ? "Active" : "Inactive"}
-                  </Badge>
-                  <span>
-                    {new Date(service.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+      ) : filteredServices.length === 0 ? (
+        <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg">
+          <div className="mb-4">
+            <Search className="h-16 w-16 text-gray-400 mx-auto" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No services found</h3>
+          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            No services match your search criteria. Try adjusting your search terms.
+          </p>
         </div>
+      ) : (
+        <>
+          {/* Services List */}
+          <div className="space-y-4">
+            {currentServices.map((service) => (
+              <Card key={service.id} className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="font-semibold text-lg text-foreground">{service.service_name}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant={service.is_active ? "default" : "secondary"}>
+                              {service.category}
+                            </Badge>
+                            <Badge variant={service.is_active ? "default" : "secondary"}>
+                              {service.is_active ? "Active" : "Inactive"}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="flex space-x-1">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => handleServiceModalOpen(service)}
+                            className="hover:bg-primary hover:text-white"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => handleDelete(service.id)}
+                            className="hover:bg-destructive hover:text-white"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {service.description && (
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                          {service.description}
+                        </p>
+                      )}
+                      
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        {service.location && (
+                          <div className="flex items-center">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            {service.location}
+                          </div>
+                        )}
+                        <span>
+                          Created: {new Date(service.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Showing {startIndex + 1} to {Math.min(endIndex, filteredServices.length)} of {filteredServices.length} services
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <ServiceModal
