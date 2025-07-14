@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Menu, X, Edit3, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, Zap, Heart, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -15,40 +15,47 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
   const { user, profile, signOut } = useAuth();
 
   return (
-    <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+    <header className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="cursor-pointer" onClick={() => window.location.href = '/'}>
-              <img 
-                src="/lovable-uploads/5c3bbf64-dfc4-4329-84c4-6574ad648cfd.png" 
-                alt="FindWhoSabi Logo" 
-                className="h-6 sm:h-8 w-auto transition-all duration-200"
-              />
+            <div className="cursor-pointer flex items-center space-x-2" onClick={() => window.location.href = '/'}>
+              <Zap className="w-6 h-6 text-primary" />
+              <span className="text-xl font-bold text-gray-900">FindWhoSabi</span>
             </div>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Centered */}
           <nav className="hidden md:flex space-x-8">
-            <a href="/" className="text-gray-700 hover:text-blue-600 transition-colors">Home</a>
-            <a href="/browse" className="text-gray-700 hover:text-blue-600 transition-colors">Browse Services</a>
+            <a href="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Home</a>
+            <a href="/browse" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Services</a>
             {user && (
-              <a href="/dashboard" className="text-gray-700 hover:text-blue-600 transition-colors">Dashboard</a>
+              <a href="/dashboard" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Dashboard</a>
             )}
             {profile?.user_type === 'admin' && (
-              <a href="/admin" className="text-red-600 hover:text-red-700 transition-colors font-medium">Admin</a>
+              <a href="/admin" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Admin</a>
             )}
           </nav>
 
-          {/* Actions */}
+          {/* Right Actions */}
           <div className="flex items-center space-x-4">
+            {/* Wishlist Icon */}
+            <button className="hidden md:flex p-2 text-gray-600 hover:text-gray-900 transition-colors">
+              <Heart className="w-5 h-5" />
+            </button>
+
+            {/* Services/Cart Icon */}
+            <button className="hidden md:flex p-2 text-gray-600 hover:text-gray-900 transition-colors">
+              <ShoppingBag className="w-5 h-5" />
+            </button>
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
                     <User className="w-4 h-4" />
-                    <span className="hidden md:inline">{profile?.name}</span>
+                    <span className="hidden lg:inline text-gray-700">{profile?.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -69,11 +76,10 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={() => window.location.href = '/auth'}>
-                Sign In
-              </Button>
+              <span className="hidden md:inline text-gray-700 font-medium cursor-pointer hover:text-gray-900 transition-colors" onClick={() => window.location.href = '/auth'}>
+                Contact us
+              </span>
             )}
-
 
             {/* Mobile menu button */}
             <button
