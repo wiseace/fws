@@ -285,7 +285,7 @@ export const RichDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-yellow-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           <p className="mt-4 text-muted-foreground">Loading your personalized dashboard...</p>
@@ -295,14 +295,14 @@ export const RichDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-yellow-50">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-primary to-secondary rounded-lg">
+                <div className="p-2 bg-primary rounded-lg">
                   <LayoutDashboard className="h-8 w-8 text-white" />
                 </div>
                 {getGreeting()}, {profile?.name}!
@@ -332,7 +332,7 @@ export const RichDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {profile?.user_type === 'provider' ? (
             <>
-              <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg">
+              <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -344,47 +344,47 @@ export const RichDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-lg">
+              <Card className="bg-brand-success text-white border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-100 text-sm font-medium">Active Services</p>
+                      <p className="text-white/80 text-sm font-medium">Active Services</p>
                       <p className="text-3xl font-bold">{stats.activeServices || 0}</p>
                     </div>
-                    <CheckCircle className="h-8 w-8 text-green-200" />
+                    <CheckCircle className="h-8 w-8 text-white/80" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+              <Card className="bg-primary-light text-white border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-purple-100 text-sm font-medium">This Week</p>
+                      <p className="text-white/80 text-sm font-medium">This Week</p>
                       <p className="text-3xl font-bold">{stats.thisWeekRequests || 0}</p>
-                      <p className="text-xs text-purple-200">New Requests</p>
+                      <p className="text-xs text-white/70">New Requests</p>
                     </div>
-                    <TrendingUp className="h-8 w-8 text-purple-200" />
+                    <TrendingUp className="h-8 w-8 text-white/80" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-r from-secondary to-secondary/80 text-white border-0 shadow-lg">
+              <Card className="bg-secondary text-white border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-yellow-100 text-sm font-medium">Profile</p>
+                      <p className="text-white/80 text-sm font-medium">Profile</p>
                       <p className="text-2xl font-bold">{stats.profileCompletion}%</p>
-                      <p className="text-xs text-yellow-200">Complete</p>
+                      <p className="text-xs text-white/70">Complete</p>
                     </div>
-                    <Award className="h-8 w-8 text-yellow-200" />
+                    <Award className="h-8 w-8 text-white/80" />
                   </div>
                 </CardContent>
               </Card>
             </>
           ) : (
             <>
-              <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg">
+              <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -396,39 +396,39 @@ export const RichDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-lg">
+              <Card className="bg-brand-success text-white border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-100 text-sm font-medium">Subscription</p>
+                      <p className="text-white/80 text-sm font-medium">Subscription</p>
                       <p className="text-xl font-bold capitalize">{stats.subscriptionPlan || 'Free'}</p>
                     </div>
-                    <Star className="h-8 w-8 text-green-200" />
+                    <Star className="h-8 w-8 text-white/80" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg">
+              <Card className="bg-primary-light text-white border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-blue-100 text-sm font-medium">Explore</p>
+                      <p className="text-white/80 text-sm font-medium">Explore</p>
                       <p className="text-lg font-bold">Browse Services</p>
                     </div>
-                    <Search className="h-8 w-8 text-blue-200" />
+                    <Search className="h-8 w-8 text-white/80" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+              <Card className="bg-secondary text-white border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-purple-100 text-sm font-medium">Profile</p>
+                      <p className="text-white/80 text-sm font-medium">Profile</p>
                       <p className="text-2xl font-bold">{stats.profileCompletion}%</p>
-                      <p className="text-xs text-purple-200">Complete</p>
+                      <p className="text-xs text-white/70">Complete</p>
                     </div>
-                    <Award className="h-8 w-8 text-purple-200" />
+                    <Award className="h-8 w-8 text-white/80" />
                   </div>
                 </CardContent>
               </Card>
@@ -526,8 +526,8 @@ export const RichDashboard = () => {
 
             {/* Rich Tabbed Experience for Providers */}
             {profile?.user_type === 'provider' && (
-              <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-blue-50">
-                <CardHeader className="bg-gradient-to-r from-primary to-secondary text-white rounded-t-lg">
+              <Card className="shadow-lg border-0 bg-background">
+                <CardHeader className="bg-primary text-white rounded-t-lg">
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5" />
                     Provider Hub
@@ -603,13 +603,13 @@ export const RichDashboard = () => {
             {/* Sidebar */}
           <div className="space-y-6">
             {/* Enhanced Notifications */}
-            <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-purple-50">
-              <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-t-lg">
+            <Card className="shadow-lg border-0 bg-background">
+              <CardHeader className="bg-primary-light text-white rounded-t-lg">
                 <CardTitle className="flex items-center gap-2">
                   <Bell className="h-5 w-5" />
                   Notifications
                   {notifications.filter(n => !n.read).length > 0 && (
-                    <Badge variant="secondary" className="ml-auto bg-white text-purple-600">
+                    <Badge variant="secondary" className="ml-auto bg-white text-primary">
                       {notifications.filter(n => !n.read).length}
                     </Badge>
                   )}
@@ -623,7 +623,7 @@ export const RichDashboard = () => {
                         key={notification.id}
                         className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
                           !notification.read 
-                            ? 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 shadow-sm' 
+                            ? 'bg-primary/5 border-primary/20 shadow-sm' 
                             : 'bg-white border-gray-200 hover:bg-gray-50'
                         }`}
                         onClick={() => handleNotificationClick(notification)}
@@ -663,7 +663,7 @@ export const RichDashboard = () => {
                 </div>
                 {notifications.length > 3 && (
                   <div className="mt-3 pt-3 border-t">
-                    <Button variant="ghost" size="sm" className="w-full text-purple-600 hover:text-purple-700">
+                    <Button variant="ghost" size="sm" className="w-full text-primary hover:text-primary-dark">
                       View All Notifications
                     </Button>
                   </div>
@@ -681,9 +681,9 @@ export const RichDashboard = () => {
 
             {/* Getting Started Progress Card - Provider Only */}
             {profile?.user_type === 'provider' && onboardingSteps.length > 0 && (
-              <Card className="shadow-lg border-0 bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
+              <Card className="shadow-lg border-0 bg-secondary/10 border-secondary/20">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-yellow-800">
+                  <CardTitle className="flex items-center gap-2 text-secondary-dark">
                     <Target className="h-5 w-5" />
                     Getting Started Progress
                   </CardTitle>
@@ -691,10 +691,10 @@ export const RichDashboard = () => {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-yellow-700">
+                      <span className="text-sm text-secondary-dark">
                         {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
                       </span>
-                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                      <Badge variant="secondary" className="bg-secondary/20 text-secondary-darker">
                         {onboardingSteps.length > 0 ? Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100) : 0}% Complete
                       </Badge>
                     </div>
@@ -707,8 +707,8 @@ export const RichDashboard = () => {
                         <button 
                           key={step.id} 
                           onClick={() => handleOnboardingStepClick(step.step_name, step.completed)}
-                          className={`flex items-center gap-3 text-sm p-3 rounded-md transition-colors hover:bg-yellow-100 text-left ${
-                            step.completed ? 'text-green-700 bg-green-50' : 'text-yellow-700 cursor-pointer bg-white'
+                          className={`flex items-center gap-3 text-sm p-3 rounded-md transition-colors hover:bg-secondary/20 text-left ${
+                            step.completed ? 'text-green-700 bg-green-50' : 'text-secondary-dark cursor-pointer bg-white'
                           }`}
                         >
                           {getStepIcon(step.step_name, step.completed)}

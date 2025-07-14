@@ -26,11 +26,32 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					light: 'hsl(var(--brand-primary-light))',
+					lighter: 'hsl(var(--brand-primary-lighter))',
+					dark: 'hsl(var(--brand-primary-dark))',
+					darker: 'hsl(var(--brand-primary-darker))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					foreground: 'hsl(var(--secondary-foreground))',
+					light: 'hsl(var(--brand-secondary-light))',
+					lighter: 'hsl(var(--brand-secondary-lighter))',
+					dark: 'hsl(var(--brand-secondary-dark))',
+					darker: 'hsl(var(--brand-secondary-darker))'
+				},
+				brand: {
+					primary: 'hsl(var(--brand-primary))',
+					'primary-light': 'hsl(var(--brand-primary-light))',
+					'primary-lighter': 'hsl(var(--brand-primary-lighter))',
+					'primary-dark': 'hsl(var(--brand-primary-dark))',
+					'primary-darker': 'hsl(var(--brand-primary-darker))',
+					secondary: 'hsl(var(--brand-secondary))',
+					'secondary-light': 'hsl(var(--brand-secondary-light))',
+					'secondary-lighter': 'hsl(var(--brand-secondary-lighter))',
+					'secondary-dark': 'hsl(var(--brand-secondary-dark))',
+					'secondary-darker': 'hsl(var(--brand-secondary-darker))',
+					success: 'hsl(var(--brand-success))'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',

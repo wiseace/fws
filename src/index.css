@@ -46,20 +46,31 @@ All colors MUST be HSL.
     
     /* Brand colors for FINDWHOSABI */
     --brand-primary: 199 100% 43%;
+    --brand-primary-light: 199 100% 53%;
+    --brand-primary-lighter: 199 100% 63%;
+    --brand-primary-dark: 199 100% 33%;
+    --brand-primary-darker: 199 100% 23%;
+    
     --brand-secondary: 47 100% 51%;
+    --brand-secondary-light: 47 100% 61%;
+    --brand-secondary-lighter: 47 100% 71%;
+    --brand-secondary-dark: 47 100% 41%;
+    --brand-secondary-darker: 47 100% 31%;
+    
     --brand-accent: 47 100% 51%;
     --brand-success: 142 76% 36%;
     --brand-warning: 47 100% 51%;
     --brand-error: 0 84% 60%;
     
+    /* Brand-based card backgrounds */
+    --card-primary: 199 100% 43%;
+    --card-secondary: 47 100% 51%;
+    --card-success: 142 76% 36%;
+    --card-info: 199 80% 50%;
+    
     /* Glassmorphism effects */
     --glass-background: 199 100% 43% / 0.1;
     --glass-border: 199 100% 43% / 0.2;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(199 100% 43%), hsl(47 100% 51%));
-    --gradient-secondary: linear-gradient(135deg, hsl(220 30% 97%), hsl(210 40% 96%));
-    --gradient-hero: linear-gradient(135deg, hsl(199 100% 43%), hsl(47 100% 51%), hsl(199 100% 35%));
 
     --sidebar-background: 0 0% 98%;
 
