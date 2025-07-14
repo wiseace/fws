@@ -313,16 +313,24 @@ export const RichDashboard = () => {
                   : "Discover amazing services and connect with providers"}
               </p>
             </div>
-            {profile?.user_type === 'admin' && (
-              <Button 
-                variant="outline" 
-                onClick={() => window.location.href = '/admin'}
-                className="flex items-center gap-2 border-red-200 text-red-700 hover:bg-red-50"
-              >
-                <Shield className="h-4 w-4" />
-                Admin Panel
-              </Button>
-            )}
+            <div className="flex items-center gap-4">
+              {/* Subscription Countdown - Show for non-admin users */}
+              {profile?.user_type !== 'admin' && (
+                <div className="w-80">
+                  <SubscriptionCountdown profile={profile} />
+                </div>
+              )}
+              {profile?.user_type === 'admin' && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.location.href = '/admin'}
+                  className="flex items-center gap-2 border-red-200 text-red-700 hover:bg-red-50"
+                >
+                  <Shield className="h-4 w-4" />
+                  Admin Panel
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -600,11 +608,6 @@ export const RichDashboard = () => {
 
             {/* Sidebar */}
           <div className="space-y-6">
-            {/* Subscription Countdown - Only show for non-admin users */}
-            {profile?.user_type !== 'admin' && (
-              <SubscriptionCountdown profile={profile} />
-            )}
-
             {/* Enhanced Notifications */}
             <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-purple-50">
               <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-t-lg">
