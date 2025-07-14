@@ -678,43 +678,6 @@ export const RichDashboard = () => {
               </div>
             )}
 
-            {/* Profile Status */}
-            <Card className="shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-primary" />
-                  Profile Status
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Profile Completion</span>
-                    <span className="font-medium">{stats.profileCompletion}%</span>
-                  </div>
-                  <Progress value={stats.profileCompletion} className="h-2" />
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Verification Status</span>
-                      <Badge variant={
-                        stats.verificationStatus === 'verified' ? 'default' : 
-                        stats.verificationStatus === 'pending' ? 'secondary' : 'destructive'
-                      }>
-                        {stats.verificationStatus || 'Not Started'}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Subscription</span>
-                      <Badge variant="outline" className="capitalize">
-                        {stats.subscriptionPlan || 'Free'}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Getting Started Progress Card - Provider Only */}
             {profile?.user_type === 'provider' && onboardingSteps.length > 0 && (

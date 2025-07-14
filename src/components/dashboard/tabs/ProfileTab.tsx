@@ -6,8 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { CustomPhoneInput } from '@/components/ui/phone-input';
+import { AddressInput } from '@/components/ui/address-input';
 import { useToast } from '@/hooks/use-toast';
 import { User, Settings, Save, CreditCard, Calendar, CheckCircle } from 'lucide-react';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 export const ProfileTab = () => {
   const { user, profile, refreshProfile } = useAuth();
@@ -15,17 +18,29 @@ export const ProfileTab = () => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
 
   useEffect(() => {
     if (profile) {
       setName(profile.name || '');
       setPhone(profile.phone || '');
+      setAddress(''); // Address field would need to be added to database
     }
   }, [profile]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    // Validate phone number if provided
+    if (phone && !isValidPhoneNumber(phone)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid phone number with country code.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
       setLoading(true);
@@ -112,13 +127,28 @@ export const ProfileTab = () => {
               
               <div>
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
+                <CustomPhoneInput
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Enter your phone number"
+                  onChange={(value) => setPhone(value || '')}
+                  placeholder="Enter phone number with country code"
+                  disabled={loading}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Include country code for international numbers (e.g., +1 555-123-4567)
+                </p>
+              </div>
+              
+              <div>
+                <Label htmlFor="address">Address</Label>
+                <AddressInput
+                  value={address}
+                  onChange={setAddress}
+                  placeholder="Start typing your address..."
+                  disabled={loading}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  We'll suggest addresses as you type using OpenStreetMap
+                </p>
               </div>
               
               <Button 

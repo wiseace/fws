@@ -98,10 +98,10 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > 1 * 1024 * 1024) {
         toast({
           title: "File too large",
-          description: "Please choose an image smaller than 5MB.",
+          description: "Please choose an image smaller than 1MB.",
           variant: "destructive"
         });
         return;
@@ -307,14 +307,14 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
                   disabled={loading}
                   className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-primary/90"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Upload an image (max 5MB). If no image is uploaded, a FINDWHOSABI placeholder will be used.
+                <p className="text-xs text-gray-500 mt-1 mb-4">
+                  Upload an image (max 1MB). If no image is uploaded, a FINDWHOSABI placeholder will be used.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4 border-t">
+          <div className="flex justify-end space-x-3 pt-6 mt-6 border-t">
             <Button
               type="button"
               variant="outline"
