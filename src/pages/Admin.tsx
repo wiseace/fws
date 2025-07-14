@@ -133,12 +133,16 @@ const Admin = () => {
   };
 
   const fetchVerificationRequests = async () => {
-    console.log('Fetching verification requests...');
-    console.log('Current user:', user?.email);
+    console.log('=== DEBUG VERIFICATION REQUESTS FETCH ===');
+    console.log('Current user:', user?.email, user?.id);
     console.log('Current profile:', profile?.user_type);
     console.log('Is admin?:', profile?.user_type === 'admin');
     
     try {
+      // First check debug function
+      const { data: debugData, error: debugError } = await supabase.rpc('debug_admin_access');
+      console.log('Debug admin access:', { debugData, debugError });
+      
       const { data, error } = await supabase
         .from('verification_requests')
         .select(`
@@ -148,9 +152,11 @@ const Admin = () => {
         .order('created_at', { ascending: false });
       
       console.log('Verification requests response:', { data, error });
+      console.log('Response data length:', data?.length || 0);
       
       if (error) {
         console.error('Error fetching verification requests:', error);
+        console.log('Error details:', error.message, error.details, error.hint);
         throw error;
       }
       if (data) {

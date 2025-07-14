@@ -381,6 +381,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      debug_admin_access: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          auth_uid: string
+          is_admin: boolean
+          user_type: string
+          user_email: string
+        }[]
+      }
       delete_user_and_related_data: {
         Args: { target_user_id: string }
         Returns: undefined
