@@ -34,7 +34,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/dashboard" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireNonAdmin={true}>
                 <NewDashboard />
               </ProtectedRoute>
             } />

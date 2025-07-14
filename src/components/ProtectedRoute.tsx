@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -6,10 +5,11 @@ import { Loader2 } from 'lucide-react';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAuth?: boolean;
+  requireNonAdmin?: boolean;
 }
 
-export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteProps) => {
-  const { user, loading, session } = useAuth();
+export const ProtectedRoute = ({ children, requireAuth = true, requireNonAdmin = false }: ProtectedRouteProps) => {
+  const { user, loading, session, profile } = useAuth();
 
   if (loading) {
     return (
@@ -22,6 +22,11 @@ export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteP
   // Enhanced authentication check - verify both user and session
   if (requireAuth && (!user || !session)) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // Redirect admin users away from regular user dashboard
+  if (requireNonAdmin && profile?.user_type === 'admin') {
+    return <Navigate to="/admin" replace />;
   }
 
   return <>{children}</>;
