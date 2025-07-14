@@ -157,23 +157,21 @@ const Admin = () => {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm('Are you sure you want to delete this user? This will permanently remove the user and ALL their related data (services, verification requests, contact requests).')) return;
     
     try {
-      const { error } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', userId);
+      const { error } = await supabase.rpc('delete_user_and_related_data', {
+        target_user_id: userId
+      });
       
       if (error) throw error;
       
       toast({
         title: "User deleted",
-        description: "User has been removed from the system."
+        description: "User and all related data have been permanently removed from the system."
       });
       
-      fetchUsers();
-      fetchStats();
+      fetchAllData(); // Refresh all data since we may have deleted from multiple tables
     } catch (error: any) {
       toast({
         title: "Error",
