@@ -41,15 +41,6 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
 
           {/* Right Actions */}
           <div className="flex items-center space-x-4">
-            {/* Wishlist Icon */}
-            <button className="hidden md:flex p-2 text-gray-600 hover:text-gray-900 transition-colors">
-              <Heart className="w-5 h-5" />
-            </button>
-
-            {/* Services/Cart Icon */}
-            <button className="hidden md:flex p-2 text-gray-600 hover:text-gray-900 transition-colors">
-              <ShoppingBag className="w-5 h-5" />
-            </button>
 
             {user ? (
               <DropdownMenu>
@@ -78,7 +69,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
               </DropdownMenu>
             ) : (
               <span className="hidden md:inline text-gray-700 font-medium cursor-pointer hover:text-gray-900 transition-colors" onClick={() => window.location.href = '/auth'}>
-                Contact us
+                Sign In
               </span>
             )}
 
