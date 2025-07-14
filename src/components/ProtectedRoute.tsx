@@ -1,5 +1,6 @@
 
 import { useAuth } from '@/hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -8,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+  const { user, loading, session } = useAuth();
 
   if (loading) {
     return (
@@ -18,9 +19,9 @@ export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteP
     );
   }
 
-  if (requireAuth && !user) {
-    window.location.href = '/auth';
-    return null;
+  // Enhanced authentication check - verify both user and session
+  if (requireAuth && (!user || !session)) {
+    return <Navigate to="/auth" replace />;
   }
 
   return <>{children}</>;

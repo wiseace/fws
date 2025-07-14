@@ -34,8 +34,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Defer profile loading to avoid blocking auth state
-          setTimeout(async () => {
+          // Use proper async handling instead of setTimeout
+          (async () => {
             try {
               const profileData = await fetchProfile(session.user.id);
               console.log('Profile data loaded:', profileData);
@@ -48,14 +48,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 // If no profile found, user might have been deleted
                 console.log('No profile found for user, signing out...');
                 await supabase.auth.signOut();
-                window.location.href = '/auth';
                 return;
               }
             } catch (error) {
               console.error('Error fetching profile:', error);
+            } finally {
+              setLoading(false);
             }
-            setLoading(false);
-          }, 0);
+          })();
         } else {
           setProfile(null);
           setCanAccessContactInfo(false);
@@ -144,10 +144,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setProfile(null);
-    setCanAccessContactInfo(false);
-    window.location.href = '/';
+    try {
+      // Clear local state first
+      setProfile(null);
+      setCanAccessContactInfo(false);
+      setUser(null);
+      setSession(null);
+      
+      // Sign out from Supabase
+      await supabase.auth.signOut({ scope: 'global' });
+      
+      // Clear any remaining auth data from storage
+      localStorage.removeItem('supabase.auth.token');
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    } finally {
+      // Always redirect, even if sign out fails
+      window.location.href = '/';
+    }
   };
 
   return (

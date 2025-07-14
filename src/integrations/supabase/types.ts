@@ -360,6 +360,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      check_user_owns_resource: {
+        Args: { resource_user_id: string }
+        Returns: boolean
+      }
       complete_onboarding_step: {
         Args: { step_name: string }
         Returns: undefined
@@ -388,6 +392,10 @@ export type Database = {
         Args: { user_email: string }
         Returns: undefined
       }
+      update_user_profile: {
+        Args: { user_name?: string; user_phone?: string }
+        Returns: undefined
+      }
       update_verification_status: {
         Args: {
           request_id: string
@@ -395,6 +403,10 @@ export type Database = {
           notes?: string
         }
         Returns: undefined
+      }
+      validate_user_subscription: {
+        Args: { user_id: string }
+        Returns: boolean
       }
     }
     Enums: {
