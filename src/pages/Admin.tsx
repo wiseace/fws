@@ -27,11 +27,18 @@ const Admin = () => {
 
   useEffect(() => {
     console.log('Admin useEffect - profile:', profile);
+    console.log('Admin useEffect - user:', user);
     if (profile?.user_type === 'admin') {
       console.log('Loading admin data...');
+      // Clear existing state to avoid stale data
+      setVerificationRequests([]);
+      setUsers([]);
+      setContactRequests([]);
+      setServices([]);
+      setStats(null);
       fetchAllData();
     }
-  }, [profile]);
+  }, [profile, user]);
 
   // Separate effect for real-time listeners
   useEffect(() => {
@@ -179,9 +186,15 @@ const Admin = () => {
   };
 
   const fetchStats = async () => {
-    const { data, error } = await supabase.rpc('get_admin_stats');
-    if (error) throw error;
-    if (data) setStats(data);
+    console.log('Fetching admin stats...');
+    try {
+      const { data, error } = await supabase.rpc('get_admin_stats');
+      console.log('Admin stats response:', { data, error });
+      if (error) throw error;
+      if (data) setStats(data);
+    } catch (error) {
+      console.error('Exception in fetchStats:', error);
+    }
   };
 
   const handleVerificationAction = async (requestId: string, status: 'verified' | 'rejected', notes?: string) => {
@@ -333,13 +346,25 @@ const Admin = () => {
                     The <strong>User Dashboard</strong> is for personal service management and profile settings.
                   </p>
                 </div>
-                <Button 
-                  onClick={() => window.location.href = '/admin/categories'} 
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  <span className="mr-2">📁</span>
-                  Manage Categories
-                </Button>
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={() => window.location.href = '/admin/categories'} 
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <span className="mr-2">📁</span>
+                    Manage Categories
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      console.log('Force refreshing admin data...');
+                      fetchAllData();
+                    }}
+                    variant="outline"
+                    className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                  >
+                    🔄 Force Refresh
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
