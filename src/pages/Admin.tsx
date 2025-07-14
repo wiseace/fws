@@ -314,36 +314,39 @@ const Admin = () => {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-background">
-        {/* Full Width Modern Header */}
-        <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center justify-between px-6">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-br from-primary to-primary-dark rounded-xl">
-                  <Shield className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
-                  <p className="text-xs text-muted-foreground">System Management Center</p>
-                </div>
+        <Header editMode={false} onToggleEdit={() => {}} />
+        
+        {/* Contained Layout */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Modern Header */}
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-primary to-primary-dark rounded-xl shadow-md">
+                <Shield className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
+                <p className="text-muted-foreground mt-1">
+                  System Management & Analytics Center
+                </p>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm"
                 onClick={() => window.location.href = '/admin/categories'}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-2"
               >
                 <span className="text-sm">📁</span>
                 Categories
               </Button>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm"
                 onClick={() => window.location.href = '/dashboard'}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-2"
               >
                 <LayoutDashboard className="h-4 w-4" />
                 User Dashboard
@@ -357,120 +360,110 @@ const Admin = () => {
                   });
                   fetchAllData();
                 }}
-                className="bg-primary hover:bg-primary-dark shadow-sm"
+                className="bg-primary hover:bg-primary-dark text-primary-foreground shadow-md"
               >
                 🔄 Refresh
               </Button>
             </div>
           </div>
-        </div>
 
-        {/* Full Width Content Area */}
-        <div className="w-full">
-          {/* Modern Stats Grid */}
+          {/* Fixed Stats Grid with Better Contrast */}
           {stats && (
-            <div className="px-6 py-8 bg-gradient-to-br from-background via-muted/30 to-background">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-2">
-                <Card 
-                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-primary/10 via-primary/5 to-background" 
-                  onClick={() => setActiveTab('users')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <div className="p-3 bg-gradient-to-br from-primary to-primary-dark rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
-                          <Users className="h-6 w-6 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">Total Users</p>
-                          <p className="text-3xl font-bold text-foreground">{stats.total_users}</p>
-                        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+              <Card 
+                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white" 
+                onClick={() => setActiveTab('users')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-3">
+                      <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        <Users className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-blue-700 mb-1">Total Users</p>
+                        <p className="text-3xl font-bold text-blue-900">{stats.total_users}</p>
                       </div>
                     </div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -translate-y-10 translate-x-10"></div>
-                  </CardContent>
-                </Card>
-                
-                <Card 
-                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-brand-success/10 via-brand-success/5 to-background"
-                  onClick={() => setActiveTab('users')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <div className="p-3 bg-gradient-to-br from-brand-success to-brand-success-dark rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
-                          <UserCheck className="h-6 w-6 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">Verified Users</p>
-                          <p className="text-3xl font-bold text-foreground">{stats.verified_users}</p>
-                        </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card 
+                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white"
+                onClick={() => setActiveTab('users')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-3">
+                      <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        <UserCheck className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-green-700 mb-1">Verified Users</p>
+                        <p className="text-3xl font-bold text-green-900">{stats.verified_users}</p>
                       </div>
                     </div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-brand-success/5 rounded-full -translate-y-10 translate-x-10"></div>
-                  </CardContent>
-                </Card>
-                
-                <Card 
-                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-warning/10 via-warning/5 to-background"
-                  onClick={() => setActiveTab('verifications')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <div className="p-3 bg-gradient-to-br from-warning to-warning-dark rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
-                          <Shield className="h-6 w-6 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">Pending Verifications</p>
-                          <p className="text-3xl font-bold text-foreground">{stats.pending_verifications}</p>
-                        </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card 
+                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white"
+                onClick={() => setActiveTab('verifications')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-3">
+                      <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        <Shield className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-orange-700 mb-1">Pending Verifications</p>
+                        <p className="text-3xl font-bold text-orange-900">{stats.pending_verifications}</p>
                       </div>
                     </div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-warning/5 rounded-full -translate-y-10 translate-x-10"></div>
-                  </CardContent>
-                </Card>
-                
-                <Card 
-                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-secondary/10 via-secondary/5 to-background"
-                  onClick={() => setActiveTab('services')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <div className="p-3 bg-gradient-to-br from-secondary to-secondary-dark rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
-                          <Eye className="h-6 w-6 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">Total Services</p>
-                          <p className="text-3xl font-bold text-foreground">{stats.total_services}</p>
-                        </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card 
+                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white"
+                onClick={() => setActiveTab('services')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-3">
+                      <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        <Eye className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-purple-700 mb-1">Total Services</p>
+                        <p className="text-3xl font-bold text-purple-900">{stats.total_services}</p>
                       </div>
                     </div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-secondary/5 rounded-full -translate-y-10 translate-x-10"></div>
-                  </CardContent>
-                </Card>
-                
-                <Card 
-                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-gradient-to-br from-primary-light/10 via-primary-light/5 to-background"
-                  onClick={() => setActiveTab('contacts')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <div className="p-3 bg-gradient-to-br from-primary-light to-primary rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
-                          <User className="h-6 w-6 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">Contact Requests</p>
-                          <p className="text-3xl font-bold text-foreground">{stats.total_contacts}</p>
-                        </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card 
+                className="group relative overflow-hidden border shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer bg-white"
+                onClick={() => setActiveTab('contacts')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-3">
+                      <div className="p-3 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        <User className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-teal-700 mb-1">Contact Requests</p>
+                        <p className="text-3xl font-bold text-teal-900">{stats.total_contacts}</p>
                       </div>
                     </div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-primary-light/5 rounded-full -translate-y-10 translate-x-10"></div>
-                  </CardContent>
-                </Card>
-              </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )}
 
@@ -845,12 +838,14 @@ const Admin = () => {
           </div>
 
           {/* Modern Footer Section */}
-          <div className="mt-16 px-6">
+          <div className="mt-16">
             <div className="border-t border-border/50 pt-8">
               <SystemExplanation />
             </div>
           </div>
         </div>
+
+        <Footer editMode={false} />
       </div>
     </ProtectedRoute>
   );
