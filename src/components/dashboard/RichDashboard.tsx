@@ -314,12 +314,6 @@ export const RichDashboard = () => {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              {/* Subscription Countdown - Show for non-admin users */}
-              {profile?.user_type !== 'admin' && (
-                <div className="w-72 transform hover:scale-105 transition-transform duration-200">
-                  <SubscriptionCountdown profile={profile} />
-                </div>
-              )}
               {profile?.user_type === 'admin' && (
                 <Button 
                   variant="outline" 
@@ -676,6 +670,13 @@ export const RichDashboard = () => {
                 )}
               </CardContent>
             </Card>
+
+            {/* Subscription Countdown - Show for non-admin users */}
+            {profile?.user_type !== 'admin' && (
+              <div className="transform hover:scale-105 transition-transform duration-200">
+                <SubscriptionCountdown profile={profile} />
+              </div>
+            )}
 
             {/* Profile Status */}
             <Card className="shadow-lg border-0">
