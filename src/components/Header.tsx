@@ -15,9 +15,10 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
   const { user, profile, signOut } = useAuth();
 
   return (
-    <header className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <header className="sticky top-0 z-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white/80 backdrop-blur-lg shadow-lg rounded-2xl border border-white/20 px-6 py-3">
+          <div className="flex justify-between items-center h-12">
           {/* Logo */}
           <div className="flex items-center">
             <div className="cursor-pointer flex items-center space-x-2" onClick={() => window.location.href = '/'}>
@@ -89,11 +90,12 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="mt-4 bg-white/90 backdrop-blur-lg shadow-lg rounded-2xl border border-white/20 px-6 py-4">
             <div className="flex flex-col space-y-2">
               <a href="/" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Home</a>
               <a href="/browse" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Browse Services</a>
