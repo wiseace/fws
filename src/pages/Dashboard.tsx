@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { ProviderVerificationFlow } from '@/components/dashboard/ProviderVerificationFlow';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Edit, Trash2, User, Settings, CreditCard, Loader2 } from 'lucide-react';
 
@@ -256,6 +257,9 @@ const Dashboard = () => {
           <Tabs defaultValue="services" className="space-y-6">
             <TabsList>
               <TabsTrigger value="services">My Services</TabsTrigger>
+              {profile?.user_type === 'provider' && (
+                <TabsTrigger value="verification">Verification</TabsTrigger>
+              )}
               <TabsTrigger value="profile">Profile</TabsTrigger>
               <TabsTrigger value="subscription">Subscription</TabsTrigger>
             </TabsList>
@@ -415,6 +419,12 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {profile?.user_type === 'provider' && (
+              <TabsContent value="verification">
+                <ProviderVerificationFlow />
+              </TabsContent>
+            )}
 
             <TabsContent value="profile">
               <Card>

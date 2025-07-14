@@ -133,12 +133,16 @@ const Admin = () => {
 
   const fetchVerificationRequests = async () => {
     console.log('Fetching verification requests...');
+    console.log('Current user:', user?.email);
+    console.log('Current profile:', profile?.user_type);
+    console.log('Is admin?:', profile?.user_type === 'admin');
+    
     try {
       const { data, error } = await supabase
         .from('verification_requests')
         .select(`
           *,
-          user:users(name, email)
+          user:users(name, email, phone, user_type)
         `)
         .order('created_at', { ascending: false });
       
@@ -150,6 +154,7 @@ const Admin = () => {
       }
       if (data) {
         console.log('Setting verification requests:', data);
+        console.log('Data count:', data.length);
         setVerificationRequests(data as any);
       }
     } catch (error) {
