@@ -20,9 +20,9 @@ export default {
 		extend: {
 			fontFamily: {
 				'sans': ['Inter', 'system-ui', 'sans-serif'],
-				'serif': ['Playfair Display', 'Georgia', 'serif'],
+				'serif': ['Space Grotesk', 'system-ui', 'sans-serif'],
 				'inter': ['Inter', 'system-ui', 'sans-serif'],
-				'playfair': ['Playfair Display', 'Georgia', 'serif']
+				'playfair': ['Space Grotesk', 'system-ui', 'sans-serif']
 			},
 			fontSize: {
 				'h1': ['2rem', { lineHeight: '2.5rem', fontWeight: '600' }], // 32px
