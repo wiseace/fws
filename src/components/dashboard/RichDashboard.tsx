@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { NotificationModal } from '@/components/NotificationModal';
+import { ServiceModal } from '@/components/ServiceModal';
 import { 
   LayoutDashboard, 
   Star, 
@@ -67,6 +68,7 @@ export const RichDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
 
   useEffect(() => {
     if (user && profile) {
@@ -195,6 +197,16 @@ export const RichDashboard = () => {
       return false;
     }
     return true;
+  };
+
+  const handleServiceModalOpen = () => {
+    if (checkAndShowVerificationToast('create services')) {
+      setIsServiceModalOpen(true);
+    }
+  };
+
+  const handleServiceCreated = () => {
+    fetchDashboardData(); // Refresh the dashboard data
   };
 
   const getStepIcon = (stepName: string, completed: boolean) => {
@@ -523,17 +535,7 @@ export const RichDashboard = () => {
                             Create your first service to start connecting with clients and showcase your expertise.
                           </p>
                           <Button 
-                            onClick={() => {
-                              if (!profile?.is_verified) {
-                                toast({
-                                  title: "Verification Required",
-                                  description: "Please complete your verification before creating services.",
-                                  variant: "destructive"
-                                });
-                                return;
-                              }
-                              window.location.href = '/dashboard?tab=services';
-                            }}
+                            onClick={handleServiceModalOpen}
                             className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
                           >
                             <PlusCircle className="h-4 w-4 mr-2" />
@@ -553,17 +555,7 @@ export const RichDashboard = () => {
                             </div>
                             <Button 
                               size="sm"
-                              onClick={() => {
-                                if (!profile?.is_verified) {
-                                  toast({
-                                    title: "Verification Required",
-                                    description: "Please complete your verification before creating services.",
-                                    variant: "destructive"
-                                  });
-                                  return;
-                                }
-                                window.location.href = '/dashboard';
-                              }}
+                              onClick={handleServiceModalOpen}
                               className="bg-primary hover:bg-primary/90"
                             >
                               <PlusCircle className="h-4 w-4 mr-2" />
@@ -762,6 +754,13 @@ export const RichDashboard = () => {
         isOpen={isNotificationModalOpen}
         onClose={() => setIsNotificationModalOpen(false)}
         onMarkAsRead={markNotificationAsRead}
+      />
+
+      {/* Service Modal */}
+      <ServiceModal
+        isOpen={isServiceModalOpen}
+        onClose={() => setIsServiceModalOpen(false)}
+        onServiceCreated={handleServiceCreated}
       />
     </div>
   );
