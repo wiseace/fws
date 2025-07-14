@@ -30,10 +30,6 @@ import {
   Zap,
   Shield
 } from 'lucide-react';
-import { MyServicesTab } from './tabs/MyServicesTab';
-import { ClientRequestsTab } from './tabs/ClientRequestsTab';
-import { VerificationTab } from './tabs/VerificationTab';
-import { ProfileTab } from './tabs/ProfileTab';
 
 interface DashboardStats {
   totalServices?: number;
@@ -73,7 +69,6 @@ export const RichDashboard = () => {
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('services');
 
   useEffect(() => {
     if (user && profile) {
@@ -485,6 +480,132 @@ export const RichDashboard = () => {
               </CardContent>
             </Card>
 
+            {/* Rich Tabbed Experience for Providers */}
+            {profile?.user_type === 'provider' && (
+              <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-blue-50">
+                <CardHeader className="bg-gradient-to-r from-primary to-secondary text-white rounded-t-lg">
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5" />
+                    Provider Hub
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  {/* Tabbed Interface */}
+                  <div className="space-y-6">
+                    {/* Tab Navigation */}
+                    <div className="flex flex-wrap gap-2 border-b">
+                      <Button 
+                        variant="ghost" 
+                        className="text-primary border-b-2 border-primary font-medium px-4 py-2"
+                      >
+                        My Services ({stats.totalServices || 0})
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="text-muted-foreground hover:text-primary px-4 py-2"
+                        onClick={() => window.location.href = '/dashboard?tab=requests'}
+                      >
+                        Client Requests
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="text-muted-foreground hover:text-primary px-4 py-2"
+                        onClick={() => window.location.href = '/dashboard?tab=verification'}
+                      >
+                        Verification
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="text-muted-foreground hover:text-primary px-4 py-2"
+                        onClick={() => window.location.href = '/provider-profile'}
+                      >
+                        Profile
+                      </Button>
+                    </div>
+
+                    {/* Services Tab Content */}
+                    <div className="min-h-[300px]">
+                      {stats.totalServices === 0 ? (
+                        <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg">
+                          <div className="mb-4">
+                            <Star className="h-16 w-16 text-gray-400 mx-auto" />
+                          </div>
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">No services yet</h3>
+                          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                            Create your first service to start connecting with clients and showcase your expertise.
+                          </p>
+                          <Button 
+                            onClick={handleServiceModalOpen}
+                            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                          >
+                            <PlusCircle className="h-4 w-4 mr-2" />
+                            CREATE YOUR FIRST SERVICE
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="bg-gradient-to-r from-primary to-secondary text-white px-3 py-1 rounded-full text-sm font-medium">
+                                {stats.activeServices} Active
+                              </div>
+                              <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                                {(stats.totalServices || 0) - (stats.activeServices || 0)} Inactive
+                              </div>
+                            </div>
+                            <Button 
+                              size="sm"
+                              onClick={handleServiceModalOpen}
+                              className="bg-primary hover:bg-primary/90"
+                            >
+                              <PlusCircle className="h-4 w-4 mr-2" />
+                              ADD SERVICE
+                            </Button>
+                          </div>
+                          
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <p className="text-blue-800 text-sm">
+                              🎉 Great start! You have {stats.totalServices} service{(stats.totalServices || 0) > 1 ? 's' : ''} created. 
+                              Keep optimizing your listings to attract more clients.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Onboarding Progress */}
+                    {onboardingSteps.length > 0 && (
+                      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
+                        <h4 className="font-semibold text-yellow-800 mb-3 flex items-center gap-2">
+                          <Target className="h-4 w-4" />
+                          Getting Started Progress
+                        </h4>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm text-yellow-700">
+                            {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
+                          </span>
+                          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                            {Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100)}% Complete
+                          </Badge>
+                        </div>
+                        <Progress 
+                          value={(onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100} 
+                          className="h-2 mb-3"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          {onboardingSteps.map((step) => (
+                            <div key={step.id} className={`flex items-center gap-2 text-xs ${step.completed ? 'text-green-700' : 'text-yellow-700'}`}>
+                              {getStepIcon(step.step_name, step.completed)}
+                              <span>{getStepTitle(step.step_name)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
             {/* Sidebar */}
