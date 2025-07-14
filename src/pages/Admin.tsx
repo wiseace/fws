@@ -147,7 +147,8 @@ const Admin = () => {
         .from('verification_requests')
         .select(`
           *,
-          user:users(name, email, phone, user_type)
+          user:users!verification_requests_user_id_fkey(name, email, phone, user_type),
+          reviewed_by_user:users!verification_requests_reviewed_by_fkey(name, email)
         `)
         .order('created_at', { ascending: false });
       
