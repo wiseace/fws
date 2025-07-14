@@ -23,7 +23,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="cursor-pointer" onClick={() => window.location.href = '/'}>
-              <img src={findWhoSabiLogo} alt="FindWhoSabi" className="h-10 w-auto" />
+              <img src={findWhoSabiLogo} alt="FindWhoSabi" className="h-8 w-auto" />
             </div>
           </div>
 
