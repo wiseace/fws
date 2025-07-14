@@ -15,7 +15,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
   const { user, profile, signOut } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 p-4">
+    <header className="absolute top-0 left-0 right-0 z-50 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white/80 backdrop-blur-lg shadow-lg rounded-2xl border border-white/20 px-6 py-3">
           <div className="flex justify-between items-center h-12">

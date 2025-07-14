@@ -24,7 +24,7 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
 
   try {
     return (
-      <section className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 text-gray-900 py-20 min-h-[600px] flex items-center relative overflow-hidden">
+      <section className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 text-gray-900 py-20 pt-32 min-h-screen flex items-center relative overflow-hidden">
         {/* Creative background elements inspired by the image */}
         <div className="absolute inset-0">
           {/* Large decorative shapes */}
