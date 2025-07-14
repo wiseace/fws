@@ -534,7 +534,7 @@ export const RichDashboard = () => {
                   {/* Tabbed Interface */}
                   <div className="space-y-6">
                      {/* Tab Navigation */}
-                     <div className="flex flex-wrap gap-2 border-b">
+                      <div className="flex flex-wrap gap-2 border-b pb-4">
                        <Button 
                          variant="ghost" 
                          className={`px-4 py-2 rounded-t-md border-2 border-transparent border-b-0 ${

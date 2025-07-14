@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Upload, X } from 'lucide-react';
+import servicePlaceholder from '@/assets/findwhosabi-service-placeholder.jpg';
 
 interface ServiceModalProps {
   isOpen: boolean;
@@ -20,18 +21,18 @@ interface ServiceModalProps {
 }
 
 export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService, service }: ServiceModalProps) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   // Form state
   const [serviceName, setServiceName] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [location, setLocation] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
@@ -62,26 +63,76 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
     setServiceName(service.service_name);
     setCategory(service.category);
     setDescription(service.description || '');
-    setPhone(service.contact_info.phone || '');
-    setEmail(service.contact_info.email || '');
-    setLocation(service.location || '');
     setImageUrl(service.image_url || '');
+    setImagePreview(service.image_url || '');
   };
 
   const resetForm = () => {
     setServiceName('');
     setCategory('');
     setDescription('');
-    setPhone('');
-    setEmail('');
-    setLocation('');
+    setImageFile(null);
+    setImagePreview('');
+    setImageUrl('');
+  };
+
+  const handleImageUpload = async (file: File) => {
+    if (!user) return null;
+    
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}_${Date.now()}.${fileExt}`;
+    
+    const { data, error } = await supabase.storage
+      .from('service-images')
+      .upload(fileName, file);
+    
+    if (error) throw error;
+    
+    const { data: { publicUrl } } = supabase.storage
+      .from('service-images')
+      .getPublicUrl(fileName);
+    
+    return publicUrl;
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please choose an image smaller than 5MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid file type",
+          description: "Please choose an image file.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview('');
     setImageUrl('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user || !serviceName || !category) {
+    if (!user || !profile || !serviceName || !category) {
       toast({
         title: "Missing Required Fields",
         description: "Please fill in service name and category.",
@@ -92,16 +143,33 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
 
     setLoading(true);
 
-    const serviceData = {
-      service_name: serviceName,
-      category,
-      description,
-      contact_info: { phone, email },
-      location,
-      image_url: imageUrl
-    };
-
     try {
+      let finalImageUrl = imageUrl;
+      
+      // Upload new image if selected
+      if (imageFile) {
+        setUploading(true);
+        finalImageUrl = await handleImageUpload(imageFile);
+        setUploading(false);
+      }
+      
+      // Use placeholder if no image
+      if (!finalImageUrl) {
+        finalImageUrl = servicePlaceholder;
+      }
+
+      const serviceData = {
+        service_name: serviceName,
+        category,
+        description,
+        contact_info: { 
+          phone: profile.phone, 
+          email: profile.email 
+        },
+        location: profile.phone, // Use user's location from profile/verification
+        image_url: finalImageUrl
+      };
+
       const serviceToEdit = editingService || service;
       if (serviceToEdit) {
         const { error } = await supabase
@@ -139,6 +207,7 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
       });
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -200,52 +269,49 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="phone">Contact Phone</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+1 (555) 123-4567"
-                disabled={loading}
-              />
-            </div>
-            <div>
-              <Label htmlFor="email">Contact Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="contact@example.com"
-                disabled={loading}
-              />
-            </div>
-          </div>
-
           <div>
-            <Label htmlFor="location">Service Location</Label>
-            <Input
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g., New York, NY or Remote"
-              disabled={loading}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="image-url">Service Image URL</Label>
-            <Input
-              id="image-url"
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://example.com/service-image.jpg"
-              disabled={loading}
-            />
+            <Label htmlFor="service-image">Service Image</Label>
+            <div className="space-y-4">
+              {imagePreview ? (
+                <div className="relative inline-block">
+                  <img 
+                    src={imagePreview} 
+                    alt="Service preview" 
+                    className="w-32 h-32 object-cover rounded-lg border"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                    onClick={removeImage}
+                    disabled={loading}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <Upload className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                    <span className="text-xs text-gray-500">No image</span>
+                  </div>
+                </div>
+              )}
+              <div>
+                <Input
+                  id="service-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  disabled={loading}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-primary/90"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Upload an image (max 5MB). If no image is uploaded, a FINDWHOSABI placeholder will be used.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t">
@@ -260,10 +326,10 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
             <Button 
               type="submit" 
               className="bg-primary hover:bg-primary/90"
-              disabled={loading}
+              disabled={loading || uploading}
             >
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {(editingService || service) ? 'Update Service' : 'Create Service'}
+              {(loading || uploading) && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {uploading ? 'Uploading...' : (editingService || service) ? 'Update Service' : 'Create Service'}
             </Button>
           </div>
         </form>
