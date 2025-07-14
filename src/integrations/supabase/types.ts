@@ -368,6 +368,15 @@ export type Database = {
         Args: { step_name: string }
         Returns: undefined
       }
+      create_contact_request: {
+        Args: {
+          provider_id: string
+          service_id: string
+          message: string
+          contact_method?: string
+        }
+        Returns: string
+      }
       create_manual_admin_user: {
         Args: Record<PropertyKey, never>
         Returns: undefined

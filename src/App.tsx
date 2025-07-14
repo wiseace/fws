@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminRoute } from "@/components/AdminRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
@@ -38,19 +39,19 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <Admin />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/categories" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminCategories />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/profile" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminProfile />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/provider/:id" element={<Provider />} />
