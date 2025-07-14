@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
+import { NotificationModal } from '@/components/NotificationModal';
 import { 
   LayoutDashboard, 
   Star, 
@@ -64,6 +65,8 @@ export const RichDashboard = () => {
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStep[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   useEffect(() => {
     if (user && profile) {
@@ -177,8 +180,13 @@ export const RichDashboard = () => {
     );
   };
 
+  const handleNotificationClick = (notification: Notification) => {
+    setSelectedNotification(notification);
+    setIsNotificationModalOpen(true);
+  };
+
   const checkAndShowVerificationToast = (action: string) => {
-    if (!profile?.is_verified) {
+    if (profile?.verification_status !== 'verified') {
       toast({
         title: "Verification Required",
         description: `You need to complete verification to ${action}. Please submit your verification documents first.`,
@@ -388,7 +396,7 @@ export const RichDashboard = () => {
                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
                         onClick={() => {
                           if (checkAndShowVerificationToast('create services')) {
-                            window.location.href = '/dashboard?tab=services';
+                            window.location.href = '/dashboard';
                           }
                         }}
                       >
@@ -406,7 +414,7 @@ export const RichDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/dashboard?tab=requests'}
+                        onClick={() => window.location.href = '/dashboard'}
                       >
                         <Eye className="h-6 w-6" />
                         View Requests
@@ -433,7 +441,7 @@ export const RichDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/dashboard?tab=requests'}
+                        onClick={() => window.location.href = '/dashboard'}
                       >
                         <Eye className="h-6 w-6" />
                         My Requests
@@ -449,7 +457,7 @@ export const RichDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/dashboard?tab=profile'}
+                        onClick={() => window.location.href = '/dashboard'}
                       >
                         <Settings className="h-6 w-6" />
                         Profile
@@ -554,7 +562,7 @@ export const RichDashboard = () => {
                                   });
                                   return;
                                 }
-                                window.location.href = '/dashboard?tab=services';
+                                window.location.href = '/dashboard';
                               }}
                               className="bg-primary hover:bg-primary/90"
                             >
@@ -634,7 +642,7 @@ export const RichDashboard = () => {
                             ? 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 shadow-sm' 
                             : 'bg-white border-gray-200 hover:bg-gray-50'
                         }`}
-                        onClick={() => !notification.read && markNotificationAsRead(notification.id)}
+                        onClick={() => handleNotificationClick(notification)}
                       >
                         <div className="flex items-start gap-3">
                           <div className={`p-1 rounded-full ${
@@ -747,6 +755,14 @@ export const RichDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Notification Modal */}
+      <NotificationModal
+        notification={selectedNotification}
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+        onMarkAsRead={markNotificationAsRead}
+      />
     </div>
   );
 };

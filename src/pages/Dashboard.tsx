@@ -271,7 +271,20 @@ const Dashboard = () => {
                   {profile?.user_type === 'provider' && (
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button onClick={resetForm} className="bg-blue-600 hover:bg-blue-700">
+                        <Button 
+                          onClick={() => {
+                            if (profile?.verification_status !== 'verified') {
+                              toast({
+                                title: "Verification Required",
+                                description: "Please complete your verification before creating services.",
+                                variant: "destructive"
+                              });
+                              return;
+                            }
+                            resetForm();
+                          }} 
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
                           <Plus className="w-4 h-4 mr-2" />
                           Add Service
                         </Button>
