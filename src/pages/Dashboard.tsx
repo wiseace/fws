@@ -232,7 +232,7 @@ const Dashboard = () => {
       <ProtectedRoute>
         <div className="min-h-screen bg-gray-50">
           <Header editMode={false} onToggleEdit={() => {}} />
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-32">
             <div className="text-center">
               <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-blue-600" />
               <p className="text-gray-600">Loading your dashboard...</p>
@@ -248,7 +248,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gray-50">
         <Header editMode={false} onToggleEdit={() => {}} />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600">Manage your profile and services</p>

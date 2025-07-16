@@ -317,7 +317,7 @@ const Admin = () => {
         <Header editMode={false} onToggleEdit={() => {}} />
         
         {/* Contained Layout */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
           {/* Modern Header */}
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-4">
