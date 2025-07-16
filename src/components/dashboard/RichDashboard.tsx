@@ -534,57 +534,63 @@ export const RichDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
-                  {/* Tabbed Interface */}
-                  <div className="space-y-6">
-                     {/* Tab Navigation */}
-                      <div className="border-b border-gray-200 mb-6">
-                        <div className="flex flex-wrap gap-1 -mb-px">
-                         <Button 
-                           variant="ghost" 
-                           className={`px-4 py-3 rounded-t-md border-2 border-transparent border-b-2 ${
-                             activeTab === 'services' 
-                               ? 'bg-white text-primary border-primary border-b-primary font-medium' 
-                               : 'text-muted-foreground hover:text-primary hover:bg-transparent border-b-transparent'
-                           }`}
-                           onClick={() => setActiveTab('services')}
-                         >
-                           My Services ({stats.totalServices || 0})
-                         </Button>
-                         <Button 
-                           variant="ghost" 
-                           className={`px-4 py-3 rounded-t-md border-2 border-transparent border-b-2 ${
-                             activeTab === 'requests' 
-                               ? 'bg-white text-primary border-primary border-b-primary font-medium' 
-                               : 'text-muted-foreground hover:text-primary hover:bg-transparent border-b-transparent'
-                           }`}
-                           onClick={() => setActiveTab('requests')}
-                         >
-                           Client Requests
-                         </Button>
-                         <Button 
-                           variant="ghost" 
-                           className={`px-4 py-3 rounded-t-md border-2 border-transparent border-b-2 ${
-                             activeTab === 'verification' 
-                               ? 'bg-white text-primary border-primary border-b-primary font-medium' 
-                               : 'text-muted-foreground hover:text-primary hover:bg-transparent border-b-transparent'
-                           }`}
-                           onClick={() => setActiveTab('verification')}
-                         >
-                           Verification
-                         </Button>
-                         <Button 
-                           variant="ghost" 
-                           className={`px-4 py-3 rounded-t-md border-2 border-transparent border-b-2 ${
-                             activeTab === 'profile' 
-                               ? 'bg-white text-primary border-primary border-b-primary font-medium' 
-                               : 'text-muted-foreground hover:text-primary hover:bg-transparent border-b-transparent'
-                           }`}
-                           onClick={() => setActiveTab('profile')}
-                         >
-                           Profile
-                         </Button>
-                        </div>
-                      </div>
+                   {/* Tabbed Interface */}
+                   <div className="space-y-6">
+                      {/* Tab Navigation */}
+                       <div className="mb-6">
+                         <div className="flex items-center justify-center">
+                           <div className="inline-flex items-center bg-muted/30 p-1 rounded-full">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                activeTab === 'services' 
+                                  ? 'bg-foreground text-background shadow-sm' 
+                                  : 'text-muted-foreground hover:text-foreground'
+                              }`}
+                              onClick={() => setActiveTab('services')}
+                            >
+                              My Services ({stats.totalServices || 0})
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                activeTab === 'requests' 
+                                  ? 'bg-foreground text-background shadow-sm' 
+                                  : 'text-muted-foreground hover:text-foreground'
+                              }`}
+                              onClick={() => setActiveTab('requests')}
+                            >
+                              Client Requests
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                activeTab === 'verification' 
+                                  ? 'bg-foreground text-background shadow-sm' 
+                                  : 'text-muted-foreground hover:text-foreground'
+                              }`}
+                              onClick={() => setActiveTab('verification')}
+                            >
+                              Verification
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                activeTab === 'profile' 
+                                  ? 'bg-foreground text-background shadow-sm' 
+                                  : 'text-muted-foreground hover:text-foreground'
+                              }`}
+                              onClick={() => setActiveTab('profile')}
+                            >
+                              Profile
+                            </Button>
+                           </div>
+                         </div>
+                       </div>
 
                      {/* Tab Content */}
                      <div className="min-h-[300px]">

@@ -461,12 +461,12 @@ const Admin = () => {
           <div className="px-6 pb-8">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <div className="flex items-center justify-center">
-                <TabsList className="grid grid-cols-5 w-full max-w-2xl bg-muted/50 border shadow-sm">
-                  <TabsTrigger value="verifications" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Verifications</TabsTrigger>
-                  <TabsTrigger value="users" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Users</TabsTrigger>
-                  <TabsTrigger value="contacts" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Contacts</TabsTrigger>
-                  <TabsTrigger value="services" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Services</TabsTrigger>
-                  <TabsTrigger value="categories" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Categories</TabsTrigger>
+                <TabsList className="grid grid-cols-5 w-full max-w-2xl bg-muted/30 p-1 rounded-full h-12">
+                  <TabsTrigger value="verifications" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Verifications</TabsTrigger>
+                  <TabsTrigger value="users" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Users</TabsTrigger>
+                  <TabsTrigger value="contacts" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Contacts</TabsTrigger>
+                  <TabsTrigger value="services" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Services</TabsTrigger>
+                  <TabsTrigger value="categories" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Categories</TabsTrigger>
                 </TabsList>
               </div>
 

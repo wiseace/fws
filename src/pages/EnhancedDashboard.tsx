@@ -431,16 +431,16 @@ const EnhancedDashboard = () => {
           )}
 
           <Tabs defaultValue={profile?.user_type === 'provider' ? 'services' : 'requests'} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-2 bg-muted/30 p-1 rounded-full h-12">
               {profile?.user_type === 'provider' ? (
                 <>
-                  <TabsTrigger value="services">My Services</TabsTrigger>
-                  <TabsTrigger value="requests">Client Requests</TabsTrigger>
+                  <TabsTrigger value="services" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">My Services</TabsTrigger>
+                  <TabsTrigger value="requests" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Client Requests</TabsTrigger>
                 </>
               ) : (
                 <>
-                  <TabsTrigger value="requests">My Requests</TabsTrigger>
-                  <TabsTrigger value="profile">Profile</TabsTrigger>
+                  <TabsTrigger value="requests" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">My Requests</TabsTrigger>
+                  <TabsTrigger value="profile" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Profile</TabsTrigger>
                 </>
               )}
             </TabsList>
