@@ -592,13 +592,13 @@ export const RichDashboard = () => {
                          </div>
                        </div>
 
-                     {/* Tab Content */}
-                     <div className="min-h-[300px]">
-                       {activeTab === 'services' && <MyServicesTab />}
-                       {activeTab === 'requests' && <ClientRequestsTab />}
-                       {activeTab === 'verification' && <VerificationTab />}
-                       {activeTab === 'profile' && <ProfileTab />}
-                     </div>
+                      {/* Tab Content */}
+                      <div className="min-h-[300px]">
+                        {activeTab === 'services' && <div className="animate-fade-in"><MyServicesTab /></div>}
+                        {activeTab === 'requests' && <div className="animate-fade-in"><ClientRequestsTab /></div>}
+                        {activeTab === 'verification' && <div className="animate-fade-in"><VerificationTab /></div>}
+                        {activeTab === 'profile' && <div className="animate-fade-in"><ProfileTab /></div>}
+                      </div>
 
                   </div>
                 </CardContent>

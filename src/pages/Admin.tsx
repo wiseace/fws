@@ -470,7 +470,7 @@ const Admin = () => {
                 </TabsList>
               </div>
 
-              <TabsContent value="verifications" className="space-y-6">
+              <TabsContent value="verifications" className="space-y-6 animate-fade-in">
                 <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-3xl p-8 shadow-xl border border-amber-200">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
@@ -604,7 +604,7 @@ const Admin = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="users" className="space-y-6">
+              <TabsContent value="users" className="space-y-6 animate-fade-in">
                 <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl p-8 shadow-xl border border-blue-200">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
@@ -706,7 +706,7 @@ const Admin = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="contacts" className="space-y-6">
+              <TabsContent value="contacts" className="space-y-6 animate-fade-in">
                 <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-3xl p-8 shadow-xl border border-green-200">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
@@ -799,7 +799,7 @@ const Admin = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="services" className="space-y-6">
+              <TabsContent value="services" className="space-y-6 animate-fade-in">
                 <div className="bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50 rounded-3xl p-8 shadow-xl border border-purple-200">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
@@ -900,7 +900,7 @@ const Admin = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="categories" className="space-y-6">
+              <TabsContent value="categories" className="space-y-6 animate-fade-in">
                 <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 rounded-3xl p-8 shadow-xl border border-rose-200">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
