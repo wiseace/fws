@@ -144,31 +144,39 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
         <div className="text-center">
           <p className="text-xs text-muted-foreground mb-3 font-medium">Time Remaining</p>
           
-          {/* Countdown Timer - Dark Theme Style */}
-          <div className="bg-gray-900 rounded-lg p-4 mb-3">
-            <div className="flex items-center justify-center divide-x divide-gray-600">
+          {/* Countdown Timer - Improved Dark Theme Style */}
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-4 mb-3 shadow-inner">
+            <div className="grid grid-cols-4 gap-1">
               {/* Days */}
-              <div className="text-center px-3 first:pl-0 last:pr-0">
-                <div className="text-2xl font-bold text-white">{String(timeRemaining.days).padStart(2, '0')}</div>
-                <div className="text-xs text-gray-400 mt-1">Days</div>
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-mono font-bold text-white leading-tight">
+                  {String(timeRemaining.days).padStart(2, '0')}
+                </div>
+                <div className="text-xs text-gray-300 mt-1 font-medium">Days</div>
               </div>
               
               {/* Hours */}
-              <div className="text-center px-3">
-                <div className="text-2xl font-bold text-white">{String(timeRemaining.hours).padStart(2, '0')}</div>
-                <div className="text-xs text-gray-400 mt-1">Hours</div>
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-mono font-bold text-white leading-tight">
+                  {String(timeRemaining.hours).padStart(2, '0')}
+                </div>
+                <div className="text-xs text-gray-300 mt-1 font-medium">Hours</div>
               </div>
               
               {/* Minutes */}
-              <div className="text-center px-3">
-                <div className="text-2xl font-bold text-white">{String(timeRemaining.minutes).padStart(2, '0')}</div>
-                <div className="text-xs text-gray-400 mt-1">Minutes</div>
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-mono font-bold text-white leading-tight">
+                  {String(timeRemaining.minutes).padStart(2, '0')}
+                </div>
+                <div className="text-xs text-gray-300 mt-1 font-medium">Minutes</div>
               </div>
               
               {/* Seconds */}
-              <div className="text-center px-3">
-                <div className="text-2xl font-bold text-white">{String(timeRemaining.seconds).padStart(2, '0')}</div>
-                <div className="text-xs text-gray-400 mt-1">Seconds</div>
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-mono font-bold text-white leading-tight">
+                  {String(timeRemaining.seconds).padStart(2, '0')}
+                </div>
+                <div className="text-xs text-gray-300 mt-1 font-medium">Seconds</div>
               </div>
             </div>
           </div>
