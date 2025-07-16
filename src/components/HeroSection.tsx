@@ -24,33 +24,33 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
 
   try {
     return (
-      <section className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 text-gray-900 py-20 pt-32 min-h-screen flex items-center relative overflow-hidden">
-        {/* Creative background elements inspired by the image */}
-        <div className="absolute inset-0">
-          {/* Large decorative shapes */}
-          <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-orange-200/30 to-amber-200/30 rounded-full blur-3xl animate-pulse-subtle"></div>
-          <div className="absolute bottom-32 left-20 w-48 h-48 bg-gradient-to-br from-yellow-200/30 to-orange-200/30 rounded-full blur-2xl animate-pulse-subtle" style={{ animationDelay: '2s' }}></div>
-          
-          {/* Floating service icons/elements */}
-          <div className="absolute top-32 right-1/3 w-16 h-16 bg-gradient-to-br from-pink-200 to-pink-300 rounded-2xl shadow-lg animate-float" style={{ animationDelay: '0.5s', transform: 'rotate(15deg)' }}></div>
-          <div className="absolute top-48 right-1/4 w-12 h-12 bg-gradient-to-br from-green-200 to-green-300 rounded-xl shadow-lg animate-float" style={{ animationDelay: '1.5s', transform: 'rotate(-20deg)' }}></div>
-          <div className="absolute bottom-48 right-1/5 w-14 h-14 bg-gradient-to-br from-blue-200 to-blue-300 rounded-2xl shadow-lg animate-float" style={{ animationDelay: '1s', transform: 'rotate(25deg)' }}></div>
-          <div className="absolute top-64 right-2/3 w-10 h-10 bg-gradient-to-br from-purple-200 to-purple-300 rounded-lg shadow-lg animate-float" style={{ animationDelay: '2.5s', transform: 'rotate(-15deg)' }}></div>
-          <div className="absolute bottom-40 right-1/2 w-18 h-18 bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-2xl shadow-lg animate-float" style={{ animationDelay: '0.8s', transform: 'rotate(10deg)' }}></div>
-        </div>
+      <section className="relative py-20 pt-32 min-h-screen flex items-center overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/lovable-uploads/192e50f4-9f3a-4668-bb0b-91e3529dae51.png)'
+          }}
+        />
+        
+        {/* Overlay for better contrast */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/40"></div>
+        
+        {/* Additional subtle pattern overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <EditableElement
             editMode={editMode}
             type="text"
-            className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 animate-fade-in-up"
+            className="text-5xl md:text-6xl font-bold mb-6 text-white drop-shadow-2xl animate-fade-in-up"
             defaultValue="Find skilled professionals near you"
           />
           
           <EditableElement
             editMode={editMode}
             type="text"
-            className="text-xl md:text-2xl mb-12 text-gray-700 max-w-3xl mx-auto animate-fade-in-up"
+            className="text-xl md:text-2xl mb-12 text-white/90 max-w-3xl mx-auto drop-shadow-lg animate-fade-in-up"
             defaultValue="Connect with verified artisans, craftsmen, and service providers. Quality work, trusted professionals, verified credentials."
           />
 
@@ -64,7 +64,7 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
 
           {/* Popular Categories */}
           <div className="mt-12 animate-fade-in-up">
-            <p className="text-gray-600 mb-6 text-lg font-medium">Popular Services:</p>
+            <p className="text-white/80 mb-6 text-lg font-medium drop-shadow-md">Popular Services:</p>
             <div className="flex flex-wrap justify-center gap-3">
               {['Plumbing', 'Electrical', 'Carpentry', 'Painting', 'Cleaning', 'Gardening'].map((category) => (
                 <button
@@ -82,7 +82,7 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up">
             <Button 
               size="lg" 
-              className="bg-gray-900 text-white hover:bg-gray-800 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
               onClick={() => window.location.href = '/browse'}
             >
               Find Services
@@ -90,7 +90,7 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
             <Button 
               size="lg" 
               variant="outline"
-              className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 bg-white/80 backdrop-blur-sm"
+              className="border-white/50 text-white hover:bg-white/10 hover:text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 bg-white/10 backdrop-blur-sm"
               onClick={() => window.location.href = '/auth'}
             >
               <ArrowRight className="w-5 h-5 mr-2" />
