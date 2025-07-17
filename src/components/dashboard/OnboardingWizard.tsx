@@ -70,8 +70,14 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Complete Profile',
           completed: false,
           actionHandler: () => {
-            // Navigate to profile tab in dashboard
-            window.location.hash = 'profile';
+            // Scroll to profile tab in dashboard
+            const profileTab = document.querySelector('[value="profile"]') as HTMLElement;
+            if (profileTab) {
+              profileTab.click();
+              setTimeout(() => {
+                profileTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 100);
+            }
             markStepCompleted('profile_completion');
           }
         },
@@ -83,7 +89,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Start Verification',
           completed: false,
           actionHandler: () => {
-            window.location.hash = 'verification';
+            const verificationTab = document.querySelector('[value="verification"]') as HTMLElement;
+            if (verificationTab) {
+              verificationTab.click();
+              setTimeout(() => {
+                verificationTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 100);
+            }
             markStepCompleted('verification_submission');
           }
         },
@@ -104,7 +116,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Create Service',
           completed: false,
           actionHandler: () => {
-            window.location.hash = 'services';
+            const servicesTab = document.querySelector('[value="services"]') as HTMLElement;
+            if (servicesTab) {
+              servicesTab.click();
+              setTimeout(() => {
+                servicesTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 100);
+            }
             markStepCompleted('first_service_creation');
           }
         }
@@ -120,7 +138,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Complete Profile',
           completed: false,
           actionHandler: () => {
-            window.location.hash = 'profile';
+            const profileTab = document.querySelector('[value="profile"]') as HTMLElement;
+            if (profileTab) {
+              profileTab.click();
+              setTimeout(() => {
+                profileTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 100);
+            }
             markStepCompleted('profile_completion');
           }
         },
@@ -196,19 +220,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
   const currentStepData = steps[currentStep];
 
   return (
-    <div className={`fixed inset-0 z-50 pointer-events-none transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`fixed inset-0 z-50 pointer-events-none transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
       {/* Backdrop */}
       <div 
-        className={`absolute inset-0 bg-black/10 backdrop-blur-sm transition-opacity duration-300 pointer-events-auto ${
-          isVisible ? 'opacity-100' : 'opacity-0'
+        className={`absolute inset-0 bg-black/10 backdrop-blur-sm transition-opacity duration-300 ${
+          isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
       />
       
       {/* Wizard Panel - Compact callout style */}
       <div 
-        className={`absolute right-4 top-24 bottom-4 w-80 bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl transform transition-all duration-500 ease-out pointer-events-auto ${
-          isVisible ? 'translate-x-0 scale-100' : 'translate-x-full scale-95'
+        className={`absolute right-4 top-24 bottom-4 w-80 bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl transform transition-all duration-500 ease-out ${
+          isVisible ? 'translate-x-0 scale-100 opacity-100 pointer-events-auto' : 'translate-x-full scale-95 opacity-0 pointer-events-none'
         }`}
       >
         {/* Header */}

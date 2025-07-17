@@ -183,7 +183,7 @@ export const NewDashboard = () => {
           <Button
             onClick={showWizardManually}
             className={`rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90 transition-all ${
-              onboardingProgress < 100 ? 'animate-pulse ring-4 ring-primary/30' : ''
+              onboardingProgress < 100 ? 'animate-pulse ring-8 ring-primary/40 ring-offset-4 ring-offset-white shadow-2xl' : ''
             }`}
             title="Show onboarding guide"
           >
