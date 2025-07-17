@@ -48,12 +48,31 @@ export const useOnboarding = () => {
       // Auto-complete steps based on current conditions
       await autoCompleteSteps(completed);
 
-      setCompletedSteps(completed);
+      // Refresh completed steps after auto-completion
+      const { data: updatedOnboardingData } = await supabase
+        .from('user_onboarding')
+        .select('step_name, completed')
+        .eq('user_id', user.id)
+        .eq('completed', true);
 
-      // Determine if wizard should be shown
-      const shouldShowWizard = await shouldShowOnboardingWizard(completed);
-      console.log('Should show wizard:', shouldShowWizard, 'Completed steps:', Array.from(completed));
-      setShowWizard(shouldShowWizard);
+      if (updatedOnboardingData) {
+        const updatedCompleted = new Set(
+          updatedOnboardingData.map(item => item.step_name)
+        );
+        setCompletedSteps(updatedCompleted);
+        
+        // Determine if wizard should be shown with updated completion status
+        const shouldShowWizard = await shouldShowOnboardingWizard(updatedCompleted);
+        console.log('Should show wizard:', shouldShowWizard, 'Completed steps:', Array.from(updatedCompleted));
+        setShowWizard(shouldShowWizard);
+      } else {
+        setCompletedSteps(completed);
+        
+        // Determine if wizard should be shown
+        const shouldShowWizard = await shouldShowOnboardingWizard(completed);
+        console.log('Should show wizard:', shouldShowWizard, 'Completed steps:', Array.from(completed));
+        setShowWizard(shouldShowWizard);
+      }
     } catch (error) {
       console.error('Error checking onboarding status:', error);
     }
@@ -118,6 +137,11 @@ export const useOnboarding = () => {
       } catch (error) {
         console.error(`Error auto-completing step ${stepName}:`, error);
       }
+    }
+
+    // Update local state with the new completed steps
+    if (stepsToComplete.length > 0) {
+      setCompletedSteps(new Set(currentCompleted));
     }
   };
 
