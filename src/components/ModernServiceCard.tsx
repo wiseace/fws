@@ -66,8 +66,8 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         </div>
 
         {/* Top Section - Service Name */}
-        <div className="relative z-10 p-6 text-center">
-          <h2 className="text-2xl font-light text-white mb-2 drop-shadow-lg">
+        <div className="relative z-10 p-4 text-center">
+          <h2 className="text-lg font-bold text-white mb-2 drop-shadow-lg leading-tight">
             {service.service_name}
           </h2>
           <div className="flex items-center justify-center gap-2">
@@ -80,7 +80,7 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
 
         {/* Verification Badge */}
         {service.user?.is_verified && (
-          <div className="absolute top-4 left-4 z-30">
+          <div className="absolute top-3 left-3 z-30">
             <div className="bg-secondary rounded-full p-2 shadow-xl ring-2 ring-white/20">
               <Verified className="w-4 h-4 text-white" />
             </div>
@@ -90,9 +90,9 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         {/* Profile Icon */}
         <button
           onClick={handleViewProfile}
-          className="absolute top-4 right-4 z-20 bg-white/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 transition-all duration-200 group/profile"
+          className="absolute top-3 right-3 z-20 bg-secondary rounded-full p-2 shadow-xl ring-2 ring-white/20 hover:bg-secondary/90 transition-all duration-200 group/profile"
         >
-          <User className="w-5 h-5 text-white group-hover/profile:scale-110 transition-transform" />
+          <User className="w-4 h-4 text-white group-hover/profile:scale-110 transition-transform" />
         </button>
 
         {/* Bottom Section */}

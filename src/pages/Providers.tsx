@@ -67,26 +67,33 @@ const Providers = () => {
       .order('name');
 
     if (providersData) {
-      // For each provider, get their primary service for display purposes
+      // For each provider, create a representative service object using provider data
       const providersWithServices = await Promise.all(
         providersData.map(async (provider) => {
+          // Get all services from this provider to determine their primary category
           const { data: userServices } = await supabase
             .from('services')
-            .select('*')
+            .select('category, service_name')
             .eq('user_id', provider.id)
-            .eq('is_active', true)
-            .order('created_at', { ascending: false })
-            .limit(1);
+            .eq('is_active', true);
 
-          // Create a representative service object for display
-          const representativeService = userServices?.[0] || {
-            id: `temp-${provider.id}`,
+          // Determine the most common category or use the first one
+          const categories = userServices?.map(s => s.category) || [];
+          const primaryCategory = categories.length > 0 
+            ? categories.reduce((a, b, i, arr) => 
+                arr.filter(v => v === a).length >= arr.filter(v => v === b).length ? a : b
+              ) 
+            : 'Professional Services';
+
+          // Create a representative service object that represents the provider
+          const representativeService = {
+            id: `provider-${provider.id}`,
             user_id: provider.id,
-            service_name: 'Service Provider',
-            category: 'General',
-            description: 'Professional service provider',
+            service_name: provider.name || 'Service Provider',
+            category: primaryCategory,
+            description: `Professional ${primaryCategory.toLowerCase()} provider`,
             contact_info: {},
-            location: null,
+            location: null, // Will use provider's location if available
             image_url: null,
             is_active: true,
             created_at: provider.created_at,
