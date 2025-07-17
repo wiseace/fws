@@ -45,6 +45,9 @@ export const useOnboarding = () => {
           .map(item => item.step_name) || []
       );
 
+      // Auto-complete steps based on current conditions
+      await autoCompleteSteps(completed);
+
       setCompletedSteps(completed);
 
       // Determine if wizard should be shown
@@ -53,6 +56,68 @@ export const useOnboarding = () => {
       setShowWizard(shouldShowWizard);
     } catch (error) {
       console.error('Error checking onboarding status:', error);
+    }
+  };
+
+  const autoCompleteSteps = async (currentCompleted: Set<string>) => {
+    if (!user || !profile) return;
+
+    const stepsToComplete: string[] = [];
+
+    // Check profile completion - if name, phone, and email are present
+    if (!currentCompleted.has('profile_completion')) {
+      if (profile.name && profile.phone && profile.email) {
+        stepsToComplete.push('profile_completion');
+      }
+    }
+
+    // Check verification submission - if verification request exists
+    if (!currentCompleted.has('verification_submission') && profile.user_type === 'provider') {
+      const { data: verificationData } = await supabase
+        .from('verification_requests')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1);
+      
+      if (verificationData && verificationData.length > 0) {
+        stepsToComplete.push('verification_submission');
+      }
+    }
+
+    // Check first service creation - if user has at least one service
+    if (!currentCompleted.has('first_service_creation') && profile.user_type === 'provider') {
+      const { data: servicesData } = await supabase
+        .from('services')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1);
+      
+      if (servicesData && servicesData.length > 0) {
+        stepsToComplete.push('first_service_creation');
+      }
+    }
+
+    // Check subscription setup - if user has a non-free subscription
+    if (!currentCompleted.has('subscription_setup')) {
+      if (profile.subscription_plan && profile.subscription_plan !== 'free') {
+        stepsToComplete.push('subscription_setup');
+      }
+    }
+
+    // Check browse services for seekers - mark as complete after they visit browse page
+    if (!currentCompleted.has('browse_services') && profile.user_type === 'seeker') {
+      // This will be handled by the browse page itself
+    }
+
+    // Complete the steps in the database
+    for (const stepName of stepsToComplete) {
+      try {
+        await supabase.rpc('complete_onboarding_step', { step_name: stepName });
+        currentCompleted.add(stepName);
+        console.log(`Auto-completed step: ${stepName}`);
+      } catch (error) {
+        console.error(`Error auto-completing step ${stepName}:`, error);
+      }
     }
   };
 
@@ -127,12 +192,25 @@ export const useOnboarding = () => {
     return (completedSteps.size / requiredSteps.length) * 100;
   };
 
+  const completeStep = async (stepName: string) => {
+    if (!user) return;
+    
+    try {
+      await supabase.rpc('complete_onboarding_step', { step_name: stepName });
+      setCompletedSteps(prev => new Set(prev).add(stepName));
+      console.log(`Manually completed step: ${stepName}`);
+    } catch (error) {
+      console.error(`Error completing step ${stepName}:`, error);
+    }
+  };
+
   return {
     showWizard,
     completedSteps,
     dismissWizard,
     showWizardManually,
     refreshOnboardingStatus: checkOnboardingStatus,
-    onboardingProgress: getOnboardingProgress()
+    onboardingProgress: getOnboardingProgress(),
+    completeStep
   };
 };

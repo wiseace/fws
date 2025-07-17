@@ -33,7 +33,7 @@ import {
 export const NewDashboard = () => {
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
-  const { showWizard, dismissWizard, showWizardManually, onboardingProgress } = useOnboarding();
+  const { showWizard, dismissWizard, showWizardManually, onboardingProgress, refreshOnboardingStatus } = useOnboarding();
   const [services, setServices] = useState<Service[]>([]);
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +43,13 @@ export const NewDashboard = () => {
       fetchDashboardData();
     }
   }, [user, profile]);
+
+  // Refresh onboarding status when services change
+  useEffect(() => {
+    if (services.length > 0) {
+      refreshOnboardingStatus();
+    }
+  }, [services, refreshOnboardingStatus]);
 
   const fetchDashboardData = async () => {
     try {

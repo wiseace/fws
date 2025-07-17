@@ -88,10 +88,21 @@ export const MyServicesTab = () => {
     setIsServiceModalOpen(true);
   };
 
-  const handleServiceCreated = () => {
-    fetchServices();
+  const handleServiceCreated = async () => {
+    await fetchServices();
     setIsServiceModalOpen(false);
     setEditingService(null);
+    
+    // Mark first service creation as complete if this is the first service
+    if (services.length === 0) {
+      try {
+        await supabase.rpc('complete_onboarding_step', {
+          step_name: 'first_service_creation'
+        });
+      } catch (error) {
+        console.error('Error completing first service step:', error);
+      }
+    }
   };
 
   const handleSearch = (query: string) => {

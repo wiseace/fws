@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { AutoCompleteOnboarding } from '@/components/dashboard/AutoCompleteOnboarding';
 import { supabase } from '@/integrations/supabase/client';
 import { Service } from '@/types/database';
 import { ModernServiceCard } from '@/components/ModernServiceCard';
@@ -132,6 +133,7 @@ const Browse = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <AutoCompleteOnboarding />
       <Header editMode={false} onToggleEdit={() => {}} />
       
       {/* Hero Section with Enhanced Search */}
