@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { OnboardingWizard } from '@/components/dashboard/OnboardingWizard';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -24,12 +26,14 @@ import {
   Settings,
   CreditCard,
   Mail,
-  Phone
+  Phone,
+  HelpCircle
 } from 'lucide-react';
 
 export const NewDashboard = () => {
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
+  const { showWizard, dismissWizard, showWizardManually } = useOnboarding();
   const [services, setServices] = useState<Service[]>([]);
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,6 +178,23 @@ export const NewDashboard = () => {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-yellow-50">
+        {/* Help Button for Manual Wizard Access */}
+        <div className="fixed bottom-6 right-6 z-40">
+          <Button
+            onClick={showWizardManually}
+            className="rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90"
+            title="Show onboarding guide"
+          >
+            <HelpCircle className="h-6 w-6" />
+          </Button>
+        </div>
+
+        {/* Onboarding Wizard */}
+        <OnboardingWizard
+          isVisible={showWizard}
+          onClose={dismissWizard}
+        />
+
         <Header editMode={false} onToggleEdit={() => {}} />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">

@@ -240,19 +240,31 @@ export const RichDashboard = () => {
     switch (stepName) {
       case 'profile_completion':
         setActiveTab('profile');
+        scrollToSection('profile-tab');
         break;
       case 'verification_submission':
         setActiveTab('verification');
+        scrollToSection('verification-tab');
         break;
       case 'first_service_creation':
         handleServiceModalOpen();
         break;
       case 'profile_optimization':
         setActiveTab('profile');
+        scrollToSection('profile-tab');
         break;
       default:
         break;
     }
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100); // Small delay to ensure tab content is rendered
   };
 
   const getStepIcon = (stepName: string, completed: boolean) => {
@@ -462,7 +474,10 @@ export const RichDashboard = () => {
                        <Button 
                          variant="outline" 
                          className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                         onClick={() => setActiveTab('profile')}
+                         onClick={() => {
+                           setActiveTab('profile');
+                           scrollToSection('profile-tab');
+                         }}
                        >
                          <Settings className="h-6 w-6" />
                          EDIT PROFILE
@@ -470,19 +485,22 @@ export const RichDashboard = () => {
                        <Button 
                          variant="outline" 
                          className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                         onClick={() => setActiveTab('requests')}
+                         onClick={() => {
+                           setActiveTab('requests');
+                           scrollToSection('requests-tab');
+                         }}
                        >
                          <Eye className="h-6 w-6" />
                          VIEW REQUESTS
                        </Button>
-                       <Button 
-                         variant="outline" 
-                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                         onClick={() => window.location.href = '/browse'}
-                       >
-                         <Search className="h-6 w-6" />
-                         BROWSE
-                       </Button>
+                        <Button 
+                          variant="outline" 
+                          className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                          onClick={() => window.location.href = '/browse'}
+                        >
+                          <Search className="h-6 w-6" />
+                          BROWSE
+                        </Button>
                     </>
                   ) : (
                     <>
@@ -592,13 +610,13 @@ export const RichDashboard = () => {
                          </div>
                        </div>
 
-                      {/* Tab Content */}
-                      <div className="min-h-[300px]">
-                        {activeTab === 'services' && <div className="animate-fade-in"><MyServicesTab /></div>}
-                        {activeTab === 'requests' && <div className="animate-fade-in"><ClientRequestsTab /></div>}
-                        {activeTab === 'verification' && <div className="animate-fade-in"><VerificationTab /></div>}
-                        {activeTab === 'profile' && <div className="animate-fade-in"><ProfileTab /></div>}
-                      </div>
+                       {/* Tab Content */}
+                       <div className="min-h-[300px]">
+                         {activeTab === 'services' && <div id="services-tab" className="animate-fade-in"><MyServicesTab /></div>}
+                         {activeTab === 'requests' && <div id="requests-tab" className="animate-fade-in"><ClientRequestsTab /></div>}
+                         {activeTab === 'verification' && <div id="verification-tab" className="animate-fade-in"><VerificationTab /></div>}
+                         {activeTab === 'profile' && <div id="profile-tab" className="animate-fade-in"><ProfileTab /></div>}
+                       </div>
 
                   </div>
                 </CardContent>
