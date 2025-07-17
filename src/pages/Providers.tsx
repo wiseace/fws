@@ -36,6 +36,8 @@ const Providers = () => {
     setLoading(true);
     
     try {
+      console.log('Fetching providers for non-logged-in users...');
+      
       // Fetch all verified providers with their services
       const { data: providersData, error } = await supabase
         .from('users')
