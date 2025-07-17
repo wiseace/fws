@@ -20,6 +20,9 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
   const [showContactModal, setShowContactModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
+  // Get the user data from either user or users property
+  const provider = service.user || service.users;
+
   // Service-specific African professional images
   const getServiceImage = (category: string) => {
     const serviceImages: { [key: string]: string } = {
@@ -103,7 +106,7 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         </div>
 
         {/* Verification Badge */}
-        {service.user?.is_verified && (
+        {provider?.is_verified && (
           <div className="absolute top-3 left-3 z-30">
             <div className="bg-blue-600 rounded-full p-2 shadow-xl ring-2 ring-white/20">
               <Verified className="w-4 h-4 text-white" />
@@ -124,9 +127,9 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
           {/* User Info */}
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden">
-              {service.user?.profile_image_url ? (
+              {provider?.profile_image_url ? (
                 <img 
-                  src={service.user.profile_image_url} 
+                  src={provider.profile_image_url} 
                   alt="Provider" 
                   className="w-full h-full object-cover"
                 />
@@ -136,7 +139,7 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
             </div>
             <div>
               <p className="text-white font-medium">
-                {service.user?.name || 'Provider'}
+                {provider?.name || 'Provider'}
               </p>
               <p className="text-white/70 text-sm">
                 {service.location && !service.location.match(/^\+?\d[\d\s\-\(\)]*$/) ? service.location : 'Location available'}

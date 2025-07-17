@@ -31,13 +31,14 @@ export interface Service {
   contact_info: {
     phone?: string;
     email?: string;
-  };
+  } | any; // Allow Json type from database
   location?: string;
   image_url?: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
   user?: User;
+  users?: User; // Allow for the joined user data from query
 }
 
 export interface Category {

@@ -8,6 +8,7 @@ import { CategoryFilter } from './CategoryFilter';
 import { ModernServiceCard } from './ModernServiceCard';
 import { EditableElement } from './EditableElement';
 import { Button } from '@/components/ui/button';
+import { Service } from '@/types/database';
 
 interface DirectoryGridProps {
   editMode: boolean;
@@ -43,7 +44,17 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
       }
       
       console.log('Services fetched:', data);
-      return data || [];
+      
+      // Transform the data to match our Service interface
+      const transformedServices: Service[] = (data || []).map(service => ({
+        ...service,
+        user: service.users, // Map the joined user data to the user property
+        contact_info: typeof service.contact_info === 'object' && service.contact_info !== null 
+          ? service.contact_info as { phone?: string; email?: string; }
+          : { phone: undefined, email: undefined }
+      }));
+      
+      return transformedServices;
     }
   });
 
@@ -133,7 +144,6 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
                   <ModernServiceCard
                     key={service.id}
                     service={service}
-                    provider={service.users}
                   />
                 ))}
               </div>
