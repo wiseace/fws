@@ -104,7 +104,7 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
             </div>
             <div>
               <p className="text-white font-medium">
-                @{service.user?.name?.toLowerCase().replace(/\s+/g, '') || 'provider'}
+                {service.user?.name || 'Provider'}
               </p>
               <p className="text-white/70 text-sm">
                 {service.location || 'Location available'}

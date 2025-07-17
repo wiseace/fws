@@ -53,14 +53,12 @@ const Providers = () => {
   const fetchServicesAndCategories = async () => {
     setLoading(true);
     
-    // Fetch unique providers instead of individual services
-    const { data: servicesData } = await supabase
-      .from('services')
-      .select(`
-        *,
-        user:users(*)
-      `)
-      .eq('is_active', true)
+    // Fetch all verified providers (users) instead of services
+    const { data: providersData } = await supabase
+      .from('users')
+      .select('*')
+      .eq('user_type', 'provider')
+      .eq('is_verified', true)
       .order('created_at', { ascending: false });
 
     const { data: categoriesData } = await supabase
@@ -68,25 +66,50 @@ const Providers = () => {
       .select('name')
       .order('name');
 
-    if (servicesData) {
-      const typedServices = servicesData.map(service => ({
-        ...service,
-        contact_info: service.contact_info as { phone?: string; email?: string; }
-      })) as Service[];
+    if (providersData) {
+      // For each provider, get their primary service for display purposes
+      const providersWithServices = await Promise.all(
+        providersData.map(async (provider) => {
+          const { data: userServices } = await supabase
+            .from('services')
+            .select('*')
+            .eq('user_id', provider.id)
+            .eq('is_active', true)
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+          // Create a representative service object for display
+          const representativeService = userServices?.[0] || {
+            id: `temp-${provider.id}`,
+            user_id: provider.id,
+            service_name: 'Service Provider',
+            category: 'General',
+            description: 'Professional service provider',
+            contact_info: {},
+            location: null,
+            image_url: null,
+            is_active: true,
+            created_at: provider.created_at,
+            updated_at: provider.updated_at,
+          };
+
+          return {
+            ...representativeService,
+            user: provider,
+            contact_info: representativeService.contact_info as { phone?: string; email?: string; }
+          } as Service;
+        })
+      );
       
-      // Group services by user to show unique providers only
-      const uniqueProviders = typedServices.reduce((acc, service) => {
-        const existingProvider = acc.find(s => s.user_id === service.user_id);
-        if (!existingProvider) {
-          acc.push(service);
-        }
-        return acc;
-      }, [] as Service[]);
+      setServices(providersWithServices);
       
-      setServices(uniqueProviders);
+      // Get all service categories for filtering
+      const { data: allServicesData } = await supabase
+        .from('services')
+        .select('category')
+        .eq('is_active', true);
       
-      // Extract unique categories from services
-      const serviceCategories = [...new Set(servicesData.map(s => s.category))];
+      const serviceCategories = [...new Set(allServicesData?.map(s => s.category) || [])];
       const dbCategories = categoriesData?.map(c => c.name) || [];
       const allCategories = [...new Set([...serviceCategories, ...dbCategories])];
       setCategories(allCategories);
@@ -96,13 +119,21 @@ const Providers = () => {
   };
 
   const generateSuggestions = () => {
+    const providerSuggestions = services
+      .filter(service => 
+        service.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .map(service => service.user?.name)
+      .filter(Boolean)
+      .slice(0, 3);
+
     const serviceSuggestions = services
       .filter(service => 
         service.service_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        service.category?.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .map(service => service.service_name)
-      .slice(0, 5);
+      .slice(0, 3);
 
     const locationSuggestions = services
       .filter(service => 
@@ -110,21 +141,22 @@ const Providers = () => {
       )
       .map(service => service.location)
       .filter(Boolean)
-      .slice(0, 3);
+      .slice(0, 2);
 
-    setSuggestions([...new Set([...serviceSuggestions, ...locationSuggestions])]);
+    setSuggestions([...new Set([...providerSuggestions, ...serviceSuggestions, ...locationSuggestions])]);
     setShowSuggestions(true);
   };
 
   const filterAndSortServices = () => {
     let filtered = [...services];
 
-    // Search filter
+    // Search filter - now searches across provider names and their services
     if (searchTerm) {
       filtered = filtered.filter(service =>
+        service.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         service.service_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         service.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        service.category?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -149,7 +181,7 @@ const Providers = () => {
         filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
         break;
       case 'name':
-        filtered.sort((a, b) => a.service_name.localeCompare(b.service_name));
+        filtered.sort((a, b) => (a.user?.name || '').localeCompare(b.user?.name || ''));
         break;
       case 'verified':
         filtered.sort((a, b) => (b.user?.is_verified ? 1 : 0) - (a.user?.is_verified ? 1 : 0));
