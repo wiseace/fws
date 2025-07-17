@@ -176,27 +176,31 @@ All colors MUST be HSL.
   }
 }
 
-/* Ken Burns animation for hero background images */
-@keyframes ken-burns {
+/* Marquee animation for services scroll */
+@keyframes marquee {
   0% {
-    transform: scale(1) translateX(0) translateY(0);
-  }
-  25% {
-    transform: scale(1.1) translateX(-2%) translateY(-1%);
-  }
-  50% {
-    transform: scale(1.05) translateX(1%) translateY(-2%);
-  }
-  75% {
-    transform: scale(1.08) translateX(-1%) translateY(1%);
+    transform: translateX(0%);
   }
   100% {
-    transform: scale(1) translateX(0) translateY(0);
+    transform: translateX(-100%);
   }
 }
 
-.animate-ken-burns {
-  animation: ken-burns ease-in-out infinite;
+@keyframes marquee2 {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee2 {
+  animation: marquee2 25s linear infinite;
 }
 
 /* Smooth transitions for opacity changes */
