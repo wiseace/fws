@@ -181,7 +181,7 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
         {/* Search Button */}
         <Button 
           onClick={handleSearch}
-          className="h-12 bg-white hover:bg-gray-50 text-primary border border-gray-200 font-semibold rounded-xl transition-colors"
+          className="h-12 bg-white hover:bg-gray-50 text-primary border-4 border-primary font-semibold rounded-xl transition-all duration-200 hover:shadow-md"
         >
           SEARCH
         </Button>

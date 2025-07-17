@@ -136,7 +136,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
         </div>
 
         {/* Featured Services Section */}
-        <div className="mb-12">
+        <div className="mb-12" data-section="featured-services">
           <EditableElement
             editMode={editMode}
             type="text"

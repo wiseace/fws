@@ -62,22 +62,32 @@ export const CategoryFilter = ({ selectedCategory, onCategoryChange, categories 
   const defaultCategories = [
     'All', 'Professional Services', 'Creative Services', 'Plumbing', 
     'Beauty & Personal Care', 'Automotive', 'Beauty', 'Carpentry',
-    'Catering', 'Cleaning', 'Education', 'Electrical', 
-    'Events & Entertainment', 'Gardening', 'Health & Wellness', 
-    'Home Services', 'Painting', 'Photography', 'Pottery', 
-    'Tailoring', 'Tech Repair', 'Technology', 'Transportation', 'Tutoring'
+    'Catering', 'Cleaning', 'Education', 'Electrical'
   ];
   
   // Ensure we only work with strings and filter out any invalid entries
   const validCategories = categories?.filter(cat => typeof cat === 'string' && cat.trim() !== '') || [];
-  const availableCategories = validCategories.length > 0 ? ['All', ...validCategories] : defaultCategories;
+  // Limit to 12 categories total (including "All")
+  const limitedCategories = validCategories.length > 0 ? 
+    ['All', ...validCategories.slice(0, 11)] : 
+    defaultCategories.slice(0, 12);
   
-  console.log('CategoryFilter - availableCategories:', availableCategories);
-  console.log('CategoryFilter - categories prop:', categories);
+  const handleCategoryClick = (categoryName: string) => {
+    onCategoryChange(categoryName);
+    
+    // Scroll to featured services section
+    const featuredSection = document.querySelector('[data-section="featured-services"]');
+    if (featuredSection) {
+      featuredSection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  };
   
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 max-w-6xl mx-auto">
-      {availableCategories.map((category) => {
+      {limitedCategories.map((category) => {
         // Extra safety check to ensure category is a string
         const categoryName = typeof category === 'string' ? category : String(category);
         const IconComponent = getCategoryIcon(categoryName);
@@ -86,7 +96,7 @@ export const CategoryFilter = ({ selectedCategory, onCategoryChange, categories 
         return (
           <button
             key={categoryName}
-            onClick={() => onCategoryChange(categoryName)}
+            onClick={() => handleCategoryClick(categoryName)}
             className={`group flex flex-col items-center p-6 rounded-2xl transition-all duration-200 hover:scale-105 ${
               isSelected
                 ? 'bg-white shadow-lg ring-2 ring-primary'

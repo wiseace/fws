@@ -126,22 +126,25 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
           {/* User Info */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden ring-2 ring-white/30">
               {provider?.profile_image_url ? (
                 <img 
                   src={provider.profile_image_url} 
-                  alt="Provider" 
-                  className="w-full h-full object-cover"
+                  alt={provider.name || 'Provider'} 
+                  className="w-full h-full object-cover rounded-full"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
                 />
-              ) : (
-                <User className="w-6 h-6 text-white" />
-              )}
+              ) : null}
+              <User className={`w-6 h-6 text-white ${provider?.profile_image_url ? 'hidden' : ''}`} />
             </div>
             <div>
-              <p className="text-white font-medium">
+              <p className="text-white font-medium text-sm">
                 {provider?.name || 'Provider'}
               </p>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/70 text-xs">
                 {service.location && !service.location.match(/^\+?\d[\d\s\-\(\)]*$/) ? service.location : 'Location available'}
               </p>
             </div>
