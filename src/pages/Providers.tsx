@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { ModernServiceCard } from '@/components/ModernServiceCard';
+import { ModernProviderCard } from '@/components/ModernProviderCard';
 import { Button } from '@/components/ui/button';
 import { Loader2, Search } from 'lucide-react';
 import { Header } from '@/components/Header';
@@ -149,15 +149,6 @@ const Providers = () => {
   const endIndex = startIndex + PROVIDERS_PER_PAGE;
   const paginatedProviders = providers.slice(startIndex, endIndex);
 
-  // Convert paginated providers to services for ModernServiceCard (show first service of each provider)
-  const displayServices = hasSearched 
-    ? searchResults
-    : paginatedProviders.map(provider => ({
-        ...provider.services[0], // Show the first service of each provider
-        user_id: provider.id,
-        user: provider
-      }));
-
   // Reset to page 1 when search changes
   useEffect(() => {
     setCurrentPage(1);
@@ -215,12 +206,12 @@ const Providers = () => {
                   <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-4" />
                   <p className="text-gray-600">Loading providers...</p>
                 </div>
-              ) : displayServices.length > 0 ? (
+              ) : paginatedProviders.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
-                    {displayServices.map((service) => (
-                      <div key={`${service.user_id}-${service.id}`} className="animate-fade-in-up">
-                        <ModernServiceCard service={service} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                    {paginatedProviders.map((provider) => (
+                      <div key={provider.id} className="animate-fade-in-up">
+                        <ModernProviderCard provider={provider} />
                       </div>
                     ))}
                   </div>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -149,11 +150,13 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
     }, 300);
   };
 
-  // Handle service suggestion selection - now triggers search
+  // Handle service suggestion selection - now triggers search immediately
   const handleServiceSuggestionClick = (suggestion: ServiceSuggestion) => {
     setSearchTerm(suggestion.service_name);
     setServiceSuggestions([]);
     setShowServiceSuggestions(false);
+    
+    console.log('Service suggestion clicked:', suggestion.service_name);
     
     // Automatically trigger search for this service
     const filters = {
@@ -165,6 +168,7 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
       availabilityOnly: availabilityOnly || undefined
     };
     
+    console.log('Triggering search with filters:', filters);
     onSearch(filters);
   };
 
@@ -234,11 +238,15 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
       availabilityOnly: availabilityOnly || undefined
     };
     
+    console.log('Manual search triggered with filters:', filters);
     onSearch(filters);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      // Hide suggestions
+      setShowServiceSuggestions(false);
+      setShowLocationSuggestions(false);
       handleSearch();
     }
   };
