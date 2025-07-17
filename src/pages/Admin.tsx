@@ -471,89 +471,90 @@ const Admin = () => {
               </div>
 
               <TabsContent value="verifications" className="space-y-6 animate-fade-in">
-                <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-3xl p-8 shadow-xl border border-amber-200">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                      <div className="p-4 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg">
-                        <Shield className="h-8 w-8 text-white" />
+                <div className="bg-card rounded-2xl p-6 border border-border">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary rounded-xl">
+                        <Shield className="h-5 w-5 text-primary-foreground" />
                       </div>
                       <div>
-                        <h2 className="text-3xl font-bold text-gray-900">Verification Requests</h2>
-                        <p className="text-gray-600 mt-1">Review and approve user verification submissions</p>
+                        <h2 className="text-xl font-semibold text-foreground">Verification Requests</h2>
+                        <p className="text-sm text-muted-foreground">Review and approve user verification submissions</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="px-4 py-2 bg-white rounded-xl shadow-md border border-amber-200">
-                        <span className="text-sm font-semibold text-gray-700">{verificationRequests.length} pending</span>
+                      <div className="px-3 py-1.5 bg-muted rounded-lg">
+                        <span className="text-sm font-medium text-foreground">{verificationRequests.length} pending</span>
                       </div>
                       <Button 
                         onClick={fetchVerificationRequests}
-                        className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-6"
+                        variant="outline"
+                        size="sm"
+                        className="rounded-lg"
                       >
                         🔄 Refresh
                       </Button>
                     </div>
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     {verificationRequests.length === 0 ? (
-                      <div className="text-center py-20 bg-white rounded-2xl shadow-lg border border-amber-100">
-                        <div className="p-6 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full w-fit mx-auto mb-6">
-                          <Shield className="h-16 w-16 text-amber-600" />
+                      <div className="text-center py-16 bg-muted/30 rounded-xl border border-border">
+                        <div className="p-4 bg-muted rounded-xl w-fit mx-auto mb-4">
+                          <Shield className="h-12 w-12 text-muted-foreground" />
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-3">No Verification Requests</h3>
-                        <p className="text-gray-600 max-w-md mx-auto mb-8">
+                        <h3 className="text-lg font-semibold text-foreground mb-2">No Verification Requests</h3>
+                        <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
                           Verification requests will appear here when users submit their documents for review.
                         </p>
                         <Button 
                           onClick={fetchVerificationRequests}
-                          className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-8 py-3"
+                          variant="outline"
+                          className="rounded-lg"
                         >
                           🔄 Check for New Requests
                         </Button>
                       </div>
                     ) : (
-                      <div className="grid gap-6">
+                      <div className="grid gap-4">
                         {verificationRequests.map((request) => (
-                          <div key={request.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-amber-100 overflow-hidden group">
-                            <div className="p-6">
-                              <div className="flex flex-col lg:flex-row gap-6">
-                                <div className="flex-1 space-y-6">
+                          <div key={request.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
+                            <div className="p-4">
+                              <div className="flex flex-col lg:flex-row gap-4">
+                                <div className="flex-1 space-y-4">
                                   <div className="flex items-start justify-between">
-                                    <div className="flex items-center gap-4">
-                                      <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center">
-                                        <User className="h-8 w-8 text-amber-600" />
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+                                        <User className="h-6 w-6 text-muted-foreground" />
                                       </div>
                                       <div>
-                                        <h3 className="text-xl font-bold text-gray-900">{request.full_name}</h3>
-                                        <p className="text-gray-600">{(request as any).user?.email}</p>
+                                        <h3 className="text-base font-semibold text-foreground">{request.full_name}</h3>
+                                        <p className="text-sm text-muted-foreground">{(request as any).user?.email}</p>
                                       </div>
                                     </div>
-                                    <div className={`px-4 py-2 rounded-xl font-semibold text-sm shadow-md ${
-                                      request.status === 'pending' 
-                                        ? 'bg-gradient-to-r from-yellow-100 to-amber-100 text-amber-800 border border-amber-200' 
-                                        : request.status === 'verified' 
-                                        ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200' 
-                                        : 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border border-red-200'
-                                    }`}>
+                                    <Badge variant={
+                                      request.status === 'pending' ? 'secondary' 
+                                      : request.status === 'verified' ? 'default'
+                                      : 'destructive'
+                                    } className="rounded-lg">
                                       {request.status?.toUpperCase()}
-                                    </div>
+                                    </Badge>
                                   </div>
                                   
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-2xl">📱</span>
-                                        <span className="text-sm font-semibold text-gray-700">Phone Number</span>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-lg">📱</span>
+                                        <span className="text-xs font-medium text-muted-foreground">Phone Number</span>
                                       </div>
-                                      <p className="text-gray-900 font-medium">{request.phone_number}</p>
+                                      <p className="text-sm font-medium text-foreground">{request.phone_number}</p>
                                     </div>
-                                    <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-2xl">📅</span>
-                                        <span className="text-sm font-semibold text-gray-700">Submitted Date</span>
+                                    <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-lg">📅</span>
+                                        <span className="text-xs font-medium text-muted-foreground">Submitted Date</span>
                                       </div>
-                                      <p className="text-gray-900 font-medium">
+                                      <p className="text-sm font-medium text-foreground">
                                         {request.submitted_at ? new Date(request.submitted_at).toLocaleDateString('en-US', {
                                           year: 'numeric',
                                           month: 'long',
@@ -564,32 +565,33 @@ const Admin = () => {
                                   </div>
                                   
                                   {request.additional_info && (
-                                    <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-                                      <div className="flex items-center gap-2 mb-3">
-                                        <span className="text-2xl">💬</span>
-                                        <span className="text-sm font-semibold text-blue-800">Additional Information</span>
+                                    <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-lg">💬</span>
+                                        <span className="text-xs font-medium text-muted-foreground">Additional Information</span>
                                       </div>
-                                      <p className="text-gray-800 leading-relaxed">{request.additional_info}</p>
+                                      <p className="text-sm text-foreground leading-relaxed">{request.additional_info}</p>
                                     </div>
                                   )}
                                 </div>
                                 
                                 {request.status === 'pending' && (
-                                  <div className="flex flex-col gap-3 lg:w-48">
+                                  <div className="flex flex-col gap-2 lg:w-40">
                                     <Button
-                                      size="lg"
+                                      size="sm"
                                       onClick={() => handleVerificationAction(request.id, 'verified')}
-                                      className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl font-semibold"
+                                      className="bg-green-600 hover:bg-green-700 text-white rounded-lg"
                                     >
-                                      <CheckCircle className="w-5 h-5 mr-2" />
+                                      <CheckCircle className="w-4 h-4 mr-2" />
                                       Approve
                                     </Button>
                                     <Button
-                                      size="lg"
+                                      size="sm"
+                                      variant="destructive"
                                       onClick={() => handleVerificationAction(request.id, 'rejected')}
-                                      className="bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl font-semibold"
+                                      className="rounded-lg"
                                     >
-                                      <XCircle className="w-5 h-5 mr-2" />
+                                      <XCircle className="w-4 h-4 mr-2" />
                                       Reject
                                     </Button>
                                   </div>
