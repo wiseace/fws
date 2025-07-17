@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { EditableElement } from './EditableElement';
 import { SearchWithGeolocation } from './SearchWithGeolocation';
@@ -26,11 +27,11 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
   return (
     <>
       <section className="relative pt-32 pb-16 overflow-hidden">
-        {/* Static Background Image */}
+        {/* Updated Background Image with African professionals */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url(/lovable-uploads/b5290578-d4c5-4295-98c6-10e9ff77ef30.png)`
+            backgroundImage: `url(https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1920&h=1080&fit=crop&q=80)`
           }}
         />
         

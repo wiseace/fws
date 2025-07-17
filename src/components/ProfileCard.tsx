@@ -22,13 +22,16 @@ interface ProfileCardProps {
 }
 
 export const ProfileCard = ({ profile, editMode }: ProfileCardProps) => {
+  // Updated with African professional image
+  const profileImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&q=80";
+
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
       <CardContent className="p-6">
         {/* Profile Image and Verification */}
         <div className="relative mb-4">
           <img
-            src={profile.image}
+            src={profileImage}
             alt={profile.name}
             className="w-20 h-20 rounded-full object-cover mx-auto border-4 border-white shadow-md"
           />

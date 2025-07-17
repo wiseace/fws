@@ -23,7 +23,8 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
-  const defaultImage = "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop";
+  // Updated default image with African professional
+  const defaultImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&q=80";
 
   const handleViewProfile = () => {
     if (!user) {
