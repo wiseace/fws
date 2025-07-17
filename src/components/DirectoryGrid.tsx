@@ -76,8 +76,19 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
         return [];
       }
       
+      console.log('Raw categories data:', data);
+      
       // Extract just the names from the category objects and ensure we return strings
-      return data?.map(cat => cat.name) || [];
+      const categoryNames = data?.map(cat => {
+        // Extra safety: ensure we get a string
+        if (typeof cat.name === 'string') {
+          return cat.name;
+        }
+        return String(cat.name || '');
+      }).filter(name => name.trim() !== '') || [];
+      
+      console.log('Processed category names:', categoryNames);
+      return categoryNames;
     }
   });
 

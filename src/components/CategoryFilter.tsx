@@ -1,3 +1,4 @@
+
 import { 
   Briefcase, 
   Palette, 
@@ -67,18 +68,25 @@ export const CategoryFilter = ({ selectedCategory, onCategoryChange, categories 
     'Tailoring', 'Tech Repair', 'Technology', 'Transportation', 'Tutoring'
   ];
   
-  const availableCategories = categories ? ['All', ...categories] : defaultCategories;
+  // Ensure we only work with strings and filter out any invalid entries
+  const validCategories = categories?.filter(cat => typeof cat === 'string' && cat.trim() !== '') || [];
+  const availableCategories = validCategories.length > 0 ? ['All', ...validCategories] : defaultCategories;
+  
+  console.log('CategoryFilter - availableCategories:', availableCategories);
+  console.log('CategoryFilter - categories prop:', categories);
   
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 max-w-6xl mx-auto">
       {availableCategories.map((category) => {
-        const IconComponent = getCategoryIcon(category);
-        const isSelected = selectedCategory === category;
+        // Extra safety check to ensure category is a string
+        const categoryName = typeof category === 'string' ? category : String(category);
+        const IconComponent = getCategoryIcon(categoryName);
+        const isSelected = selectedCategory === categoryName;
         
         return (
           <button
-            key={category}
-            onClick={() => onCategoryChange(category)}
+            key={categoryName}
+            onClick={() => onCategoryChange(categoryName)}
             className={`group flex flex-col items-center p-6 rounded-2xl transition-all duration-200 hover:scale-105 ${
               isSelected
                 ? 'bg-white shadow-lg ring-2 ring-primary'
@@ -98,7 +106,7 @@ export const CategoryFilter = ({ selectedCategory, onCategoryChange, categories 
                 ? 'text-primary' 
                 : 'text-gray-700 group-hover:text-primary'
             }`}>
-              {category}
+              {categoryName}
             </span>
           </button>
         );
