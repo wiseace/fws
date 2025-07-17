@@ -1,5 +1,5 @@
 
-import { Facebook, Twitter, Instagram, Linkedin, Mail } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, Mail, Shield, CheckCircle, Star, Users, Award, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -31,7 +31,51 @@ export const Footer = ({ editMode }: FooterProps) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-8 mb-12">
+          {/* About Section - New Addition */}
+          <div className="md:col-span-2">
+            <h3 className="text-lg font-semibold mb-4 text-white">About FindWhoSabi</h3>
+            <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+              Connect with verified skilled professionals across Nigeria. From plumbing to beauty services, 
+              find trusted experts in your area with our secure platform.
+            </p>
+            
+            {/* Trust Indicators */}
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center gap-2 text-gray-300 text-sm">
+                <Shield className="h-4 w-4 text-green-400" />
+                <span>Verified Professionals</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-300 text-sm">
+                <CheckCircle className="h-4 w-4 text-green-400" />
+                <span>Quality Guaranteed</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-300 text-sm">
+                <Star className="h-4 w-4 text-yellow-400" />
+                <span>Rated Services</span>
+              </div>
+            </div>
+
+            {/* Social Media Links with Icons */}
+            <div>
+              <h4 className="text-md font-semibold mb-3 text-white">Follow Us</h4>
+              <div className="flex space-x-4">
+                <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-full hover:bg-gray-700">
+                  <Facebook className="h-4 w-4" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-full hover:bg-gray-700">
+                  <Twitter className="h-4 w-4" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-full hover:bg-gray-700">
+                  <Instagram className="h-4 w-4" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-full hover:bg-gray-700">
+                  <Linkedin className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+
           {/* Services */}
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Services</h3>
@@ -73,19 +117,40 @@ export const Footer = ({ editMode }: FooterProps) => {
             </ul>
           </div>
 
-          {/* For Customers */}
+          {/* For Customers + Stats */}
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">For Customers</h3>
-            <ul className="space-y-2">
+            <ul className="space-y-2 mb-6">
               <li><a href="/auth" className="text-gray-300 hover:text-white transition-colors">Account Login</a></li>
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors">How to Find Services</a></li>
               <li><a href="/browse" className="text-gray-300 hover:text-white transition-colors">Browse the Network</a></li>
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Safety & Security</a></li>
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Quality Guarantee</a></li>
             </ul>
-          </div>
 
-          {/* Company */}
+            {/* Platform Stats */}
+            <div className="bg-gray-900 p-4 rounded-lg">
+              <h4 className="text-sm font-semibold mb-3 text-white">Platform Stats</h4>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-gray-300 text-sm">
+                  <Users className="h-4 w-4 text-blue-400" />
+                  <span>1000+ Active Providers</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300 text-sm">
+                  <Award className="h-4 w-4 text-yellow-400" />
+                  <span>5000+ Services Completed</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300 text-sm">
+                  <Star className="h-4 w-4 text-yellow-400" />
+                  <span>4.8/5 Average Rating</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Company Info + Contact */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 pb-8 border-b border-gray-800">
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Company</h3>
             <ul className="space-y-2">
@@ -97,21 +162,56 @@ export const Footer = ({ editMode }: FooterProps) => {
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Partner Program</a></li>
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Media Kit</a></li>
             </ul>
+          </div>
 
-            {/* Contact Section */}
-            <div className="mt-8">
-              <h4 className="text-md font-semibold mb-3 text-white">Contact</h4>
-              <ul className="space-y-2">
-                <li><a href="mailto:support@findwhosabi.com" className="text-gray-300 hover:text-white transition-colors">Contact Support</a></li>
-                <li><a href="mailto:sales@findwhosabi.com" className="text-gray-300 hover:text-white transition-colors">Contact Sales</a></li>
-                <li><a href="mailto:info@findwhosabi.com" className="text-gray-300 hover:text-white transition-colors">General Inquiries</a></li>
-              </ul>
+          {/* Enhanced Contact Section */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-white">Contact Us</h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-gray-300">
+                <Mail className="h-4 w-4 text-blue-400" />
+                <div>
+                  <p className="text-sm font-medium">Support</p>
+                  <a href="mailto:support@findwhosabi.com" className="text-sm hover:text-white transition-colors">support@findwhosabi.com</a>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-gray-300">
+                <Mail className="h-4 w-4 text-green-400" />
+                <div>
+                  <p className="text-sm font-medium">Sales</p>
+                  <a href="mailto:sales@findwhosabi.com" className="text-sm hover:text-white transition-colors">sales@findwhosabi.com</a>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-gray-300">
+                <Phone className="h-4 w-4 text-yellow-400" />
+                <div>
+                  <p className="text-sm font-medium">Phone</p>
+                  <a href="tel:+2341234567890" className="text-sm hover:text-white transition-colors">+234 123 456 7890</a>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-gray-300">
+                <Mail className="h-4 w-4 text-purple-400" />
+                <div>
+                  <p className="text-sm font-medium">General</p>
+                  <a href="mailto:info@findwhosabi.com" className="text-sm hover:text-white transition-colors">info@findwhosabi.com</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Business Hours */}
+            <div className="mt-6 p-3 bg-gray-900 rounded-lg">
+              <h4 className="text-sm font-semibold mb-2 text-white">Business Hours</h4>
+              <div className="text-sm text-gray-300 space-y-1">
+                <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
+                <p>Saturday: 9:00 AM - 4:00 PM</p>
+                <p>Sunday: Closed</p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-800 mt-12 pt-8">
+        <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex flex-wrap gap-6 mb-4 md:mb-0">
               <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Legal</a>
@@ -131,7 +231,7 @@ export const Footer = ({ editMode }: FooterProps) => {
           
           <div className="text-center mt-6">
             <p className="text-gray-400 text-sm">
-              © 2024 FindWhoSabi, Inc.
+              © 2024 FindWhoSabi, Inc. • Connecting Nigeria with Skilled Professionals
             </p>
           </div>
         </div>
