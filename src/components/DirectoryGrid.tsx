@@ -24,11 +24,16 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
       let query = supabase.from('services').select(`
         *,
         users:user_id (
+          id,
           name,
           phone,
           email,
           profile_image_url,
-          is_verified
+          is_verified,
+          user_type,
+          subscription_status,
+          created_at,
+          updated_at
         )
       `);
 
@@ -71,6 +76,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
         return [];
       }
       
+      // Extract just the names from the category objects
       return data?.map(cat => cat.name) || [];
     }
   });
