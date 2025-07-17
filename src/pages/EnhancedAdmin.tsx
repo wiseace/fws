@@ -9,12 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { AdminTableControls } from '@/components/admin/AdminTableControls';
 
 import { User as UserType, VerificationRequest, ContactRequest, Service } from '@/types/database';
 import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
-const Admin = () => {
+const EnhancedAdmin = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -26,9 +27,15 @@ const Admin = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [stats, setStats] = useState<any>(null);
 
+  // Pagination states for each tab
+  const [displayedUsers, setDisplayedUsers] = useState<UserType[]>([]);
+  const [displayedVerifications, setDisplayedVerifications] = useState<VerificationRequest[]>([]);
+  const [displayedContacts, setDisplayedContacts] = useState<ContactRequest[]>([]);
+  const [displayedServices, setDisplayedServices] = useState<Service[]>([]);
+
   useEffect(() => {
-    console.log('Admin useEffect - profile:', profile);
-    console.log('Admin useEffect - user:', user);
+    console.log('Enhanced Admin useEffect - profile:', profile);
+    console.log('Enhanced Admin useEffect - user:', user);
     if (profile?.user_type === 'admin') {
       console.log('Loading admin data...');
       // Clear existing state to avoid stale data
@@ -321,13 +328,13 @@ const Admin = () => {
           {/* Modern Header */}
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-primary to-primary-dark rounded-xl shadow-md">
-                <Shield className="h-8 w-8 text-white" />
+              <div className="p-3 bg-primary rounded-xl">
+                <Shield className="h-8 w-8 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="heading-1">Admin Dashboard</h1>
+                <h1 className="heading-1">Enhanced Admin Dashboard</h1>
                 <p className="body-text text-muted-foreground mt-1">
-                  System Management & Analytics Center
+                  System Management & Analytics Center with Advanced Controls
                 </p>
               </div>
             </div>
@@ -360,7 +367,7 @@ const Admin = () => {
                   });
                   fetchAllData();
                 }}
-                className="bg-primary hover:bg-primary-dark text-primary-foreground shadow-md"
+                className="rounded-lg"
               >
                 🔄 Refresh
               </Button>
@@ -371,85 +378,85 @@ const Admin = () => {
           {stats && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
               <Card 
-                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105" 
+                className="cursor-pointer hover:bg-muted/50 transition-colors duration-200" 
                 onClick={() => setActiveTab('users')}
               >
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-md">
-                      <Users className="h-8 w-8 text-white" />
+                    <div className="p-3 bg-primary rounded-xl">
+                      <Users className="h-6 w-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <p className="caption-text font-medium text-blue-700 mb-2">Total Users</p>
-                      <p className="text-[2rem] font-bold text-blue-900">{stats.total_users}</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-2">Total Users</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.total_users}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
               <Card 
-                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                className="cursor-pointer hover:bg-muted/50 transition-colors duration-200"
                 onClick={() => setActiveTab('users')}
               >
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-md">
-                      <UserCheck className="h-8 w-8 text-white" />
+                    <div className="p-3 bg-green-600 rounded-xl">
+                      <UserCheck className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="caption-text font-medium text-green-700 mb-2">Verified Users</p>
-                      <p className="text-[2rem] font-bold text-green-900">{stats.verified_users}</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-2">Verified Users</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.verified_users}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
               <Card 
-                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                className="cursor-pointer hover:bg-muted/50 transition-colors duration-200"
                 onClick={() => setActiveTab('verifications')}
               >
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-4 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-md">
-                      <Shield className="h-8 w-8 text-white" />
+                    <div className="p-3 bg-orange-600 rounded-xl">
+                      <Shield className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="caption-text font-medium text-orange-700 mb-2">Pending Verifications</p>
-                      <p className="text-[2rem] font-bold text-orange-900">{stats.pending_verifications}</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-2">Pending Verifications</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.pending_verifications}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
               <Card 
-                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                className="cursor-pointer hover:bg-muted/50 transition-colors duration-200"
                 onClick={() => setActiveTab('services')}
               >
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-md">
-                      <Eye className="h-8 w-8 text-white" />
+                    <div className="p-3 bg-purple-600 rounded-xl">
+                      <Eye className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="caption-text font-medium text-purple-700 mb-2">Total Services</p>
-                      <p className="text-[2rem] font-bold text-purple-900">{stats.total_services}</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-2">Total Services</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.total_services}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
               
               <Card 
-                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                className="cursor-pointer hover:bg-muted/50 transition-colors duration-200"
                 onClick={() => setActiveTab('contacts')}
               >
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-4 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl shadow-md">
-                      <User className="h-8 w-8 text-white" />
+                    <div className="p-3 bg-teal-600 rounded-xl">
+                      <User className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="caption-text font-medium text-teal-700 mb-2">Contact Requests</p>
-                      <p className="text-[2rem] font-bold text-teal-900">{stats.total_contacts}</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-2">Contact Requests</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.total_contacts}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -497,8 +504,32 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    {verificationRequests.length === 0 ? (
+                  <AdminTableControls
+                    data={verificationRequests}
+                    searchPlaceholder="Search verifications by name or email..."
+                    searchFields={['full_name', 'phone_number', 'additional_info']}
+                    filterOptions={[
+                      {
+                        label: 'Status',
+                        field: 'status',
+                        options: [
+                          { label: 'Pending', value: 'pending', count: verificationRequests.filter(r => r.status === 'pending').length },
+                          { label: 'Verified', value: 'verified', count: verificationRequests.filter(r => r.status === 'verified').length },
+                          { label: 'Rejected', value: 'rejected', count: verificationRequests.filter(r => r.status === 'rejected').length }
+                        ]
+                      }
+                    ]}
+                    sortOptions={[
+                      { label: 'Submitted Date', value: 'submitted_at' },
+                      { label: 'Name', value: 'full_name' },
+                      { label: 'Status', value: 'status' }
+                    ]}
+                    itemsPerPage={5}
+                    onDataChange={(data) => setDisplayedVerifications(data)}
+                  />
+
+                  <div className="space-y-4 mt-6">
+                    {displayedVerifications.length === 0 ? (
                       <div className="text-center py-16 bg-muted/30 rounded-xl border border-border">
                         <div className="p-4 bg-muted rounded-xl w-fit mx-auto mb-4">
                           <Shield className="h-12 w-12 text-muted-foreground" />
@@ -507,17 +538,10 @@ const Admin = () => {
                         <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
                           Verification requests will appear here when users submit their documents for review.
                         </p>
-                        <Button 
-                          onClick={fetchVerificationRequests}
-                          variant="outline"
-                          className="rounded-lg"
-                        >
-                          🔄 Check for New Requests
-                        </Button>
                       </div>
                     ) : (
                       <div className="grid gap-4">
-                        {verificationRequests.map((request) => (
+                        {displayedVerifications.map((request) => (
                           <div key={request.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
                             <div className="p-4">
                               <div className="flex flex-col lg:flex-row gap-4">
@@ -623,8 +647,49 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  <div className="grid gap-4">
-                    {users.map((user) => (
+                  <AdminTableControls
+                    data={users}
+                    searchPlaceholder="Search users by name or email..."
+                    searchFields={['name', 'email']}
+                    filterOptions={[
+                      {
+                        label: 'User Type',
+                        field: 'user_type',
+                        options: [
+                          { label: 'Admin', value: 'admin', count: users.filter(u => u.user_type === 'admin').length },
+                          { label: 'Provider', value: 'provider', count: users.filter(u => u.user_type === 'provider').length },
+                          { label: 'Seeker', value: 'seeker', count: users.filter(u => u.user_type === 'seeker').length }
+                        ]
+                      },
+                      {
+                        label: 'Verification Status',
+                        field: 'is_verified',
+                        options: [
+                          { label: 'Verified', value: 'true', count: users.filter(u => u.is_verified).length },
+                          { label: 'Unverified', value: 'false', count: users.filter(u => !u.is_verified).length }
+                        ]
+                      },
+                      {
+                        label: 'Subscription',
+                        field: 'subscription_plan',
+                        options: [
+                          { label: 'Free', value: 'free', count: users.filter(u => u.subscription_plan === 'free').length },
+                          { label: 'Premium', value: 'monthly', count: users.filter(u => u.subscription_plan !== 'free').length }
+                        ]
+                      }
+                    ]}
+                    sortOptions={[
+                      { label: 'Created Date', value: 'created_at' },
+                      { label: 'Name', value: 'name' },
+                      { label: 'Email', value: 'email' },
+                      { label: 'User Type', value: 'user_type' }
+                    ]}
+                    itemsPerPage={10}
+                    onDataChange={(data) => setDisplayedUsers(data)}
+                  />
+
+                  <div className="grid gap-4 mt-6">
+                    {displayedUsers.map((user) => (
                       <div key={user.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
                         <div className="p-4">
                           <div className="flex items-center justify-between">
@@ -716,8 +781,30 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    {contactRequests.length === 0 ? (
+                  <AdminTableControls
+                    data={contactRequests}
+                    searchPlaceholder="Search contacts by seeker, provider, or service..."
+                    searchFields={['message', 'contact_method']}
+                    filterOptions={[
+                      {
+                        label: 'Contact Method',
+                        field: 'contact_method',
+                        options: [
+                          { label: 'Email', value: 'email', count: contactRequests.filter(c => c.contact_method === 'email').length },
+                          { label: 'Phone', value: 'phone', count: contactRequests.filter(c => c.contact_method === 'phone').length }
+                        ]
+                      }
+                    ]}
+                    sortOptions={[
+                      { label: 'Created Date', value: 'created_at' },
+                      { label: 'Contact Method', value: 'contact_method' }
+                    ]}
+                    itemsPerPage={8}
+                    onDataChange={(data) => setDisplayedContacts(data)}
+                  />
+
+                  <div className="space-y-4 mt-6">
+                    {displayedContacts.length === 0 ? (
                       <div className="text-center py-16 bg-muted/30 rounded-xl border border-border">
                         <div className="p-4 bg-muted rounded-xl w-fit mx-auto mb-4">
                           <User className="h-12 w-12 text-muted-foreground" />
@@ -729,7 +816,7 @@ const Admin = () => {
                       </div>
                     ) : (
                       <div className="grid gap-4">
-                        {contactRequests.map((request) => (
+                        {displayedContacts.map((request) => (
                           <div key={request.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
                             <div className="p-4">
                               <div className="flex items-start gap-4">
@@ -814,8 +901,41 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  <div className="grid gap-4">
-                    {services.map((service) => (
+                  <AdminTableControls
+                    data={services}
+                    searchPlaceholder="Search services by name, category, or provider..."
+                    searchFields={['service_name', 'category', 'description', 'location']}
+                    filterOptions={[
+                      {
+                        label: 'Status',
+                        field: 'is_active',
+                        options: [
+                          { label: 'Active', value: 'true', count: services.filter(s => s.is_active).length },
+                          { label: 'Inactive', value: 'false', count: services.filter(s => !s.is_active).length }
+                        ]
+                      },
+                      {
+                        label: 'Category',
+                        field: 'category',
+                        options: Array.from(new Set(services.map(s => s.category))).map(cat => ({
+                          label: cat,
+                          value: cat,
+                          count: services.filter(s => s.category === cat).length
+                        }))
+                      }
+                    ]}
+                    sortOptions={[
+                      { label: 'Created Date', value: 'created_at' },
+                      { label: 'Service Name', value: 'service_name' },
+                      { label: 'Category', value: 'category' },
+                      { label: 'Status', value: 'is_active' }
+                    ]}
+                    itemsPerPage={6}
+                    onDataChange={(data) => setDisplayedServices(data)}
+                  />
+
+                  <div className="grid gap-4 mt-6">
+                    {displayedServices.map((service) => (
                       <div key={service.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
                         <div className="p-4">
                           <div className="flex items-start gap-4">
@@ -960,4 +1080,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default EnhancedAdmin;
