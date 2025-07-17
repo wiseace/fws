@@ -104,57 +104,63 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
   };
 
   return (
-    <div className={`bg-white rounded-2xl shadow-lg p-4 ${className}`}>
+    <div className={`bg-white rounded-2xl shadow-lg p-6 ${className}`}>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Search Input */}
-        <div className="flex items-center px-4 border border-gray-200 rounded-lg">
-          <Search className="w-5 h-5 text-gray-400 mr-3" />
-          <Input
-            placeholder="What service do you need?"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="border-0 focus:ring-0 text-gray-900 placeholder-gray-500"
-          />
+        <div className="relative">
+          <div className="flex items-center px-4 py-3 bg-gray-50 border-0 rounded-xl hover:bg-gray-100 transition-colors">
+            <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+            <Input
+              placeholder="What service do you need?"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="border-0 bg-transparent focus:ring-0 focus-visible:ring-0 text-gray-900 placeholder-gray-500 p-0 h-auto"
+            />
+          </div>
         </div>
 
         {/* Category Filter */}
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="border-gray-200 text-foreground font-medium data-[state=open]:ring-2 data-[state=open]:ring-primary">
-            <SelectValue placeholder="All Categories" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all" className="font-medium">All Categories</SelectItem>
-            {categories && categories.length > 0 ? (
-              categories.map((category) => (
-                <SelectItem key={category.id} value={category.name} className="font-medium">
-                  {category.name}
+        <div className="relative">
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="h-12 bg-gray-50 border-0 rounded-xl hover:bg-gray-100 transition-colors text-foreground font-medium focus:ring-0 focus-visible:ring-0">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="font-medium">All Categories</SelectItem>
+              {categories && categories.length > 0 ? (
+                categories.map((category) => (
+                  <SelectItem key={category.id} value={category.name} className="font-medium">
+                    {category.name}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="loading" disabled>
+                  {isError ? 'Failed to load categories' : 'Loading categories...'}
                 </SelectItem>
-              ))
-            ) : (
-              <SelectItem value="loading" disabled>
-                {isError ? 'Failed to load categories' : 'Loading categories...'}
-              </SelectItem>
-            )}
-          </SelectContent>
-        </Select>
+              )}
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Location Input with Geolocation */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center px-4 border border-gray-200 rounded-lg">
-            <MapPin className="w-5 h-5 text-gray-400 mr-3" />
-            <Input
-              placeholder="Enter location"
-              value={locationFilter}
-              onChange={(e) => {
-                setLocationFilter(e.target.value);
-                if (e.target.value !== 'Current Location') {
-                  setUserLocation(null);
-                }
-              }}
-              onKeyPress={handleKeyPress}
-              className="border-0 focus:ring-0 text-gray-900 placeholder-gray-500"
-            />
+          <div className="flex-1">
+            <div className="flex items-center px-4 py-3 bg-gray-50 border-0 rounded-xl hover:bg-gray-100 transition-colors">
+              <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+              <Input
+                placeholder="Enter location"
+                value={locationFilter}
+                onChange={(e) => {
+                  setLocationFilter(e.target.value);
+                  if (e.target.value !== 'Current Location') {
+                    setUserLocation(null);
+                  }
+                }}
+                onKeyPress={handleKeyPress}
+                className="border-0 bg-transparent focus:ring-0 focus-visible:ring-0 text-gray-900 placeholder-gray-500 p-0 h-auto"
+              />
+            </div>
           </div>
           <Button
             type="button"
@@ -162,7 +168,7 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
             size="icon"
             onClick={handleGetLocation}
             disabled={isGettingLocation}
-            className="shrink-0"
+            className="h-12 w-12 shrink-0 bg-gray-50 border-0 rounded-xl hover:bg-gray-100 transition-colors"
             title="Use current location"
           >
             {isGettingLocation ? (
@@ -176,9 +182,9 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
         {/* Search Button */}
         <Button 
           onClick={handleSearch}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+          className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-colors"
         >
-          Search
+          SEARCH
         </Button>
       </div>
     </div>
