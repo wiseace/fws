@@ -89,7 +89,8 @@ const Browse = () => {
   };
 
   const handleContactClick = (service: Service) => {
-    console.log('Contact service:', service);
+    // This will trigger the ContactModal through the ServiceCard component
+    // No action needed here as ServiceCard handles the modal display
   };
 
   const handleClearFilters = () => {
@@ -176,7 +177,6 @@ const Browse = () => {
                   <ServiceCard
                     key={service.id}
                     service={service}
-                    onContactClick={handleContactClick}
                   />
                 ))}
               </div>

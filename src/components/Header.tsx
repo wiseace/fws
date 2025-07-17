@@ -31,12 +31,6 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           <nav className="hidden md:flex space-x-8">
             <a href="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Home</a>
             <a href="/browse" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Services</a>
-            {user && (
-              <a href="/dashboard" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Dashboard</a>
-            )}
-            {profile?.user_type === 'admin' && (
-              <a href="/admin" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Admin</a>
-            )}
           </nav>
 
           {/* Right Actions */}
@@ -53,14 +47,8 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => window.location.href = '/dashboard'}>
                     <User className="w-4 h-4 mr-2" />
-                    Dashboard
+                    {profile?.user_type === 'admin' ? 'Admin Panel' : 'Dashboard'}
                   </DropdownMenuItem>
-                  {profile?.user_type === 'admin' && (
-                    <DropdownMenuItem onClick={() => window.location.href = '/admin'}>
-                      <User className="w-4 h-4 mr-2" />
-                      Admin Panel
-                    </DropdownMenuItem>
-                  )}
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Sign Out
@@ -91,12 +79,6 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
             <div className="flex flex-col space-y-2">
               <a href="/" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Home</a>
               <a href="/browse" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Browse Services</a>
-              {user && (
-                <a href="/dashboard" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Dashboard</a>
-              )}
-              {profile?.user_type === 'admin' && (
-                <a href="/admin" className="px-4 py-2 text-red-600 hover:bg-red-50 rounded font-medium">Admin Panel</a>
-              )}
             </div>
           </div>
         )}
