@@ -84,8 +84,8 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
   return (
     <>
       <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100">
-        {/* Header with Profile Image - Updated with brand colors */}
-        <div className="relative p-6 bg-gradient-to-br from-brand-primary to-brand-secondary">
+        {/* Header with Profile Image - Updated with darker brand colors for better readability */}
+        <div className="relative p-6 bg-gradient-to-br from-brand-primary-dark to-brand-primary-darker">
           {/* Top badges container - positioned to avoid overlap */}
           <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
             {/* Availability Status - Left side */}
@@ -124,11 +124,11 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
               <h3 className="text-xl font-bold text-white mb-1">
                 {provider.name}
               </h3>
-              <div className="flex items-center gap-2 text-white/80 text-sm">
+              <div className="flex items-center gap-2 text-white/90 text-sm">
                 <MapPin className="w-4 h-4" />
                 <span>{provider.service_location || provider.city_or_state || 'Location available'}</span>
               </div>
-              <div className="flex items-center gap-2 text-white/70 text-xs mt-1">
+              <div className="flex items-center gap-2 text-white/80 text-xs mt-1">
                 <Calendar className="w-3 h-3" />
                 <span>{formatLastActive(provider.last_active)}</span>
               </div>
