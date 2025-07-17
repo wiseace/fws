@@ -177,30 +177,27 @@ All colors MUST be HSL.
 }
 
 /* Marquee animation for services scroll */
-@keyframes marquee {
+@keyframes marquee-smooth {
   0% {
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-33.333%);
   }
 }
 
-@keyframes marquee2 {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
+.animate-marquee-smooth {
+  animation: marquee-smooth 30s linear infinite;
 }
 
-.animate-marquee {
-  animation: marquee 25s linear infinite;
+/* Hide scrollbar for webkit browsers */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.animate-marquee2 {
-  animation: marquee2 25s linear infinite;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Smooth transitions for opacity changes */
