@@ -236,51 +236,52 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
         }`}
       >
         {/* Header */}
-        <div className="p-6 border-b bg-gradient-to-r from-primary/5 to-primary/10">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-4 border-b bg-gradient-to-r from-primary/5 to-primary/10">
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Welcome aboard! 🎉</h2>
-              <p className="text-sm text-gray-600 mt-1">
+              <h2 className="text-lg font-bold text-gray-900">Welcome aboard! 🎉</h2>
+              <p className="text-xs text-gray-600 mt-1">
                 Let's get you set up in just a few steps
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
+            <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
+              <X className="h-3 w-3" />
             </Button>
           </div>
           
           {/* Progress */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs">
               <span className="text-gray-600">Progress</span>
               <span className="font-semibold text-primary">{Math.round(progress)}% complete</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-1.5" />
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-3">
           {/* Current Step Highlight */}
           {currentStepData && !completedSteps.has(currentStepData.id) && (
-            <Card className="mb-6 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 animate-pulse-glow">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <currentStepData.icon className="h-5 w-5 text-primary" />
+            <Card className="mb-4 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+              <CardContent className="p-3">
+                <div className="flex items-start gap-2">
+                  <div className="p-1.5 bg-primary/10 rounded-lg">
+                    <currentStepData.icon className="h-4 w-4 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-semibold text-gray-900">{currentStepData.title}</h3>
-                      <Badge variant="default" className="text-xs">Next</Badge>
+                    <div className="flex items-center gap-1 mb-1">
+                      <h3 className="text-sm font-semibold text-gray-900">{currentStepData.title}</h3>
+                      <Badge variant="default" className="text-xs px-1.5 py-0.5">Next</Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">{currentStepData.description}</p>
+                    <p className="text-xs text-gray-600 mb-2">{currentStepData.description}</p>
                     <Button 
                       onClick={() => handleStepAction(currentStepData)}
-                      className="w-full bg-gradient-primary hover:opacity-90"
+                      className="w-full bg-gradient-primary hover:opacity-90 text-xs h-8"
+                      size="sm"
                     >
                       {currentStepData.action}
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="ml-1 h-3 w-3" />
                     </Button>
                   </div>
                 </div>
@@ -289,8 +290,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           )}
 
           {/* All Steps Overview */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-gray-900 mb-4">Your Journey</h3>
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Your Journey</h3>
             {steps.map((step, index) => {
               const isCompleted = completedSteps.has(step.id);
               const isCurrent = index === currentStep && !isCompleted;
@@ -298,10 +299,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
               return (
                 <div 
                   key={step.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${
-                    isCurrent ? 'bg-primary/5 border border-primary/20' : 
+                  onClick={() => !isCompleted && handleStepAction(step)}
+                  className={`flex items-center gap-2 p-2.5 rounded-lg transition-all duration-300 cursor-pointer hover:shadow-sm ${
+                    isCurrent ? 'bg-primary/5 border border-primary/20 hover:bg-primary/10' : 
                     isCompleted ? 'bg-green-50 border border-green-200' : 
-                    'bg-gray-50 border border-gray-200'
+                    'bg-gray-50 border border-gray-200 hover:bg-gray-100'
                   }`}
                 >
                   <div className={`flex-shrink-0 transition-colors duration-300 ${
@@ -309,31 +311,31 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
                     isCurrent ? 'text-primary' : 'text-gray-400'
                   }`}>
                     {isCompleted ? (
-                      <CheckCircle className="h-5 w-5" />
+                      <CheckCircle className="h-4 w-4" />
                     ) : (
-                      <Circle className="h-5 w-5" />
+                      <Circle className="h-4 w-4" />
                     )}
                   </div>
                   
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <step.icon className={`h-4 w-4 ${
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <step.icon className={`h-3 w-3 flex-shrink-0 ${
                         isCompleted ? 'text-green-600' : 
                         isCurrent ? 'text-primary' : 'text-gray-400'
                       }`} />
-                      <span className={`font-medium text-sm ${
+                      <span className={`text-xs font-medium truncate ${
                         isCompleted ? 'text-green-800' : 
                         isCurrent ? 'text-primary' : 'text-gray-600'
                       }`}>
                         {step.title}
                       </span>
                       {isCompleted && (
-                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                        <Badge variant="secondary" className="text-[10px] px-1 py-0 bg-green-100 text-green-800 flex-shrink-0">
                           Done
                         </Badge>
                       )}
                       {isCurrent && (
-                        <Badge variant="default" className="text-xs">
+                        <Badge variant="default" className="text-[10px] px-1 py-0 flex-shrink-0">
                           Current
                         </Badge>
                       )}
@@ -346,18 +348,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
 
           {/* Completion Message */}
           {progress === 100 && (
-            <Card className="mt-6 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-              <CardContent className="p-4 text-center">
-                <div className="mb-3">
-                  <CheckCircle className="h-12 w-12 text-green-600 mx-auto" />
+            <Card className="mt-4 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+              <CardContent className="p-3 text-center">
+                <div className="mb-2">
+                  <CheckCircle className="h-8 w-8 text-green-600 mx-auto" />
                 </div>
-                <h3 className="font-bold text-green-800 mb-2">Congratulations! 🎉</h3>
-                <p className="text-sm text-green-700 mb-4">
+                <h3 className="text-sm font-bold text-green-800 mb-1">Congratulations! 🎉</h3>
+                <p className="text-xs text-green-700 mb-3">
                   You've completed all onboarding steps. You're ready to {profile?.user_type === 'provider' ? 'start receiving clients' : 'find amazing services'}!
                 </p>
                 <Button 
                   onClick={onClose}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-green-600 hover:bg-green-700 text-white text-xs h-8"
+                  size="sm"
                 >
                   Get Started
                 </Button>
@@ -367,8 +370,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t bg-gray-50">
-          <p className="text-xs text-gray-500 text-center">
+        <div className="p-2 border-t bg-gray-50">
+          <p className="text-[10px] text-gray-500 text-center">
             Need help? Contact our support team anytime.
           </p>
         </div>
