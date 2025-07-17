@@ -9,6 +9,7 @@ import { Footer } from '@/components/Footer';
 import { SmartSearchBar } from '@/components/SmartSearchBar';
 import { useSmartSearch } from '@/hooks/useSmartSearch';
 import { SmartSearchResults } from '@/components/SmartSearchResults';
+import { User, Service } from '@/types/database';
 import {
   Pagination,
   PaginationContent,
@@ -20,34 +21,10 @@ import {
 
 const PROVIDERS_PER_PAGE = 12;
 
-interface Provider {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
+// Use the User type from database.ts but ensure it's a provider
+interface Provider extends User {
   user_type: 'provider';
-  is_verified: boolean;
-  verification_status: 'verified';
-  profile_image_url: string;
-  subscription_status: string;
-  created_at: string;
-  updated_at: string;
-  services: Array<{
-    id: string;
-    service_name: string;
-    category: string;
-    description: string;
-    image_url: string;
-    location: string;
-    contact_info: any;
-    is_active: boolean;
-    created_at: string;
-    updated_at: string;
-    price_range_min: number;
-    price_range_max: number;
-    skills: string[];
-    tags: string[];
-  }>;
+  services: Service[];
 }
 
 const Providers = () => {
@@ -78,6 +55,16 @@ const Providers = () => {
           verification_status,
           profile_image_url,
           subscription_status,
+          subscription_plan,
+          can_access_contact,
+          skills,
+          tags,
+          service_location,
+          city_or_state,
+          availability_status,
+          price_range_min,
+          price_range_max,
+          last_active,
           created_at,
           updated_at,
           services!inner(
@@ -116,14 +103,20 @@ const Providers = () => {
           const existingProvider = acc.find(p => p.id === current.id);
           
           if (existingProvider) {
-            // Add service to existing provider
-            existingProvider.services.push(...current.services);
+            // Add service to existing provider if not already included
+            const serviceExists = existingProvider.services.some(s => 
+              current.services.some(cs => cs.id === s.id)
+            );
+            if (!serviceExists) {
+              existingProvider.services.push(...current.services);
+            }
           } else {
-            // Add new provider
+            // Add new provider - cast to Provider type since we know it's a provider
             acc.push({
               ...current,
+              user_type: 'provider' as const,
               services: current.services
-            });
+            } as Provider);
           }
           
           return acc;
@@ -161,21 +154,20 @@ const Providers = () => {
     );
   };
 
-  // Use smart search results when available, otherwise use all providers
-  const displayResults = hasSearched ? searchResults : getServicesFromProviders(providers);
-  const isLoadingResults = hasSearched ? isSearching : loading;
-
-  // For pagination, we want to paginate providers, not services
-  const providersToDisplay = hasSearched ? providers : providers;
-  const totalPages = Math.ceil(providersToDisplay.length / PROVIDERS_PER_PAGE);
+  // For pagination, work with unique providers
+  const totalPages = Math.ceil(providers.length / PROVIDERS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROVIDERS_PER_PAGE;
   const endIndex = startIndex + PROVIDERS_PER_PAGE;
-  const paginatedProviders = providersToDisplay.slice(startIndex, endIndex);
+  const paginatedProviders = providers.slice(startIndex, endIndex);
 
-  // Convert paginated providers to services for ModernServiceCard
-  const paginatedServices = hasSearched 
-    ? searchResults.slice(startIndex, endIndex)
-    : getServicesFromProviders(paginatedProviders);
+  // Convert paginated providers to services for ModernServiceCard (show first service of each provider)
+  const displayServices = hasSearched 
+    ? searchResults
+    : paginatedProviders.map(provider => ({
+        ...provider.services[0], // Show the first service of each provider
+        user_id: provider.id,
+        user: provider
+      }));
 
   // Reset to page 1 when search changes
   useEffect(() => {
@@ -229,23 +221,23 @@ const Providers = () => {
               </div>
 
               {/* Providers Grid */}
-              {isLoadingResults ? (
+              {loading ? (
                 <div className="flex flex-col items-center justify-center py-16">
                   <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-4" />
                   <p className="text-gray-600">Loading providers...</p>
                 </div>
-              ) : paginatedServices.length > 0 ? (
+              ) : displayServices.length > 0 ? (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
-                    {paginatedServices.map((service) => (
-                      <div key={service.id} className="animate-fade-in-up">
+                    {displayServices.map((service) => (
+                      <div key={`${service.user_id}-${service.id}`} className="animate-fade-in-up">
                         <ModernServiceCard service={service} />
                       </div>
                     ))}
                   </div>
                   
-                  {/* Pagination */}
-                  {totalPages > 1 && (
+                  {/* Pagination - only show if not searching and there are multiple pages */}
+                  {!hasSearched && totalPages > 1 && (
                     <div className="flex justify-center">
                       <Pagination>
                         <PaginationContent>
