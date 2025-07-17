@@ -1,9 +1,9 @@
 
-import { ModernServiceCard } from '@/components/ModernServiceCard';
+import { ModernProviderCard } from '@/components/ModernProviderCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Search, MapPin, Clock, Star } from 'lucide-react';
-import { Service } from '@/types/database';
+import { Provider } from '@/types/database';
 
 interface SearchResult {
   user_id: string;
@@ -43,41 +43,72 @@ export const SmartSearchResults = ({
   searchFilters,
   onClearSearch 
 }: SmartSearchResultsProps) => {
-  // Convert search results to Service format for ModernServiceCard
-  const convertToService = (result: SearchResult): Service => ({
-    id: result.service_id,
-    user_id: result.user_id,
-    service_name: result.service_name,
-    category: result.service_category,
-    description: result.service_description || 'Professional service provider',
-    contact_info: {
-      phone: result.phone || '',
-      email: result.email || ''
-    },
-    location: result.service_location || result.city_or_state || '',
-    image_url: result.profile_image_url,
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    price_range_min: result.service_price_min || result.price_range_min,
-    price_range_max: result.service_price_max || result.price_range_max,
-    skills: result.skills,
-    tags: result.tags,
-    user: {
-      id: result.user_id,
-      name: result.name || 'Service Provider',
-      email: result.email || '',
-      phone: result.phone || '',
-      user_type: 'provider' as const,
-      is_verified: true,
-      subscription_status: 'monthly' as const,
-      verification_status: 'verified' as const,
-      profile_image_url: result.profile_image_url,
-      availability_status: result.availability_status,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }
-  });
+  // Convert search results to Provider format, grouping services by provider
+  const convertToProviders = (searchResults: SearchResult[]): Provider[] => {
+    const providersMap = new Map<string, Provider>();
+
+    searchResults.forEach((result) => {
+      const providerId = result.user_id;
+      
+      // Create service object for this result
+      const service = {
+        id: result.service_id,
+        user_id: result.user_id,
+        service_name: result.service_name,
+        category: result.service_category,
+        description: result.service_description || 'Professional service provider',
+        contact_info: {
+          phone: result.phone || '',
+          email: result.email || ''
+        },
+        location: result.service_location || result.city_or_state || '',
+        image_url: result.profile_image_url,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        price_range_min: result.service_price_min || result.price_range_min,
+        price_range_max: result.service_price_max || result.price_range_max,
+        skills: result.skills,
+        tags: result.tags
+      };
+
+      if (providersMap.has(providerId)) {
+        // Add service to existing provider
+        const existingProvider = providersMap.get(providerId)!;
+        existingProvider.services.push(service);
+      } else {
+        // Create new provider
+        const provider: Provider = {
+          id: result.user_id,
+          name: result.name || 'Service Provider',
+          email: result.email || '',
+          phone: result.phone || '',
+          user_type: 'provider' as const,
+          is_verified: true,
+          subscription_status: 'monthly' as const,
+          verification_status: 'verified' as const,
+          profile_image_url: result.profile_image_url,
+          availability_status: result.availability_status,
+          skills: result.skills,
+          tags: result.tags,
+          service_location: result.service_location,
+          city_or_state: result.city_or_state,
+          price_range_min: result.price_range_min,
+          price_range_max: result.price_range_max,
+          last_active: result.last_active,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          services: [service],
+          can_access_contact: true,
+          subscription_plan: 'monthly' as const
+        };
+        
+        providersMap.set(providerId, provider);
+      }
+    });
+
+    return Array.from(providersMap.values());
+  };
 
   if (isLoading) {
     return (
@@ -131,13 +162,15 @@ export const SmartSearchResults = ({
     );
   }
 
+  const providers = convertToProviders(results);
+
   return (
     <div className="space-y-6">
       {/* Search Summary */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">
-            Found {results.length} provider{results.length !== 1 ? 's' : ''}
+            Found {providers.length} provider{providers.length !== 1 ? 's' : ''} offering {results.length} service{results.length !== 1 ? 's' : ''}
           </h3>
           <div className="flex flex-wrap gap-2 mt-2">
             {searchFilters.searchTerm && (
@@ -164,22 +197,28 @@ export const SmartSearchResults = ({
         </Button>
       </div>
 
-      {/* Results Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {results.map((result) => (
-          <div key={result.service_id} className="relative">
-            <ModernServiceCard service={convertToService(result)} />
-            {/* Match Score Badge */}
-            {result.match_score > 70 && (
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-500 text-white">
-                  <Star className="w-3 h-3 mr-1 fill-current" />
-                  Best Match
-                </Badge>
-              </div>
-            )}
+      {/* Results Grid - Show Provider Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {providers.map((provider) => (
+          <div key={provider.id} className="relative">
+            <ModernProviderCard provider={provider} />
+            {/* Show match score for the best matching service */}
+            {(() => {
+              const bestMatch = results
+                .filter(r => r.user_id === provider.id)
+                .reduce((best, current) => current.match_score > best.match_score ? current : best);
+              
+              return bestMatch.match_score > 70 && (
+                <div className="absolute top-2 right-2 z-10">
+                  <Badge className="bg-green-500 text-white">
+                    <Star className="w-3 h-3 mr-1 fill-current" />
+                    Best Match
+                  </Badge>
+                </div>
+              );
+            })()}
             {/* Availability Status */}
-            {result.availability_status === 'available' && (
+            {provider.availability_status === 'available' && (
               <div className="absolute top-2 left-2 z-10">
                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                   <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>

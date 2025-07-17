@@ -148,6 +148,12 @@ const Providers = () => {
     });
   };
 
+  const handleClearSearch = () => {
+    clearSearch();
+    // Reset to show all providers when search is cleared
+    setCurrentPage(1);
+  };
+
   // For pagination, work with unique providers
   const totalPages = Math.ceil(providers.length / PROVIDERS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROVIDERS_PER_PAGE;
@@ -189,7 +195,7 @@ const Providers = () => {
               isLoading={isSearching}
               hasSearched={hasSearched}
               searchFilters={searchFilters}
-              onClearSearch={clearSearch}
+              onClearSearch={handleClearSearch}
             />
           ) : (
             <>

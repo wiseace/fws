@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Search, MapPin, Loader2, Navigation, Filter, X } from 'lucide-react';
@@ -261,6 +260,7 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
     setLocationSuggestions([]);
     setShowServiceSuggestions(false);
     setShowLocationSuggestions(false);
+    // Clear search results by calling onSearch with empty filters
     onSearch({});
   };
 
