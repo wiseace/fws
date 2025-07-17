@@ -31,6 +31,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
           is_verified,
           user_type,
           subscription_status,
+          verification_status,
           created_at,
           updated_at
         )
@@ -52,7 +53,10 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
       // Transform the data to match our Service interface
       const transformedServices: Service[] = (data || []).map(service => ({
         ...service,
-        user: service.users, // Map the joined user data to the user property
+        user: service.users ? {
+          ...service.users,
+          verification_status: service.users.verification_status || 'not_verified'
+        } : undefined, // Map the joined user data to the user property
         contact_info: typeof service.contact_info === 'object' && service.contact_info !== null 
           ? service.contact_info as { phone?: string; email?: string; }
           : { phone: undefined, email: undefined }
