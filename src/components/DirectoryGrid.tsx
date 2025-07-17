@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -108,31 +109,39 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
   }
 
   return (
-    <section className="relative py-16 overflow-hidden">
-      {/* Enhanced Background with Gradient and Subtle Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-blue-50/30 to-primary/5"></div>
+    <section className="relative py-20 overflow-hidden min-h-screen">
+      {/* Primary Background with Rich Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"></div>
       
-      {/* Subtle Geometric Pattern Overlay */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-primary/5 rounded-full blur-xl"></div>
-        <div className="absolute top-40 right-20 w-48 h-48 bg-secondary/5 rounded-full blur-xl"></div>
-        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-primary/5 rounded-full blur-xl"></div>
-        <div className="absolute bottom-40 right-1/3 w-56 h-56 bg-secondary/5 rounded-full blur-xl"></div>
+      {/* Secondary Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-blue-100/30"></div>
+      
+      {/* Animated Floating Elements */}
+      <div className="absolute inset-0 opacity-40">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-60 right-20 w-80 h-80 bg-purple-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-40 left-1/4 w-72 h-72 bg-indigo-200/25 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute bottom-20 right-1/3 w-96 h-96 bg-blue-300/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '6s' }}></div>
       </div>
 
-      {/* Grid Pattern Overlay */}
+      {/* Subtle Grid Pattern */}
       <div 
-        className="absolute inset-0 opacity-[0.02]" 
+        className="absolute inset-0 opacity-[0.03]" 
         style={{
           backgroundImage: `
-            linear-gradient(hsl(var(--primary)) 1px, transparent 1px),
-            linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)
+            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '60px 60px'
+          backgroundSize: '50px 50px'
         }}
       ></div>
 
-      {/* Content */}
+      {/* Decorative Elements */}
+      <div className="absolute top-10 right-10 w-2 h-2 bg-blue-400 rounded-full opacity-60"></div>
+      <div className="absolute top-32 right-32 w-3 h-3 bg-purple-400 rounded-full opacity-40"></div>
+      <div className="absolute bottom-20 left-20 w-2 h-2 bg-indigo-400 rounded-full opacity-50"></div>
+
+      {/* Main Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <EditableElement
@@ -170,10 +179,10 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(12)].map((_, i) => (
-                <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 animate-pulse">
-                  <div className="w-full h-48 bg-gray-200 rounded-lg mb-4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div key={i} className="bg-white/90 backdrop-blur-md rounded-xl shadow-lg border border-white/20 p-6 animate-pulse">
+                  <div className="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg mb-4"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/2"></div>
                 </div>
               ))}
             </div>
@@ -192,7 +201,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
               <div className="text-center">
                 <Button 
                   onClick={() => window.location.href = '/browse'}
-                  className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 >
                   View All Services
                 </Button>
