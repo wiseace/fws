@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Service } from '@/types/database';
 import { ModernServiceCard } from '@/components/ModernServiceCard';
 import { Button } from '@/components/ui/button';
 import { Loader2, Search } from 'lucide-react';
@@ -21,64 +20,119 @@ import {
 
 const PROVIDERS_PER_PAGE = 12;
 
+interface Provider {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  user_type: 'provider';
+  is_verified: boolean;
+  verification_status: 'verified';
+  profile_image_url: string;
+  subscription_status: string;
+  created_at: string;
+  updated_at: string;
+  services: Array<{
+    id: string;
+    service_name: string;
+    category: string;
+    description: string;
+    image_url: string;
+    location: string;
+    contact_info: any;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    price_range_min: number;
+    price_range_max: number;
+    skills: string[];
+    tags: string[];
+  }>;
+}
+
 const Providers = () => {
-  const [services, setServices] = useState<Service[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
   const { searchResults, isLoading: isSearching, performSearch, clearSearch, hasSearched, searchFilters } = useSmartSearch();
 
   useEffect(() => {
-    fetchAllServices();
+    fetchAllProviders();
   }, []);
 
-  const fetchAllServices = async () => {
+  const fetchAllProviders = async () => {
     setLoading(true);
     
     try {
-      // Fetch all active services from verified providers
-      const { data: servicesData, error } = await supabase
-        .from('services')
+      // Fetch all verified providers with their services
+      const { data: providersData, error } = await supabase
+        .from('users')
         .select(`
-          *,
-          users!inner(
+          id,
+          name,
+          email,
+          phone,
+          user_type,
+          is_verified,
+          verification_status,
+          profile_image_url,
+          subscription_status,
+          created_at,
+          updated_at,
+          services!inner(
             id,
-            name,
-            email,
-            phone,
-            user_type,
-            is_verified,
-            verification_status,
-            profile_image_url,
-            subscription_status,
+            service_name,
+            category,
+            description,
+            image_url,
+            location,
+            contact_info,
+            is_active,
             created_at,
-            updated_at
+            updated_at,
+            price_range_min,
+            price_range_max,
+            skills,
+            tags
           )
         `)
-        .eq('is_active', true)
-        .eq('users.user_type', 'provider')
-        .eq('users.is_verified', true)
-        .eq('users.verification_status', 'verified')
+        .eq('user_type', 'provider')
+        .eq('is_verified', true)
+        .eq('verification_status', 'verified')
+        .eq('services.is_active', true)
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching services:', error);
+        console.error('Error fetching providers:', error);
         return;
       }
 
-      console.log('Fetched services:', servicesData);
+      console.log('Fetched providers:', providersData);
 
-      if (servicesData) {
-        // Transform the data to match our Service interface
-        const transformedServices = servicesData.map(service => ({
-          ...service,
-          user: service.users
-        }));
+      if (providersData) {
+        // Group services by provider to avoid duplicates
+        const uniqueProviders = providersData.reduce((acc: Provider[], current) => {
+          const existingProvider = acc.find(p => p.id === current.id);
+          
+          if (existingProvider) {
+            // Add service to existing provider
+            existingProvider.services.push(...current.services);
+          } else {
+            // Add new provider
+            acc.push({
+              ...current,
+              services: current.services
+            });
+          }
+          
+          return acc;
+        }, []);
         
-        setServices(transformedServices);
+        setProviders(uniqueProviders);
       }
     } catch (error) {
-      console.error('Error in fetchAllServices:', error);
+      console.error('Error in fetchAllProviders:', error);
     } finally {
       setLoading(false);
     }
@@ -96,22 +150,37 @@ const Providers = () => {
     });
   };
 
-  // Use smart search results when available, otherwise use all services
-  const displayResults = hasSearched ? searchResults : services;
+  // Convert providers to services format for display
+  const getServicesFromProviders = (providers: Provider[]) => {
+    return providers.flatMap(provider => 
+      provider.services.map(service => ({
+        ...service,
+        user_id: provider.id,
+        user: provider
+      }))
+    );
+  };
+
+  // Use smart search results when available, otherwise use all providers
+  const displayResults = hasSearched ? searchResults : getServicesFromProviders(providers);
   const isLoadingResults = hasSearched ? isSearching : loading;
 
-  // Pagination calculations
-  const totalPages = Math.ceil(displayResults.length / PROVIDERS_PER_PAGE);
+  // For pagination, we want to paginate providers, not services
+  const providersToDisplay = hasSearched ? providers : providers;
+  const totalPages = Math.ceil(providersToDisplay.length / PROVIDERS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROVIDERS_PER_PAGE;
   const endIndex = startIndex + PROVIDERS_PER_PAGE;
-  const paginatedResults = hasSearched 
-    ? displayResults.slice(startIndex, endIndex)
-    : services.slice(startIndex, endIndex);
+  const paginatedProviders = providersToDisplay.slice(startIndex, endIndex);
+
+  // Convert paginated providers to services for ModernServiceCard
+  const paginatedServices = hasSearched 
+    ? searchResults.slice(startIndex, endIndex)
+    : getServicesFromProviders(paginatedProviders);
 
   // Reset to page 1 when search changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [hasSearched, searchResults.length, services.length]);
+  }, [hasSearched, searchResults.length, providers.length]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -154,7 +223,7 @@ const Providers = () => {
                     All Verified Providers
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {services.length} service{services.length !== 1 ? 's' : ''} available
+                    {providers.length} verified provider{providers.length !== 1 ? 's' : ''} available
                   </p>
                 </div>
               </div>
@@ -165,10 +234,10 @@ const Providers = () => {
                   <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-4" />
                   <p className="text-gray-600">Loading providers...</p>
                 </div>
-              ) : paginatedResults.length > 0 ? (
+              ) : paginatedServices.length > 0 ? (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
-                    {paginatedResults.map((service) => (
+                    {paginatedServices.map((service) => (
                       <div key={service.id} className="animate-fade-in-up">
                         <ModernServiceCard service={service} />
                       </div>
