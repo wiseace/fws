@@ -18,6 +18,14 @@ export interface User {
   verification_documents?: any;
   can_access_contact?: boolean;
   profile_image_url?: string;
+  skills?: string[];
+  tags?: string[];
+  service_location?: string;
+  city_or_state?: string;
+  availability_status?: string;
+  price_range_min?: number;
+  price_range_max?: number;
+  last_active?: string;
   created_at: string;
   updated_at: string;
 }
@@ -35,6 +43,10 @@ export interface Service {
   location?: string;
   image_url?: string;
   is_active: boolean;
+  price_range_min?: number;
+  price_range_max?: number;
+  skills?: string[];
+  tags?: string[];
   created_at: string;
   updated_at: string;
   user?: User;
