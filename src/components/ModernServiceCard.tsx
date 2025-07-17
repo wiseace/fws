@@ -107,7 +107,7 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
                 {service.user?.name || 'Provider'}
               </p>
               <p className="text-white/70 text-sm">
-                {service.location || 'Location available'}
+                {service.location && !service.location.match(/^\+?\d[\d\s\-\(\)]*$/) ? service.location : 'Location available'}
               </p>
             </div>
           </div>
