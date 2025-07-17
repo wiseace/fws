@@ -80,16 +80,17 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
             }
             
             setTimeout(() => {
-              const profileTab = document.querySelector('[data-value="profile"]') as HTMLElement;
+              const profileTab = document.querySelector('[data-state="inactive"][data-value="profile"]') as HTMLElement;
               if (profileTab) {
                 profileTab.click();
                 setTimeout(() => {
-                  profileTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 200);
+                  const profileContent = document.querySelector('[data-state="active"] form, [data-state="active"] .profile-form');
+                  if (profileContent) {
+                    profileContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }, 300);
               }
-            }, 100);
-            
-            markStepCompleted('profile_completion');
+            }, 200);
           }
         },
         {
@@ -108,16 +109,17 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
             }
             
             setTimeout(() => {
-              const verificationTab = document.querySelector('[data-value="verification"]') as HTMLElement;
+              const verificationTab = document.querySelector('[data-state="inactive"][data-value="verification"]') as HTMLElement;
               if (verificationTab) {
                 verificationTab.click();
                 setTimeout(() => {
-                  verificationTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 200);
+                  const verificationContent = document.querySelector('[data-state="active"] form, [data-state="active"] .verification-form');
+                  if (verificationContent) {
+                    verificationContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }, 300);
               }
-            }, 100);
-            
-            markStepCompleted('verification_submission');
+            }, 200);
           }
         },
         {
@@ -145,16 +147,17 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
             }
             
             setTimeout(() => {
-              const servicesTab = document.querySelector('[data-value="services"]') as HTMLElement;
+              const servicesTab = document.querySelector('[data-state="inactive"][data-value="services"]') as HTMLElement;
               if (servicesTab) {
                 servicesTab.click();
                 setTimeout(() => {
-                  servicesTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 200);
+                  const servicesContent = document.querySelector('[data-state="active"] .services-grid, [data-state="active"] button[aria-label*="Add"], [data-state="active"] [class*="add"]');
+                  if (servicesContent) {
+                    servicesContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }, 300);
               }
-            }, 100);
-            
-            markStepCompleted('first_service_creation');
+            }, 200);
           }
         }
       ]);
@@ -177,16 +180,17 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
             }
             
             setTimeout(() => {
-              const profileTab = document.querySelector('[data-value="profile"]') as HTMLElement;
+              const profileTab = document.querySelector('[data-state="inactive"][data-value="profile"]') as HTMLElement;
               if (profileTab) {
                 profileTab.click();
                 setTimeout(() => {
-                  profileTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 200);
+                  const profileContent = document.querySelector('[data-state="active"] form, [data-state="active"] .profile-form');
+                  if (profileContent) {
+                    profileContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }, 300);
               }
-            }, 100);
-            
-            markStepCompleted('profile_completion');
+            }, 200);
           }
         },
         {
