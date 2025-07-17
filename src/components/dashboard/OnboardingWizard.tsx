@@ -207,7 +207,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
       
       {/* Wizard Panel */}
       <div 
-        className={`absolute right-0 top-0 h-full w-[420px] bg-white border-l shadow-2xl transform transition-transform duration-500 ease-out pointer-events-auto ${
+        className={`absolute right-0 top-20 h-[calc(100vh-5rem)] w-[420px] bg-white border-l shadow-2xl transform transition-transform duration-500 ease-out pointer-events-auto ${
           isVisible ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
