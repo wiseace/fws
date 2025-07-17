@@ -8,7 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Eye, EyeOff, ArrowLeft, Sparkles } from 'lucide-react';
+import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import logo from '@/assets/findwhosabi-logo.png';
 import { PasswordValidator, isPasswordValid } from '@/components/PasswordValidator';
 import { Link } from 'react-router-dom';
 
@@ -124,11 +125,12 @@ const Auth = () => {
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <Card className="w-full max-w-md backdrop-blur-lg bg-white/90 border-white/20 shadow-2xl animate-fade-in-up">
           <CardHeader className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-2">
-              <Sparkles className="h-8 w-8 text-primary animate-pulse-glow" />
-              <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                FINDWHOSABI
-              </CardTitle>
+            <div className="flex items-center justify-center">
+              <img 
+                src={logo} 
+                alt="FindWhoSabi Logo" 
+                className="h-16 w-auto"
+              />
             </div>
             <p className="text-muted-foreground">Connect with skilled professionals</p>
             <Link 
