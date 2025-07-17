@@ -76,7 +76,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
         return [];
       }
       
-      // Extract just the names from the category objects
+      // Extract just the names from the category objects and ensure we return strings
       return data?.map(cat => cat.name) || [];
     }
   });
