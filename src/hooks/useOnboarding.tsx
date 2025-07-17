@@ -117,11 +117,22 @@ export const useOnboarding = () => {
     setShowWizard(true);
   };
 
+  const getOnboardingProgress = () => {
+    if (!profile) return 0;
+    
+    const requiredSteps = profile.user_type === 'provider' 
+      ? ['profile_completion', 'verification_submission', 'first_service_creation', 'subscription_setup']
+      : ['profile_completion', 'browse_services', 'subscription_setup'];
+    
+    return (completedSteps.size / requiredSteps.length) * 100;
+  };
+
   return {
     showWizard,
     completedSteps,
     dismissWizard,
     showWizardManually,
-    refreshOnboardingStatus: checkOnboardingStatus
+    refreshOnboardingStatus: checkOnboardingStatus,
+    onboardingProgress: getOnboardingProgress()
   };
 };

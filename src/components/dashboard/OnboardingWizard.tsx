@@ -196,19 +196,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
   const currentStepData = steps[currentStep];
 
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none">
+    <div className={`fixed inset-0 z-50 pointer-events-none transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {/* Backdrop */}
       <div 
-        className={`absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 pointer-events-auto ${
+        className={`absolute inset-0 bg-black/10 backdrop-blur-sm transition-opacity duration-300 pointer-events-auto ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
       />
       
-      {/* Wizard Panel */}
+      {/* Wizard Panel - Compact callout style */}
       <div 
-        className={`absolute right-0 top-20 h-[calc(100vh-5rem)] w-[420px] bg-white border-l shadow-2xl transform transition-transform duration-500 ease-out pointer-events-auto ${
-          isVisible ? 'translate-x-0' : 'translate-x-full'
+        className={`absolute right-4 top-24 bottom-4 w-80 bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl transform transition-all duration-500 ease-out pointer-events-auto ${
+          isVisible ? 'translate-x-0 scale-100' : 'translate-x-full scale-95'
         }`}
       >
         {/* Header */}

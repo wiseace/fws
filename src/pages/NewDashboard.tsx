@@ -33,7 +33,7 @@ import {
 export const NewDashboard = () => {
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
-  const { showWizard, dismissWizard, showWizardManually } = useOnboarding();
+  const { showWizard, dismissWizard, showWizardManually, onboardingProgress } = useOnboarding();
   const [services, setServices] = useState<Service[]>([]);
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -182,7 +182,9 @@ export const NewDashboard = () => {
         <div className="fixed bottom-6 right-6 z-40">
           <Button
             onClick={showWizardManually}
-            className="rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90"
+            className={`rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90 transition-all ${
+              onboardingProgress < 100 ? 'animate-pulse ring-4 ring-primary/30' : ''
+            }`}
             title="Show onboarding guide"
           >
             <HelpCircle className="h-6 w-6" />
