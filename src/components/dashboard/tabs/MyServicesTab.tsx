@@ -294,12 +294,12 @@ export const MyServicesTab = () => {
                           </Badge>
                         </div>
                       </div>
-                      <div className="flex flex-col space-y-1">
+                      <div className="flex flex-col space-y-1 opacity-100 group-hover:opacity-100 transition-opacity duration-200">
                         <Button 
                           size="sm" 
                           variant="ghost" 
                           onClick={() => handleServiceModalOpen(service)}
-                          className="hover:bg-primary hover:text-white transition-all duration-200 h-8 w-8 p-0"
+                          className="bg-white/10 backdrop-blur-sm text-white hover:bg-primary hover:text-white transition-all duration-200 h-8 w-8 p-0 shadow-lg"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -307,7 +307,7 @@ export const MyServicesTab = () => {
                           size="sm" 
                           variant="ghost" 
                           onClick={() => handleDelete(service.id)}
-                          className="hover:bg-destructive hover:text-white transition-all duration-200 h-8 w-8 p-0"
+                          className="bg-white/10 backdrop-blur-sm text-white hover:bg-destructive hover:text-white transition-all duration-200 h-8 w-8 p-0 shadow-lg"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { CustomPhoneInput } from '@/components/ui/phone-input';
 import { AddressInput } from '@/components/ui/address-input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
-import { User, Settings, Save, CreditCard, Calendar, CheckCircle } from 'lucide-react';
+import { User, Settings, Save, CreditCard, Calendar, CheckCircle, Upload, Camera } from 'lucide-react';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 
 export const ProfileTab = () => {
@@ -19,14 +20,67 @@ export const ProfileTab = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (profile) {
       setName(profile.name || '');
       setPhone(profile.phone || '');
       setAddress(''); // Address field would need to be added to database
+      // For now, we'll use a generated avatar based on initials
+      setProfileImage(`https://api.dicebear.com/7.x/initials/svg?seed=${profile.name}`);
     }
   }, [profile]);
+
+  const handleImageUpload = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user?.id}-${Date.now()}.${fileExt}`;
+
+      const { data, error } = await supabase.storage
+        .from('service-images')
+        .upload(`profiles/${fileName}`, file);
+
+      if (error) throw error;
+
+      const { data: publicData } = supabase.storage
+        .from('service-images')
+        .getPublicUrl(data.path);
+
+      return publicData.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Upload Error",
+        description: "Failed to upload profile image. Please try again.",
+        variant: "destructive"
+      });
+      return null;
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 1024 * 1024) { // 1MB limit
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 1MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfileImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +98,14 @@ export const ProfileTab = () => {
 
     try {
       setLoading(true);
+      
+      // Upload new profile image if selected
+      let uploadedImageUrl = null;
+      if (imageFile) {
+        setUploading(true);
+        uploadedImageUrl = await handleImageUpload(imageFile);
+        setUploading(false);
+      }
       
       const { error } = await supabase.rpc('update_user_profile', {
         user_name: name,
@@ -104,6 +166,41 @@ export const ProfileTab = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleUpdateProfile} className="space-y-4">
+              {/* Profile Image Upload */}
+              <div className="text-center">
+                <Label>Profile Image</Label>
+                <div className="flex flex-col items-center space-y-4 mt-2">
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage src={profileImage || undefined} />
+                    <AvatarFallback className="text-xl">
+                      {name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex items-center space-x-2">
+                    <label htmlFor="profile-image" className="cursor-pointer">
+                      <div className="flex items-center space-x-2 px-3 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+                        <Camera className="h-4 w-4" />
+                        <span className="text-sm">Change Photo</span>
+                      </div>
+                    </label>
+                    <input
+                      id="profile-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      disabled={loading || uploading}
+                    />
+                    {uploading && (
+                      <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Upload a clear photo (max 1MB). JPG, PNG formats supported.
+                  </p>
+                </div>
+              </div>
+              
               <div>
                 <Label htmlFor="name">Full Name</Label>
                 <Input

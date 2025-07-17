@@ -81,7 +81,7 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         {/* Verification Badge */}
         {service.user?.is_verified && (
           <div className="absolute top-3 left-3 z-30">
-            <div className="bg-secondary rounded-full p-2 shadow-xl ring-2 ring-white/20">
+            <div className="bg-blue-600 rounded-full p-2 shadow-xl ring-2 ring-white/20">
               <Verified className="w-4 h-4 text-white" />
             </div>
           </div>
@@ -90,7 +90,7 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         {/* Profile Icon */}
         <button
           onClick={handleViewProfile}
-          className="absolute top-3 right-3 z-20 bg-secondary rounded-full p-2 shadow-xl ring-2 ring-white/20 hover:bg-secondary/90 transition-all duration-200 group/profile"
+          className="absolute top-3 right-3 z-20 bg-white/20 backdrop-blur-sm rounded-full p-2 shadow-xl ring-2 ring-white/20 hover:bg-white/30 transition-all duration-200 group/profile"
         >
           <User className="w-4 h-4 text-white group-hover/profile:scale-110 transition-transform" />
         </button>

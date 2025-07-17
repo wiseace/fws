@@ -118,9 +118,9 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-12 animate-fade-in-up">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 animate-fade-in-up max-w-5xl mx-auto">
         {filteredServices && filteredServices.length > 0 ? (
-          filteredServices.map((service, index) => (
+          filteredServices.slice(0, 9).map((service, index) => (
             <div 
               key={service.id} 
               className="animate-fade-in-up"
