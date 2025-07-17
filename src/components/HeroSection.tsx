@@ -1,14 +1,20 @@
-
-import { Search, MapPin, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { EditableElement } from './EditableElement';
 import { SearchWithGeolocation } from './SearchWithGeolocation';
+import artisan1 from '@/assets/african-artisan-1.jpg';
+import artisan2 from '@/assets/african-artisan-2.jpg';
+import artisan3 from '@/assets/african-artisan-3.jpg';
+import artisan4 from '@/assets/african-artisan-4.jpg';
 
 interface HeroSectionProps {
   editMode: boolean;
 }
 
+const artisanImages = [artisan1, artisan2, artisan3, artisan4];
+
 export const HeroSection = ({ editMode }: HeroSectionProps) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const handleSearch = (filters: { search?: string; category?: string; location?: string; userLocation?: { lat: number; lng: number } }) => {
     console.log('Search filters:', filters);
     const params = new URLSearchParams();
@@ -22,81 +28,68 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
     window.location.href = `/browse?${params.toString()}`;
   };
 
+  // Image slideshow effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % artisanImages.length);
+    }, 8000); // Change image every 8 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   try {
     return (
-      <section className="relative py-20 pt-32 min-h-screen flex items-center overflow-hidden">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url(/lovable-uploads/192e50f4-9f3a-4668-bb0b-91e3529dae51.png)'
-          }}
-        />
+      <section className="relative pt-32 pb-16 overflow-hidden bg-gradient-to-r from-blue-600 to-purple-700">
+        {/* Background Image Slideshow with Ken Burns Effect */}
+        <div className="absolute inset-0">
+          {artisanImages.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-2000 ${
+                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <div 
+                className="w-full h-full bg-cover bg-center bg-no-repeat animate-ken-burns"
+                style={{
+                  backgroundImage: `url(${image})`,
+                  animationDuration: '20s',
+                  animationIterationCount: 'infinite',
+                  animationTimingFunction: 'ease-in-out'
+                }}
+              />
+            </div>
+          ))}
+        </div>
         
         {/* Overlay for better contrast */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/50"></div>
         
         {/* Additional subtle pattern overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent"></div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <EditableElement
-            editMode={editMode}
-            type="text"
-            className="text-5xl md:text-6xl font-bold mb-6 text-white drop-shadow-2xl animate-fade-in-up"
-            defaultValue="Find skilled professionals near you"
-          />
-          
-          <EditableElement
-            editMode={editMode}
-            type="text"
-            className="text-xl md:text-2xl mb-12 text-white/90 max-w-3xl mx-auto drop-shadow-lg animate-fade-in-up"
-            defaultValue="Connect with verified artisans, craftsmen, and service providers. Quality work, trusted professionals, verified credentials."
-          />
-
-          {/* Enhanced Search Bar with Geolocation */}
-          <div className="max-w-5xl mx-auto mb-12 animate-fade-in-up">
-            <SearchWithGeolocation 
-              onSearch={handleSearch}
-              className="shadow-2xl backdrop-blur-sm"
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="mb-8">
+            <EditableElement
+              editMode={editMode}
+              type="text"
+              className="text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-2xl animate-fade-in"
+              defaultValue="Find skilled professionals near you"
+            />
+            
+            <EditableElement
+              editMode={editMode}
+              type="text"
+              className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto drop-shadow-lg animate-fade-in"
+              defaultValue="Connect with verified artisans, craftsmen, and service providers. Quality work, trusted professionals, verified credentials."
             />
           </div>
-
-          {/* Popular Categories */}
-          <div className="mt-12 animate-fade-in-up">
-            <p className="text-white/80 mb-6 text-lg font-medium drop-shadow-md">Popular Services:</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {['Plumbing', 'Electrical', 'Carpentry', 'Painting', 'Cleaning', 'Gardening'].map((category) => (
-                <button
-                  key={category}
-                  className="bg-white/80 hover:bg-white backdrop-blur-sm text-gray-700 hover:text-gray-900 px-6 py-3 rounded-full text-sm font-medium transition-all border border-gray-200 hover:border-gray-300 hover:scale-105 transform shadow-sm hover:shadow-md"
-                  onClick={() => window.location.href = `/browse?category=${category}`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up">
-            <Button 
-              size="lg" 
-              className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-              onClick={() => window.location.href = '/browse'}
-            >
-              Find Services
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="border-white/50 text-white hover:bg-white/10 hover:text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 bg-white/10 backdrop-blur-sm"
-              onClick={() => window.location.href = '/auth'}
-            >
-              <ArrowRight className="w-5 h-5 mr-2" />
-              Discover How
-            </Button>
-          </div>
+          
+          {/* Search Component */}
+          <SearchWithGeolocation 
+            onSearch={handleSearch} 
+            className="max-w-4xl mx-auto shadow-2xl backdrop-blur-sm" 
+          />
         </div>
       </section>
     );
@@ -104,31 +97,22 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
     console.error('HeroSection render error:', error);
     // Fallback content if there's any rendering error
     return (
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white py-20 min-h-[600px] flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg">
-            Find Skilled Professionals Near You
-          </h1>
-          <p className="text-xl md:text-2xl mb-12 text-blue-100 max-w-3xl mx-auto drop-shadow-md">
-            Connect with verified artisans, craftsmen, and service providers. Quality work, trusted professionals, verified credentials.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-blue-800 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-xl"
-              onClick={() => window.location.href = '/browse'}
-            >
-              Find Services
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-blue-800 px-8 py-4 text-lg font-semibold rounded-xl"
-              onClick={() => window.location.href = '/auth'}
-            >
-              Join as Provider
-            </Button>
+      <section className="pt-32 pb-16 bg-gradient-to-r from-blue-600 to-purple-700">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="mb-8">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              Find Professional Services
+            </h1>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Connect with verified service providers in your area
+            </p>
           </div>
+          
+          {/* Search Component */}
+          <SearchWithGeolocation 
+            onSearch={handleSearch} 
+            className="max-w-4xl mx-auto" 
+          />
         </div>
       </section>
     );
