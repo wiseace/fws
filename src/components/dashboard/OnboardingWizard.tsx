@@ -220,7 +220,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
   const currentStepData = steps[currentStep];
 
   return (
-    <div className={`fixed inset-0 z-50 pointer-events-none transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+    <div className={`fixed inset-0 z-50 pointer-events-none ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}>
       {/* Backdrop */}
       <div 
         className={`absolute inset-0 bg-black/10 backdrop-blur-sm transition-opacity duration-300 ${
@@ -229,10 +229,10 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
         onClick={onClose}
       />
       
-      {/* Wizard Panel - Compact callout style */}
+      {/* Wizard Panel - Compact callout style positioned safely */}
       <div 
-        className={`absolute right-4 top-24 bottom-4 w-80 bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl transform transition-all duration-500 ease-out ${
-          isVisible ? 'translate-x-0 scale-100 opacity-100 pointer-events-auto' : 'translate-x-full scale-95 opacity-0 pointer-events-none'
+        className={`absolute right-6 top-20 bottom-6 w-80 bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl transform transition-all duration-500 ease-out ${
+          isVisible ? 'translate-x-0 scale-100 opacity-100 pointer-events-auto animate-slide-in-right' : 'translate-x-full scale-95 opacity-0 pointer-events-none animate-slide-out-right'
         }`}
       >
         {/* Header */}
@@ -260,11 +260,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-3">
+        <div className="flex-1 overflow-y-auto p-4 pb-6">
           {/* Current Step Highlight */}
           {currentStepData && !completedSteps.has(currentStepData.id) && (
-            <Card className="mb-4 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-              <CardContent className="p-3">
+            <Card className="mb-6 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+              <CardContent className="p-4">
                 <div className="flex items-start gap-2">
                   <div className="p-1.5 bg-primary/10 rounded-lg">
                     <currentStepData.icon className="h-4 w-4 text-primary" />
@@ -297,10 +297,10 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
               const isCurrent = index === currentStep && !isCompleted;
               
               return (
-                <div 
+                 <div 
                   key={step.id}
                   onClick={() => !isCompleted && handleStepAction(step)}
-                  className={`flex items-center gap-2 p-2.5 rounded-lg transition-all duration-300 cursor-pointer hover:shadow-sm ${
+                  className={`flex items-center gap-2 p-3 rounded-lg transition-all duration-300 cursor-pointer hover:shadow-sm mb-2 ${
                     isCurrent ? 'bg-primary/5 border border-primary/20 hover:bg-primary/10' : 
                     isCompleted ? 'bg-green-50 border border-green-200' : 
                     'bg-gray-50 border border-gray-200 hover:bg-gray-100'
@@ -348,8 +348,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
 
           {/* Completion Message */}
           {progress === 100 && (
-            <Card className="mt-4 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-              <CardContent className="p-3 text-center">
+            <Card className="mt-6 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+              <CardContent className="p-4 text-center">
                 <div className="mb-2">
                   <CheckCircle className="h-8 w-8 text-green-600 mx-auto" />
                 </div>
@@ -370,7 +370,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
         </div>
 
         {/* Footer */}
-        <div className="p-2 border-t bg-gray-50">
+        <div className="p-3 border-t bg-gray-50">
           <p className="text-[10px] text-gray-500 text-center">
             Need help? Contact our support team anytime.
           </p>
