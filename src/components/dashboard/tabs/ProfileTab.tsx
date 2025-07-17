@@ -79,7 +79,7 @@ export const ProfileTab = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'verified':
-        return <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" /> Verified</Badge>;
+        return <Badge className="bg-secondary text-white"><CheckCircle className="h-3 w-3 mr-1" /> Verified</Badge>;
       case 'pending':
         return <Badge variant="secondary">Pending</Badge>;
       case 'rejected':

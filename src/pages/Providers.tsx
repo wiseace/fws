@@ -53,6 +53,7 @@ const Providers = () => {
   const fetchServicesAndCategories = async () => {
     setLoading(true);
     
+    // Fetch unique providers instead of individual services
     const { data: servicesData } = await supabase
       .from('services')
       .select(`
@@ -72,7 +73,17 @@ const Providers = () => {
         ...service,
         contact_info: service.contact_info as { phone?: string; email?: string; }
       })) as Service[];
-      setServices(typedServices);
+      
+      // Group services by user to show unique providers only
+      const uniqueProviders = typedServices.reduce((acc, service) => {
+        const existingProvider = acc.find(s => s.user_id === service.user_id);
+        if (!existingProvider) {
+          acc.push(service);
+        }
+        return acc;
+      }, [] as Service[]);
+      
+      setServices(uniqueProviders);
       
       // Extract unique categories from services
       const serviceCategories = [...new Set(servicesData.map(s => s.category))];
@@ -174,7 +185,7 @@ const Providers = () => {
       <Header editMode={false} onToggleEdit={() => {}} />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-to-r from-blue-600 to-purple-700">
+      <section className="pt-32 pb-16 bg-gradient-hero">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
@@ -196,7 +207,7 @@ const Providers = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
-                  placeholder="Search services, providers, or descriptions..."
+                  placeholder="Search for providers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 h-12"

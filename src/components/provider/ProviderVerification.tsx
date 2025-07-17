@@ -15,10 +15,10 @@ export const ProviderVerification = ({ user }: ProviderVerificationProps) => {
           <div className="flex items-center">
             {user?.is_verified ? (
               <>
-                <div className="bg-green-100 rounded-full p-1 mr-3">
-                  <Verified className="w-4 h-4 text-green-600" />
+                <div className="bg-secondary/10 rounded-full p-1 mr-3">
+                  <Verified className="w-4 h-4 text-secondary" />
                 </div>
-                <span className="text-green-600 font-medium">Verified Provider</span>
+                <span className="text-secondary font-medium">Verified Provider</span>
               </>
             ) : (
               <>

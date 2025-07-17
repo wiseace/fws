@@ -112,7 +112,7 @@ const Browse = () => {
       <Header editMode={false} onToggleEdit={() => {}} />
       
       {/* Hero Section with Search */}
-      <section className="pt-32 pb-16 bg-gradient-to-r from-blue-600 to-purple-700">
+      <section className="pt-32 pb-16 bg-gradient-hero">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
