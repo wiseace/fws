@@ -80,8 +80,8 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
 
         {/* Verification Badge */}
         {service.user?.is_verified && (
-          <div className="absolute top-4 left-4 z-20">
-            <div className="bg-blue-500 rounded-full p-2 shadow-lg">
+          <div className="absolute top-4 left-4 z-30">
+            <div className="bg-blue-500 rounded-full p-2 shadow-xl ring-2 ring-white/20">
               <Verified className="w-4 h-4 text-white" />
             </div>
           </div>

@@ -31,6 +31,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           <nav className="hidden md:flex space-x-8">
             <a href="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Home</a>
             <a href="/browse" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Services</a>
+            <a href="/providers" className="text-gray-700 hover:text-gray-900 font-medium transition-colors">Providers</a>
           </nav>
 
           {/* Right Actions */}
@@ -79,6 +80,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
             <div className="flex flex-col space-y-2">
               <a href="/" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Home</a>
               <a href="/browse" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Browse Services</a>
+              <a href="/providers" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Providers</a>
             </div>
           </div>
         )}

@@ -17,6 +17,7 @@ import AdminCategories from "./pages/AdminCategories";
 import AdminProfile from "./pages/AdminProfile";
 import Pricing from "./pages/Pricing";
 import Provider from "./pages/Provider";
+import Providers from "./pages/Providers";
 import ProviderProfile from "./pages/ProviderProfile";
 import NotFound from "./pages/NotFound";
 
@@ -54,6 +55,7 @@ const App = () => (
               </AdminRoute>
             } />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/providers" element={<Providers />} />
             <Route path="/provider/:id" element={<Provider />} />
             <Route path="/provider-profile" element={
               <ProtectedRoute>

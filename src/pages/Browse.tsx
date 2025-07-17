@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Service } from '@/types/database';
-import { ServiceCard } from '@/components/ServiceCard';
+import { ModernServiceCard } from '@/components/ModernServiceCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Search } from 'lucide-react';
@@ -172,9 +172,9 @@ const Browse = () => {
             </div>
           ) : paginatedServices.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
                 {paginatedServices.map((service) => (
-                  <ServiceCard
+                  <ModernServiceCard
                     key={service.id}
                     service={service}
                   />
