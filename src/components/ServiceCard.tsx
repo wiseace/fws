@@ -23,8 +23,30 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
-  // Updated default image with African professional
-  const defaultImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&q=80";
+  // Service-specific African professional images
+  const getServiceImage = (category: string) => {
+    const serviceImages: { [key: string]: string } = {
+      'plumbing': 'https://images.unsplash.com/photo-1581578949510-fa5a511c6066?w=400&h=300&fit=crop&q=80',
+      'electrical': 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=300&fit=crop&q=80',
+      'cleaning': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&q=80',
+      'carpentry': 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&h=300&fit=crop&q=80',
+      'painting': 'https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=400&h=300&fit=crop&q=80',
+      'hair salon': 'https://images.unsplash.com/photo-1560869713-7d0ac4c75c52?w=400&h=300&fit=crop&q=80',
+      'beauty': 'https://images.unsplash.com/photo-1487412912498-0447578fcca8?w=400&h=300&fit=crop&q=80',
+      'catering': 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=300&fit=crop&q=80',
+      'tailoring': 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&h=300&fit=crop&q=80',
+      'mechanic': 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=400&h=300&fit=crop&q=80',
+      'gardening': 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop&q=80',
+      'tutoring': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&q=80',
+      'photography': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop&q=80',
+      'fitness': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&q=80',
+      'security': 'https://images.unsplash.com/photo-1566753323558-f4e0952af115?w=400&h=300&fit=crop&q=80'
+    };
+    
+    return serviceImages[category.toLowerCase()] || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&q=80';
+  };
+
+  const defaultImage = getServiceImage(service.category);
 
   const handleViewProfile = () => {
     if (!user) {
