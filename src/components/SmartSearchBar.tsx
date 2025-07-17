@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -150,11 +149,23 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
     }, 300);
   };
 
-  // Handle service suggestion selection
+  // Handle service suggestion selection - now triggers search
   const handleServiceSuggestionClick = (suggestion: ServiceSuggestion) => {
     setSearchTerm(suggestion.service_name);
     setServiceSuggestions([]);
     setShowServiceSuggestions(false);
+    
+    // Automatically trigger search for this service
+    const filters = {
+      searchTerm: suggestion.service_name,
+      location: location || undefined,
+      userLocation: userLocation || undefined,
+      minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
+      maxPrice: priceRange[1] < 50000 ? priceRange[1] : undefined,
+      availabilityOnly: availabilityOnly || undefined
+    };
+    
+    onSearch(filters);
   };
 
   // Handle location suggestion selection
@@ -287,12 +298,12 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
               {serviceSuggestions.map((suggestion, index) => (
                 <div
                   key={index}
-                  className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                  className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
                   onClick={() => handleServiceSuggestionClick(suggestion)}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-gray-900">{suggestion.service_name}</span>
-                    <span className="text-sm text-gray-500">{suggestion.category}</span>
+                    <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">{suggestion.category}</span>
                   </div>
                 </div>
               ))}
@@ -325,7 +336,7 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
                 {locationSuggestions.map((suggestion) => (
                   <div
                     key={suggestion.place_id}
-                    className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className="px-4 py-3 hover:bg-green-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
                     onClick={() => handleLocationSuggestionClick(suggestion)}
                   >
                     <div className="flex items-center">

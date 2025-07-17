@@ -1,12 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Service } from '@/types/database';
 import { ModernServiceCard } from '@/components/ModernServiceCard';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Search, SlidersHorizontal, MapPin } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { SmartSearchBar } from '@/components/SmartSearchBar';
@@ -25,37 +23,14 @@ const PROVIDERS_PER_PAGE = 12;
 
 const Providers = () => {
   const [services, setServices] = useState<Service[]>([]);
-  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('latest');
-  const [locationFilter, setLocationFilter] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const { searchResults, isLoading: isSearching, performSearch, clearSearch, hasSearched, searchFilters } = useSmartSearch();
 
   useEffect(() => {
     fetchServicesAndCategories();
   }, []);
-
-  useEffect(() => {
-    if (!hasSearched) {
-      filterAndSortServices();
-    }
-  }, [services, searchTerm, selectedCategory, sortBy, locationFilter, hasSearched]);
-
-  useEffect(() => {
-    if (searchTerm.length > 2 && !hasSearched) {
-      generateSuggestions();
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
-  }, [searchTerm, services, hasSearched]);
 
   const fetchServicesAndCategories = async () => {
     setLoading(true);
@@ -67,11 +42,6 @@ const Providers = () => {
       .eq('user_type', 'provider')
       .eq('is_verified', true)
       .order('created_at', { ascending: false });
-
-    const { data: categoriesData } = await supabase
-      .from('categories')
-      .select('name')
-      .order('name');
 
     if (providersData) {
       // For each provider, create a representative service object using provider data
@@ -116,107 +86,9 @@ const Providers = () => {
       );
       
       setServices(providersWithServices);
-      
-      // Get all service categories for filtering
-      const { data: allServicesData } = await supabase
-        .from('services')
-        .select('category')
-        .eq('is_active', true);
-      
-      const serviceCategories = [...new Set(allServicesData?.map(s => s.category) || [])];
-      const dbCategories = categoriesData?.map(c => c.name) || [];
-      const allCategories = [...new Set([...serviceCategories, ...dbCategories])];
-      setCategories(allCategories);
     }
     
     setLoading(false);
-  };
-
-  const generateSuggestions = () => {
-    const providerSuggestions = services
-      .filter(service => 
-        service.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .map(service => service.user?.name)
-      .filter(Boolean)
-      .slice(0, 3);
-
-    const serviceSuggestions = services
-      .filter(service => 
-        service.service_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.category?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .map(service => service.service_name)
-      .slice(0, 3);
-
-    const locationSuggestions = services
-      .filter(service => 
-        service.location?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .map(service => service.location)
-      .filter(Boolean)
-      .slice(0, 2);
-
-    setSuggestions([...new Set([...providerSuggestions, ...serviceSuggestions, ...locationSuggestions])]);
-    setShowSuggestions(true);
-  };
-
-  const filterAndSortServices = () => {
-    let filtered = [...services];
-
-    // Search filter - now searches across provider names and their services
-    if (searchTerm) {
-      filtered = filtered.filter(service =>
-        service.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.service_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.category?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Category filter
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(service => service.category === selectedCategory);
-    }
-
-    // Location filter
-    if (locationFilter) {
-      filtered = filtered.filter(service =>
-        service.location?.toLowerCase().includes(locationFilter.toLowerCase())
-      );
-    }
-
-    // Sort
-    switch (sortBy) {
-      case 'latest':
-        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-        break;
-      case 'oldest':
-        filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-        break;
-      case 'name':
-        filtered.sort((a, b) => (a.user?.name || '').localeCompare(b.user?.name || ''));
-        break;
-      case 'verified':
-        filtered.sort((a, b) => (b.user?.is_verified ? 1 : 0) - (a.user?.is_verified ? 1 : 0));
-        break;
-    }
-
-    setFilteredServices(filtered);
-    setCurrentPage(1);
-  };
-
-  const handleSearchSelect = (suggestion: string) => {
-    setSearchTerm(suggestion);
-    setShowSuggestions(false);
-  };
-
-  const clearFilters = () => {
-    setSearchTerm('');
-    setSelectedCategory('all');
-    setLocationFilter('');
-    setSortBy('latest');
-    clearSearch();
   };
 
   const handleSmartSearch = (filters: any) => {
@@ -231,8 +103,8 @@ const Providers = () => {
     });
   };
 
-  // Use smart search results when available, otherwise use filtered services
-  const displayResults = hasSearched ? searchResults : filteredServices;
+  // Use smart search results when available, otherwise use all services
+  const displayResults = hasSearched ? searchResults : services;
   const isLoadingResults = hasSearched ? isSearching : loading;
 
   // Pagination calculations
@@ -241,9 +113,7 @@ const Providers = () => {
   const endIndex = startIndex + PROVIDERS_PER_PAGE;
   const paginatedResults = hasSearched 
     ? displayResults.slice(startIndex, endIndex)
-    : filteredServices.slice(startIndex, endIndex);
-
-  const hasActiveFilters = searchTerm || selectedCategory !== 'all' || locationFilter || hasSearched;
+    : services.slice(startIndex, endIndex);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -279,118 +149,17 @@ const Providers = () => {
             />
           ) : (
             <>
-              {/* Legacy Search and Filter Section */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                {/* Search Box with Suggestions */}
-                <div className="relative md:col-span-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <Input
-                      placeholder="Search for providers..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 h-12"
-                      onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                      onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                    />
-                  </div>
-                  
-                  {/* Suggestions Dropdown */}
-                  {showSuggestions && suggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 mt-1">
-                      {suggestions.map((suggestion, index) => (
-                        <div
-                          key={index}
-                          className="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                          onClick={() => handleSearchSelect(suggestion)}
-                        >
-                          <div className="flex items-center">
-                            <Search className="w-4 h-4 text-gray-400 mr-2" />
-                            <span>{suggestion}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Location Filter */}
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <Input
-                    placeholder="Filter by location..."
-                    value={locationFilter}
-                    onChange={(e) => setLocationFilter(e.target.value)}
-                    className="pl-10 h-12"
-                  />
-                </div>
-
-                {/* Sort and Category */}
-                <div className="flex gap-2">
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Sort and Results Info */}
+              {/* Default Results Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                <div className="flex items-center gap-4">
-                  <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-48">
-                      <SlidersHorizontal className="w-4 h-4 mr-2" />
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="latest">Latest First</SelectItem>
-                      <SelectItem value="oldest">Oldest First</SelectItem>
-                      <SelectItem value="name">Name A-Z</SelectItem>
-                      <SelectItem value="verified">Verified First</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  {hasActiveFilters && (
-                    <Button variant="outline" onClick={clearFilters}>
-                      Clear Filters
-                    </Button>
-                  )}
-                </div>
-
-                <div className="text-sm text-gray-600">
-                  {filteredServices.length} provider{filteredServices.length !== 1 ? 's' : ''} found
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    All Verified Providers
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {services.length} provider{services.length !== 1 ? 's' : ''} available
+                  </p>
                 </div>
               </div>
-
-              {/* Active Filters */}
-              {hasActiveFilters && !hasSearched && (
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {searchTerm && (
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                      Search: "{searchTerm}"
-                    </Badge>
-                  )}
-                  {selectedCategory !== 'all' && (
-                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                      Category: {selectedCategory}
-                    </Badge>
-                  )}
-                  {locationFilter && (
-                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-                      Location: {locationFilter}
-                    </Badge>
-                  )}
-                </div>
-              )}
 
               {/* Providers Grid */}
               {isLoadingResults ? (
@@ -464,11 +233,8 @@ const Providers = () => {
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">No providers found</h3>
                     <p className="text-gray-600 mb-6">
-                      We couldn't find any providers matching your criteria. Try adjusting your search or filters.
+                      We couldn't find any providers. Try using the search above to find what you need.
                     </p>
-                    <Button onClick={clearFilters} className="rounded-full">
-                      Clear All Filters
-                    </Button>
                   </div>
                 </div>
               )}
