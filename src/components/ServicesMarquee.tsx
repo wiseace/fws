@@ -21,7 +21,14 @@ export const ServicesMarquee = () => {
   useEffect(() => {
     const animate = () => {
       if (!isDragging) {
-        setAnimationOffset(prev => (prev - 0.5) % -33.333);
+        setAnimationOffset(prev => {
+          const newOffset = prev - 0.15; // Slower speed for better UX
+          // Reset smoothly when reaching the end of one cycle
+          if (newOffset <= -33.333) {
+            return newOffset + 33.333;
+          }
+          return newOffset;
+        });
       }
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -37,26 +44,22 @@ export const ServicesMarquee = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
-    setDragOffset(0);
     e.preventDefault();
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
     
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    
     const moveX = e.movementX || 0;
-    setDragOffset(prev => prev + (moveX * 0.5));
+    setDragOffset(prev => prev + (moveX * 0.3)); // Reduced sensitivity
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    // Gradually reduce drag offset back to 0
+    // Smoothly return to normal flow
     const resetDrag = () => {
       setDragOffset(prev => {
-        const newOffset = prev * 0.95;
+        const newOffset = prev * 0.92;
         if (Math.abs(newOffset) > 0.1) {
           requestAnimationFrame(resetDrag);
           return newOffset;
@@ -72,7 +75,7 @@ export const ServicesMarquee = () => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
       const moveX = e.movementX || 0;
-      setDragOffset(prev => prev + (moveX * 0.5));
+      setDragOffset(prev => prev + (moveX * 0.3));
     };
 
     if (isDragging) {
@@ -89,21 +92,19 @@ export const ServicesMarquee = () => {
   const totalOffset = animationOffset + dragOffset;
 
   return (
-    <div className="w-full overflow-hidden py-8 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 relative">
+    <div className="w-full overflow-hidden py-8 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5">
       <div 
         ref={containerRef}
-        className="relative cursor-drag-custom select-none"
+        className="relative select-none cursor-grab active:cursor-grabbing"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        style={{
-          cursor: isDragging ? 'grabbing' : 'grab'
-        }}
       >
         <div 
-          className="flex whitespace-nowrap transition-transform duration-75 ease-out"
+          className="flex whitespace-nowrap"
           style={{
-            transform: `translateX(${totalOffset}%)`
+            transform: `translateX(${totalOffset}%)`,
+            willChange: 'transform'
           }}
         >
           {duplicatedServices.map((service, index) => (
