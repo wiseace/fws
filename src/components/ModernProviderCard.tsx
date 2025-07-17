@@ -86,17 +86,28 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
       <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100">
         {/* Header with Profile Image */}
         <div className="relative p-6 bg-gradient-to-br from-blue-600 to-purple-700">
-          {/* Verification Badge */}
-          {provider.is_verified && (
-            <div className="absolute top-4 right-4 z-20">
+          {/* Top badges container - positioned to avoid overlap */}
+          <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+            {/* Availability Status - Left side */}
+            {provider.availability_status === 'available' && (
+              <div className="bg-green-500/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
+                <div className="flex items-center gap-1 text-white text-xs font-medium">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  Available
+                </div>
+              </div>
+            )}
+
+            {/* Verification Badge - Right side */}
+            {provider.is_verified && (
               <div className="bg-green-500 rounded-full p-2 shadow-lg ring-2 ring-white/50">
                 <Verified className="w-4 h-4 text-white" />
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Profile Section */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 mt-8">
             <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden ring-4 ring-white/30">
               {provider.profile_image_url && !imageError ? (
                 <img 
@@ -133,12 +144,6 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
               <span className="text-sm font-medium text-gray-600">
                 {provider.services.length} Service{provider.services.length !== 1 ? 's' : ''}
               </span>
-              {provider.availability_status === 'available' && (
-                <div className="flex items-center gap-1 text-green-600 text-xs">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  Available
-                </div>
-              )}
             </div>
             
             {/* Service Categories */}

@@ -1,4 +1,3 @@
-
 import { ModernProviderCard } from '@/components/ModernProviderCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -197,7 +196,7 @@ export const SmartSearchResults = ({
         </Button>
       </div>
 
-      {/* Results Grid - Show Provider Cards */}
+      {/* Results Grid - Show Provider Cards without overlapping badges */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {providers.map((provider) => (
           <div key={provider.id} className="relative">
@@ -209,23 +208,14 @@ export const SmartSearchResults = ({
                 .reduce((best, current) => current.match_score > best.match_score ? current : best);
               
               return bestMatch.match_score > 70 && (
-                <div className="absolute top-2 right-2 z-10">
-                  <Badge className="bg-green-500 text-white">
+                <div className="absolute top-2 left-2 z-20">
+                  <Badge className="bg-green-500 text-white shadow-lg">
                     <Star className="w-3 h-3 mr-1 fill-current" />
                     Best Match
                   </Badge>
                 </div>
               );
             })()}
-            {/* Availability Status */}
-            {provider.availability_status === 'available' && (
-              <div className="absolute top-2 left-2 z-10">
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                  Available
-                </Badge>
-              </div>
-            )}
           </div>
         ))}
       </div>
