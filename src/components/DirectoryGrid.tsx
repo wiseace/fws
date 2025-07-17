@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -109,8 +108,32 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-16 overflow-hidden">
+      {/* Enhanced Background with Gradient and Subtle Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-blue-50/30 to-primary/5"></div>
+      
+      {/* Subtle Geometric Pattern Overlay */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-primary/5 rounded-full blur-xl"></div>
+        <div className="absolute top-40 right-20 w-48 h-48 bg-secondary/5 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-primary/5 rounded-full blur-xl"></div>
+        <div className="absolute bottom-40 right-1/3 w-56 h-56 bg-secondary/5 rounded-full blur-xl"></div>
+      </div>
+
+      {/* Grid Pattern Overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.02]" 
+        style={{
+          backgroundImage: `
+            linear-gradient(hsl(var(--primary)) 1px, transparent 1px),
+            linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px'
+        }}
+      ></div>
+
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <EditableElement
             editMode={editMode}
@@ -147,7 +170,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(12)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl shadow-md p-6 animate-pulse">
+                <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 animate-pulse">
                   <div className="w-full h-48 bg-gray-200 rounded-lg mb-4"></div>
                   <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/2"></div>
