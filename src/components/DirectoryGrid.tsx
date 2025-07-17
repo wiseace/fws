@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Service, User } from '@/types/database';
@@ -118,7 +119,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 animate-fade-in-up max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-12 animate-fade-in-up">
         {filteredServices && filteredServices.length > 0 ? (
           filteredServices.map((service, index) => (
             <div 
