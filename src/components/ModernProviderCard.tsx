@@ -84,13 +84,13 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
   return (
     <>
       <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100">
-        {/* Header with Profile Image */}
-        <div className="relative p-6 bg-gradient-to-br from-blue-600 to-purple-700">
+        {/* Header with Profile Image - Updated with brand colors */}
+        <div className="relative p-6 bg-gradient-to-br from-brand-primary to-brand-secondary">
           {/* Top badges container - positioned to avoid overlap */}
           <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
             {/* Availability Status - Left side */}
             {provider.availability_status === 'available' && (
-              <div className="bg-green-500/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
+              <div className="bg-brand-success/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
                 <div className="flex items-center gap-1 text-white text-xs font-medium">
                   <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                   Available
@@ -100,7 +100,7 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
 
             {/* Verification Badge - Right side */}
             {provider.is_verified && (
-              <div className="bg-green-500 rounded-full p-2 shadow-lg ring-2 ring-white/50">
+              <div className="bg-brand-success rounded-full p-2 shadow-lg ring-2 ring-white/50">
                 <Verified className="w-4 h-4 text-white" />
               </div>
             )}
@@ -151,7 +151,7 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
               {Array.from(new Set(provider.services.map(s => s.category))).slice(0, 3).map((category, index) => (
                 <span 
                   key={index}
-                  className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-200"
+                  className="px-2 py-1 bg-brand-primary/10 text-brand-primary text-xs rounded-full border border-brand-primary/20"
                 >
                   {category}
                 </span>
@@ -202,14 +202,14 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
             <Button
               variant="outline"
               onClick={handleViewProfile}
-              className="flex-1 rounded-xl border-gray-200 hover:bg-gray-50"
+              className="flex-1 rounded-xl border-brand-primary/20 hover:bg-brand-primary/5 text-brand-primary"
             >
               <User className="w-4 h-4 mr-2" />
               View Profile
             </Button>
             <Button
               onClick={handleContactClick}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+              className="flex-1 bg-brand-primary hover:bg-brand-primary-dark text-white rounded-xl"
             >
               <Mail className="w-4 h-4 mr-2" />
               {getContactButtonText()}
