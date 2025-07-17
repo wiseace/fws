@@ -1,20 +1,17 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Search, MapPin, Loader2, Navigation, Filter, X } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-interface SearchWithGeolocationProps {
-  onSearch: (filters: { 
-    search?: string; 
-    category?: string; 
-    location?: string; 
+interface SmartSearchBarProps {
+  onSearch: (filters: {
+    searchTerm?: string;
+    location?: string;
     userLocation?: { lat: number; lng: number };
     minPrice?: number;
     maxPrice?: number;
@@ -23,36 +20,14 @@ interface SearchWithGeolocationProps {
   className?: string;
 }
 
-export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGeolocationProps) => {
+export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [locationFilter, setLocationFilter] = useState('');
+  const [location, setLocation] = useState('');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 50000]);
   const [availabilityOnly, setAvailabilityOnly] = useState(false);
-
-  const { data: categories, isError } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from('categories')
-          .select('*')
-          .order('name');
-        
-        if (error) {
-          console.error('Categories fetch error:', error);
-          throw error;
-        }
-        return data || [];
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-        return [];
-      }
-    }
-  });
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
@@ -64,12 +39,12 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
     
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const location = {
+        const currentLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
-        setUserLocation(location);
-        setLocationFilter('Current Location');
+        setUserLocation(currentLocation);
+        setLocation('Current Location');
         setIsGettingLocation(false);
         toast.success('Location detected successfully');
       },
@@ -101,9 +76,8 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
 
   const handleSearch = () => {
     const filters = {
-      search: searchTerm || undefined,
-      category: selectedCategory === 'all' ? undefined : selectedCategory,
-      location: locationFilter || undefined,
+      searchTerm: searchTerm || undefined,
+      location: location || undefined,
       userLocation: userLocation || undefined,
       minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
       maxPrice: priceRange[1] < 50000 ? priceRange[1] : undefined,
@@ -121,26 +95,25 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
 
   const clearAllFilters = () => {
     setSearchTerm('');
-    setSelectedCategory('all');
-    setLocationFilter('');
+    setLocation('');
     setUserLocation(null);
     setPriceRange([0, 50000]);
     setAvailabilityOnly(false);
     onSearch({});
   };
 
-  const hasActiveFilters = searchTerm || selectedCategory !== 'all' || locationFilter || priceRange[0] > 0 || priceRange[1] < 50000 || availabilityOnly;
+  const hasActiveFilters = searchTerm || location || priceRange[0] > 0 || priceRange[1] < 50000 || availabilityOnly;
 
   return (
     <div className={`bg-white rounded-2xl shadow-lg p-6 ${className}`}>
       {/* Main Search Row */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-        {/* Search Input */}
-        <div className="md:col-span-2">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+        {/* Service Search Input */}
+        <div className="md:col-span-5">
           <div className="flex items-center px-4 py-3 bg-gray-50 border-0 rounded-xl hover:bg-gray-100 transition-colors">
             <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
             <Input
-              placeholder="What service do you need?"
+              placeholder="What service do you need? (e.g., AC repair, Wedding makeup, Math tutor)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={handleKeyPress}
@@ -149,39 +122,16 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
           </div>
         </div>
 
-        {/* Category Filter */}
-        <div className="relative">
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="h-12 bg-gray-50 border-0 rounded-xl hover:bg-gray-100 transition-colors text-foreground font-medium focus:ring-0 focus-visible:ring-0">
-              <SelectValue placeholder="All Categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all" className="font-medium">All Categories</SelectItem>
-              {categories && categories.length > 0 ? (
-                categories.map((category) => (
-                  <SelectItem key={category.id} value={category.name} className="font-medium">
-                    {category.name}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem value="loading" disabled>
-                  {isError ? 'Failed to load categories' : 'Loading categories...'}
-                </SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Location Input with Geolocation */}
-        <div className="flex items-center gap-2">
+        {/* Location Input */}
+        <div className="md:col-span-4 flex items-center gap-2">
           <div className="flex-1">
             <div className="flex items-center px-4 py-3 bg-gray-50 border-0 rounded-xl hover:bg-gray-100 transition-colors">
               <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
               <Input
-                placeholder="Enter location"
-                value={locationFilter}
+                placeholder="Enter your area (e.g., Lagos, Ajah, Port Harcourt)"
+                value={location}
                 onChange={(e) => {
-                  setLocationFilter(e.target.value);
+                  setLocation(e.target.value);
                   if (e.target.value !== 'Current Location') {
                     setUserLocation(null);
                   }
@@ -208,22 +158,22 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
           </Button>
         </div>
 
-        {/* Search Actions */}
-        <div className="flex items-center gap-2">
+        {/* Action Buttons */}
+        <div className="md:col-span-3 flex items-center gap-2">
           <Button
             type="button"
             variant="outline"
             size="icon"
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            onClick={() => setShowFilters(!showFilters)}
             className="h-12 w-12 shrink-0"
-            title="Advanced filters"
+            title="More filters"
           >
             <Filter className="w-4 h-4" />
           </Button>
           
           <Button 
             onClick={handleSearch}
-            className="flex-1 h-12 bg-primary hover:bg-primary/90 text-white border-4 border-primary font-semibold rounded-xl transition-all duration-200 hover:shadow-md"
+            className="flex-1 h-12 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-md"
           >
             SEARCH
           </Button>
@@ -231,7 +181,7 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
       </div>
 
       {/* Advanced Filters Panel */}
-      {showAdvancedFilters && (
+      {showFilters && (
         <div className="border-t border-gray-200 pt-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Price Range */}
@@ -257,10 +207,10 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <label className="text-sm font-medium text-gray-700">
-                  Available Now Only
+                  Show Available Only
                 </label>
                 <p className="text-xs text-gray-500">
-                  Show only providers available right now
+                  Only show providers available right now
                 </p>
               </div>
               <Switch

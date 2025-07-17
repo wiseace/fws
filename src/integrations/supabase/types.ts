@@ -100,7 +100,11 @@ export type Database = {
           image_url: string | null
           is_active: boolean
           location: string | null
+          price_range_max: number | null
+          price_range_min: number | null
           service_name: string
+          skills: string[] | null
+          tags: string[] | null
           updated_at: string
           user_id: string
         }
@@ -113,7 +117,11 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           location?: string | null
+          price_range_max?: number | null
+          price_range_min?: number | null
           service_name: string
+          skills?: string[] | null
+          tags?: string[] | null
           updated_at?: string
           user_id: string
         }
@@ -126,7 +134,11 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           location?: string | null
+          price_range_max?: number | null
+          price_range_min?: number | null
           service_name?: string
+          skills?: string[] | null
+          tags?: string[] | null
           updated_at?: string
           user_id?: string
         }
@@ -224,19 +236,27 @@ export type Database = {
       }
       users: {
         Row: {
+          availability_status: string | null
           can_access_contact: boolean | null
+          city_or_state: string | null
           created_at: string
           email: string
           id: string
           is_verified: boolean
+          last_active: string | null
           name: string
           phone: string | null
+          price_range_max: number | null
+          price_range_min: number | null
           profile_image_url: string | null
+          service_location: string | null
+          skills: string[] | null
           subscription_expiry: string | null
           subscription_plan:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
           subscription_status: Database["public"]["Enums"]["subscription_status"]
+          tags: string[] | null
           updated_at: string
           user_type: Database["public"]["Enums"]["user_type"]
           verification_documents: Json | null
@@ -245,19 +265,27 @@ export type Database = {
             | null
         }
         Insert: {
+          availability_status?: string | null
           can_access_contact?: boolean | null
+          city_or_state?: string | null
           created_at?: string
           email: string
           id: string
           is_verified?: boolean
+          last_active?: string | null
           name: string
           phone?: string | null
+          price_range_max?: number | null
+          price_range_min?: number | null
           profile_image_url?: string | null
+          service_location?: string | null
+          skills?: string[] | null
           subscription_expiry?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
+          tags?: string[] | null
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"]
           verification_documents?: Json | null
@@ -266,19 +294,27 @@ export type Database = {
             | null
         }
         Update: {
+          availability_status?: string | null
           can_access_contact?: boolean | null
+          city_or_state?: string | null
           created_at?: string
           email?: string
           id?: string
           is_verified?: boolean
+          last_active?: string | null
           name?: string
           phone?: string | null
+          price_range_max?: number | null
+          price_range_min?: number | null
           profile_image_url?: string | null
+          service_location?: string | null
+          skills?: string[] | null
           subscription_expiry?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
+          tags?: string[] | null
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"]
           verification_documents?: Json | null
@@ -412,6 +448,39 @@ export type Database = {
       make_user_admin: {
         Args: { user_email: string }
         Returns: undefined
+      }
+      smart_search_providers: {
+        Args: {
+          search_term?: string
+          search_location?: string
+          min_price?: number
+          max_price?: number
+          availability_only?: boolean
+          user_lat?: number
+          user_lng?: number
+        }
+        Returns: {
+          user_id: string
+          name: string
+          email: string
+          phone: string
+          profile_image_url: string
+          skills: string[]
+          tags: string[]
+          service_location: string
+          city_or_state: string
+          availability_status: string
+          price_range_min: number
+          price_range_max: number
+          last_active: string
+          service_id: string
+          service_name: string
+          service_description: string
+          service_category: string
+          service_price_min: number
+          service_price_max: number
+          match_score: number
+        }[]
       }
       update_user_profile: {
         Args: { user_name?: string; user_phone?: string }

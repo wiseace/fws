@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Service } from '@/types/database';
@@ -29,6 +30,9 @@ const Browse = () => {
     category?: string;
     location?: string;
     userLocation?: { lat: number; lng: number };
+    minPrice?: number;
+    maxPrice?: number;
+    availabilityOnly?: boolean;
   }>({});
 
   useEffect(() => {
@@ -66,7 +70,8 @@ const Browse = () => {
     if (searchFilters.search) {
       filtered = filtered.filter(service =>
         service.service_name.toLowerCase().includes(searchFilters.search!.toLowerCase()) ||
-        service.description?.toLowerCase().includes(searchFilters.search!.toLowerCase())
+        service.description?.toLowerCase().includes(searchFilters.search!.toLowerCase()) ||
+        service.category?.toLowerCase().includes(searchFilters.search!.toLowerCase())
       );
     }
 
@@ -76,21 +81,39 @@ const Browse = () => {
 
     if (searchFilters.location && searchFilters.location !== 'Current Location') {
       filtered = filtered.filter(service =>
-        service.location?.toLowerCase().includes(searchFilters.location!.toLowerCase())
+        service.location?.toLowerCase().includes(searchFilters.location!.toLowerCase()) ||
+        service.user?.service_location?.toLowerCase().includes(searchFilters.location!.toLowerCase()) ||
+        service.user?.city_or_state?.toLowerCase().includes(searchFilters.location!.toLowerCase())
+      );
+    }
+
+    if (searchFilters.minPrice) {
+      filtered = filtered.filter(service => 
+        (service.price_range_min && service.price_range_min >= searchFilters.minPrice!) ||
+        (service.user?.price_range_min && service.user.price_range_min >= searchFilters.minPrice!)
+      );
+    }
+
+    if (searchFilters.maxPrice) {
+      filtered = filtered.filter(service => 
+        (service.price_range_max && service.price_range_max <= searchFilters.maxPrice!) ||
+        (service.user?.price_range_max && service.user.price_range_max <= searchFilters.maxPrice!)
+      );
+    }
+
+    if (searchFilters.availabilityOnly) {
+      filtered = filtered.filter(service => 
+        service.user?.availability_status === 'available'
       );
     }
 
     setFilteredServices(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
   const handleSearch = (filters: typeof searchFilters) => {
+    console.log('Enhanced search filters:', filters);
     setSearchFilters(filters);
-  };
-
-  const handleContactClick = (service: Service) => {
-    // This will trigger the ContactModal through the ServiceCard component
-    // No action needed here as ServiceCard handles the modal display
   };
 
   const handleClearFilters = () => {
@@ -111,7 +134,7 @@ const Browse = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Header editMode={false} onToggleEdit={() => {}} />
       
-      {/* Hero Section with Search */}
+      {/* Hero Section with Enhanced Search */}
       <section className="pt-32 pb-16 bg-gradient-hero">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
@@ -119,11 +142,11 @@ const Browse = () => {
               Find Professional Services
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Connect with verified service providers in your area
+              Connect with verified service providers using our smart search
             </p>
           </div>
           
-          {/* Search Component */}
+          {/* Enhanced Search Component */}
           <SearchWithGeolocation onSearch={handleSearch} className="max-w-4xl mx-auto" />
         </div>
       </section>
@@ -151,6 +174,16 @@ const Browse = () => {
                 {searchFilters.location && (
                   <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
                     Location: {searchFilters.location}
+                  </Badge>
+                )}
+                {searchFilters.minPrice && searchFilters.maxPrice && (
+                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                    ₦{searchFilters.minPrice.toLocaleString()} - ₦{searchFilters.maxPrice.toLocaleString()}
+                  </Badge>
+                )}
+                {searchFilters.availabilityOnly && (
+                  <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                    Available Now
                   </Badge>
                 )}
                 <Button 
@@ -224,8 +257,19 @@ const Browse = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">No services found</h3>
                 <p className="text-gray-600 mb-6">
-                  We couldn't find any services matching your criteria. Try adjusting your search or filters.
+                  {hasActiveFilters 
+                    ? "No services found matching your service and location. Try changing your search." 
+                    : "We couldn't find any services. Try using the search above to find what you need."
+                  }
                 </p>
+                <div className="space-y-2 text-sm text-gray-500 mb-6">
+                  <p>Try searching for:</p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    <Badge variant="outline">"AC repair Ajah"</Badge>
+                    <Badge variant="outline">"Wedding makeup in Lagos"</Badge>
+                    <Badge variant="outline">"Math tutor near me"</Badge>
+                  </div>
+                </div>
                 <Button 
                   onClick={handleClearFilters}
                   className="rounded-full"
