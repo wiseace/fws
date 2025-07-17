@@ -36,6 +36,8 @@ export const ContactModal = ({ isOpen, onClose, service }: ContactModalProps) =>
         description: "Please sign in to contact providers.",
         variant: "destructive"
       });
+      // Redirect to auth page
+      window.location.href = '/auth';
       return;
     }
 
@@ -77,6 +79,11 @@ export const ContactModal = ({ isOpen, onClose, service }: ContactModalProps) =>
     }
   };
 
+  const handleAuthRedirect = () => {
+    onClose();
+    window.location.href = '/auth';
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
@@ -94,16 +101,32 @@ export const ContactModal = ({ isOpen, onClose, service }: ContactModalProps) =>
           </DialogDescription>
         </DialogHeader>
 
-        {!canAccessContactInfo ? (
+        {!user ? (
           <div className="space-y-4">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
-                <strong>Note:</strong> You need to be verified and have an active subscription to contact providers.
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800">
+                <strong>Sign up required:</strong> You need to create an account to contact providers.
               </p>
             </div>
             <div className="flex space-x-2">
-              <Button onClick={() => window.location.href = '/dashboard'} className="flex-1">
-                Get Verified
+              <Button onClick={handleAuthRedirect} className="flex-1 bg-blue-600 hover:bg-blue-700">
+                Sign Up / Login
+              </Button>
+              <Button variant="outline" onClick={onClose} className="flex-1">
+                Close
+              </Button>
+            </div>
+          </div>
+        ) : !canAccessContactInfo ? (
+          <div className="space-y-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-sm text-yellow-800">
+                <strong>Subscription required:</strong> You need to be verified and have an active subscription to contact providers.
+              </p>
+            </div>
+            <div className="flex space-x-2">
+              <Button onClick={() => setShowSubscriptionGate(true)} className="flex-1">
+                Get Subscription
               </Button>
               <Button variant="outline" onClick={onClose} className="flex-1">
                 Close

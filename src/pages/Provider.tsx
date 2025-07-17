@@ -80,8 +80,8 @@ const Provider = () => {
   const handleContactClick = () => {
     if (!user) {
       toast({
-        title: "Sign in required",
-        description: "Please sign in to contact providers",
+        title: "Sign up required",
+        description: "Please sign up to contact providers",
         variant: "destructive"
       });
       window.location.href = '/auth';
@@ -94,6 +94,7 @@ const Provider = () => {
         description: "Verify your account and subscribe to view contact information",
         variant: "destructive"
       });
+      window.location.href = '/dashboard';
       return;
     }
 
@@ -101,6 +102,20 @@ const Provider = () => {
       title: "Contact information available",
       description: "You can now see the provider's contact details",
     });
+  };
+
+  const getContactButtonText = () => {
+    if (!user) {
+      return 'Sign Up to Contact';
+    }
+    return canAccessContactInfo ? 'Contact Now' : 'Subscribe to Contact';
+  };
+
+  const getContactLockMessage = () => {
+    if (!user) {
+      return 'Sign up and subscribe to view contact details';
+    }
+    return 'Verify your account and subscribe to view contact details';
   };
 
   if (loading) {
@@ -120,9 +135,9 @@ const Provider = () => {
         <Header editMode={false} onToggleEdit={() => {}} />
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Provider not found</h1>
-          <Button onClick={() => window.location.href = '/browse'}>
+          <Button onClick={() => window.location.href = '/providers'}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Browse
+            Back to Providers
           </Button>
         </div>
       </div>
@@ -138,10 +153,10 @@ const Provider = () => {
         <Button 
           variant="outline" 
           className="mb-6"
-          onClick={() => window.location.href = '/browse'}
+          onClick={() => window.location.href = '/providers'}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Browse
+          Back to Providers
         </Button>
 
         {/* Provider Profile Card */}
@@ -149,9 +164,17 @@ const Provider = () => {
           <CardContent className="p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-blue-600">
-                  {provider.name.charAt(0).toUpperCase()}
-                </span>
+                {provider.profile_image_url ? (
+                  <img 
+                    src={provider.profile_image_url} 
+                    alt={provider.name} 
+                    className="w-24 h-24 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl font-bold text-blue-600">
+                    {provider.name.charAt(0).toUpperCase()}
+                  </span>
+                )}
               </div>
               
               <div className="flex-1">
@@ -199,10 +222,10 @@ const Provider = () => {
                       <Lock className="w-8 h-8 text-gray-400 mx-auto mb-3" />
                       <h3 className="font-semibold text-gray-900 mb-2">Contact Information Locked</h3>
                       <p className="text-gray-600 mb-4">
-                        Verify your account and subscribe to view contact details
+                        {getContactLockMessage()}
                       </p>
                       <Button onClick={handleContactClick} className="bg-blue-600 hover:bg-blue-700">
-                        Verify & Subscribe
+                        {getContactButtonText()}
                       </Button>
                     </div>
                   )}

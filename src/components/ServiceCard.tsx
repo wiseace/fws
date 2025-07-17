@@ -55,6 +55,8 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
         description: "Please sign in to view provider profiles.",
         variant: "destructive"
       });
+      // Redirect to auth page instead of returning
+      window.location.href = '/auth';
       return;
     }
     
@@ -76,6 +78,13 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
     } else {
       setShowContactModal(true);
     }
+  };
+
+  const getContactLockMessage = () => {
+    if (!user) {
+      return 'Sign up to view contact info';
+    }
+    return 'Subscribe & verify to view contact info';
   };
 
   return (
@@ -148,7 +157,7 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
                 <div className="flex items-center text-gray-500 bg-gray-50 p-3 rounded-lg">
                   <Lock className="w-4 h-4 mr-2" />
                   <span className="text-sm">
-                    {!user ? 'Sign in to view contact info' : 'Subscribe & verify to view contact info'}
+                    {getContactLockMessage()}
                   </span>
                 </div>
               )}
@@ -170,7 +179,7 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={handleContactClick}
               >
-                Contact
+                {!user ? 'Sign Up' : 'Contact'}
               </Button>
             </div>
           </div>
@@ -183,15 +192,17 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
         onClose={() => setShowContactModal(false)}
       />
       
-      <ProfileModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-        userId={service.user_id}
-        onContact={() => {
-          setShowProfileModal(false);
-          setShowContactModal(true);
-        }}
-      />
+      {user && (
+        <ProfileModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
+          userId={service.user_id}
+          onContact={() => {
+            setShowProfileModal(false);
+            setShowContactModal(true);
+          }}
+        />
+      )}
     </>
   );
 };

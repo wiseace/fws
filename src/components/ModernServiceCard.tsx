@@ -55,6 +55,8 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         description: "Please sign in to view provider profiles.",
         variant: "destructive"
       });
+      // Redirect to auth page
+      window.location.href = '/auth';
       return;
     }
     
@@ -76,6 +78,13 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
     } else {
       setShowContactModal(true);
     }
+  };
+
+  const getContactButtonText = () => {
+    if (!user) {
+      return 'Sign Up to Contact';
+    }
+    return 'Contact Provider';
   };
 
   return (
@@ -156,7 +165,7 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
             className="w-full bg-white text-slate-900 hover:bg-white/90 rounded-2xl py-3 font-medium shadow-lg transition-all duration-200 group/button"
           >
             <Plus className="w-5 h-5 mr-2 group-hover/button:rotate-90 transition-transform duration-200" />
-            Contact Provider
+            {getContactButtonText()}
           </Button>
         </div>
       </div>
@@ -167,15 +176,17 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         onClose={() => setShowContactModal(false)}
       />
       
-      <ProfileModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-        userId={service.user_id}
-        onContact={() => {
-          setShowProfileModal(false);
-          setShowContactModal(true);
-        }}
-      />
+      {user && (
+        <ProfileModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
+          userId={service.user_id}
+          onContact={() => {
+            setShowProfileModal(false);
+            setShowContactModal(true);
+          }}
+        />
+      )}
     </>
   );
 };

@@ -1,21 +1,37 @@
 
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Mail, Star, Calendar } from 'lucide-react';
+import { MapPin, Phone, Mail, Star, Calendar, Lock } from 'lucide-react';
 
 interface ProviderInfoProps {
   mainService: any;
   canAccessContactInfo: boolean;
   contactInfo: { phone: string | null; email: string | null };
   onContactClick: () => void;
+  isAuthenticated: boolean;
 }
 
 export const ProviderInfo = ({ 
   mainService, 
   canAccessContactInfo, 
   contactInfo, 
-  onContactClick 
+  onContactClick,
+  isAuthenticated 
 }: ProviderInfoProps) => {
+  const getContactButtonText = () => {
+    if (!isAuthenticated) {
+      return 'Sign Up to Contact';
+    }
+    return canAccessContactInfo ? 'Contact Now' : 'Subscribe to Contact';
+  };
+
+  const getContactMessage = () => {
+    if (!isAuthenticated) {
+      return 'Sign up and subscribe to view contact details';
+    }
+    return 'Verify your account and subscribe to view contact details';
+  };
+
   return (
     <CardContent className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -68,8 +84,12 @@ export const ProviderInfo = ({
                 <Mail className="w-4 h-4 mr-2" />
                 <span>••••••@••••.com</span>
               </div>
+              <div className="flex items-center text-orange-600 mb-2">
+                <Lock className="w-4 h-4 mr-2" />
+                <span className="text-sm font-medium">Contact Info Locked</span>
+              </div>
               <p className="text-sm text-gray-600">
-                Verify your account and subscribe to view contact details
+                {getContactMessage()}
               </p>
             </div>
           )}
@@ -81,7 +101,7 @@ export const ProviderInfo = ({
           onClick={onContactClick}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
         >
-          {canAccessContactInfo ? 'Contact Now' : 'Unlock Contact Info'}
+          {getContactButtonText()}
         </Button>
       </div>
     </CardContent>
