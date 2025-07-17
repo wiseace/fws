@@ -47,6 +47,8 @@ export const useSmartSearch = () => {
       }
 
       setIsSearching(true);
+      console.log('Performing smart search with filters:', searchFilters);
+      
       try {
         const { data, error } = await supabase.rpc('smart_search_providers', {
           search_term: searchFilters.searchTerm || '',
@@ -58,11 +60,14 @@ export const useSmartSearch = () => {
           user_lng: searchFilters.userLocation?.lng || null
         });
 
+        console.log('Smart search response:', { data, error });
+
         if (error) {
           console.error('Smart search error:', error);
           throw error;
         }
 
+        console.log('Search results found:', data?.length || 0);
         return data as SearchResult[] || [];
       } finally {
         setIsSearching(false);
@@ -77,6 +82,7 @@ export const useSmartSearch = () => {
   }, []);
 
   const clearSearch = useCallback(() => {
+    console.log('Clearing search');
     setSearchFilters({});
   }, []);
 

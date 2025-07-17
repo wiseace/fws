@@ -43,6 +43,15 @@ export const SmartSearchResults = ({
   searchFilters,
   onClearSearch 
 }: SmartSearchResultsProps) => {
+  // Add debugging
+  console.log('SmartSearchResults render:', {
+    resultsLength: results.length,
+    isLoading,
+    hasSearched,
+    searchFilters,
+    results: results.slice(0, 2) // Log first 2 results for debugging
+  });
+
   // Convert search results to Service format for ModernServiceCard
   const convertToService = (result: SearchResult): Service => ({
     id: result.service_id,
@@ -122,6 +131,14 @@ export const SmartSearchResults = ({
               <Badge variant="outline">"Plumbing repair"</Badge>
               <Badge variant="outline">"Web design"</Badge>
             </div>
+          </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-yellow-800">
+              <strong>Debug Info:</strong><br />
+              Search Term: "{searchFilters.searchTerm || 'None'}"<br />
+              Location: "{searchFilters.location || 'None'}"<br />
+              Results Found: {results.length}
+            </p>
           </div>
           <Button onClick={onClearSearch} className="rounded-full">
             Clear Search
