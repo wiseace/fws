@@ -18,26 +18,66 @@ export const useOnboarding = () => {
 
     try {
       // Get completed onboarding steps
-      const { data: onboardingData, error: onboardingError } = await supabase
+      let { data: onboardingData, error: onboardingError } = await supabase
         .from('user_onboarding')
         .select('step_name, completed')
         .eq('user_id', user.id);
 
       if (onboardingError) throw onboardingError;
 
+      console.log('Onboarding data for user:', user.id, onboardingData);
+
+      // If no onboarding data exists for providers, create it
+      if (profile?.user_type === 'provider' && (!onboardingData || onboardingData.length === 0)) {
+        console.log('No onboarding data found for provider, creating initial steps...');
+        await createInitialOnboardingSteps();
+        // Retry fetching after creation
+        const { data: newData } = await supabase
+          .from('user_onboarding')
+          .select('step_name, completed')
+          .eq('user_id', user.id);
+        onboardingData = newData || [];
+      }
+
       const completed = new Set(
         onboardingData
-          .filter(item => item.completed)
-          .map(item => item.step_name)
+          ?.filter(item => item.completed)
+          .map(item => item.step_name) || []
       );
 
       setCompletedSteps(completed);
 
       // Determine if wizard should be shown
       const shouldShowWizard = await shouldShowOnboardingWizard(completed);
+      console.log('Should show wizard:', shouldShowWizard, 'Completed steps:', Array.from(completed));
       setShowWizard(shouldShowWizard);
     } catch (error) {
       console.error('Error checking onboarding status:', error);
+    }
+  };
+
+  const createInitialOnboardingSteps = async () => {
+    if (!user || !profile) return;
+
+    const steps = profile.user_type === 'provider' 
+      ? ['profile_completion', 'verification_submission', 'first_service_creation', 'subscription_setup']
+      : ['profile_completion', 'browse_services', 'subscription_setup'];
+
+    try {
+      const { error } = await supabase
+        .from('user_onboarding')
+        .insert(
+          steps.map(step => ({
+            user_id: user.id,
+            step_name: step,
+            completed: false
+          }))
+        );
+
+      if (error) throw error;
+      console.log('Created initial onboarding steps for:', profile.user_type);
+    } catch (error) {
+      console.error('Error creating initial onboarding steps:', error);
     }
   };
 
