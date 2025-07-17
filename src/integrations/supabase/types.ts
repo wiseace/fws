@@ -231,6 +231,7 @@ export type Database = {
           is_verified: boolean
           name: string
           phone: string | null
+          profile_image_url: string | null
           subscription_expiry: string | null
           subscription_plan:
             | Database["public"]["Enums"]["subscription_plan"]
@@ -251,6 +252,7 @@ export type Database = {
           is_verified?: boolean
           name: string
           phone?: string | null
+          profile_image_url?: string | null
           subscription_expiry?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
@@ -271,6 +273,7 @@ export type Database = {
           is_verified?: boolean
           name?: string
           phone?: string | null
+          profile_image_url?: string | null
           subscription_expiry?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]

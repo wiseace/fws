@@ -17,6 +17,7 @@ export interface User {
   verification_status?: VerificationStatus;
   verification_documents?: any;
   can_access_contact?: boolean;
+  profile_image_url?: string;
   created_at: string;
   updated_at: string;
 }

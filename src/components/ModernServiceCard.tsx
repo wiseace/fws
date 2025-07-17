@@ -99,8 +99,16 @@ export const ModernServiceCard = ({ service, onContactClick }: ModernServiceCard
         <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
           {/* User Info */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-              <User className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden">
+              {service.user?.profile_image_url ? (
+                <img 
+                  src={service.user.profile_image_url} 
+                  alt="Provider" 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="w-6 h-6 text-white" />
+              )}
             </div>
             <div>
               <p className="text-white font-medium">

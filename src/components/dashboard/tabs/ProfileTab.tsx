@@ -29,8 +29,8 @@ export const ProfileTab = () => {
       setName(profile.name || '');
       setPhone(profile.phone || '');
       setAddress(''); // Address field would need to be added to database
-      // For now, we'll use a generated avatar based on initials
-      setProfileImage(`https://api.dicebear.com/7.x/initials/svg?seed=${profile.name}`);
+      // Use uploaded profile image or fallback to generated avatar
+      setProfileImage(profile.profile_image_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile.name}`);
     }
   }, [profile]);
 
@@ -105,12 +105,22 @@ export const ProfileTab = () => {
         setUploading(true);
         uploadedImageUrl = await handleImageUpload(imageFile);
         setUploading(false);
+        
+        if (!uploadedImageUrl) {
+          return; // Upload failed, error already shown
+        }
       }
       
-      const { error } = await supabase.rpc('update_user_profile', {
-        user_name: name,
-        user_phone: phone
-      });
+      // Update profile including image URL if uploaded
+      const { error } = await supabase
+        .from('users')
+        .update({
+          name: name,
+          phone: phone,
+          profile_image_url: uploadedImageUrl || profileImage,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
 
       if (error) throw error;
 
