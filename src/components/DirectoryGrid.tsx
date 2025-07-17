@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -201,7 +200,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
               <div className="text-center">
                 <Button 
                   onClick={() => window.location.href = '/browse'}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 >
                   View All Services
                 </Button>
