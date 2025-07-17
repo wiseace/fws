@@ -143,17 +143,6 @@ const Providers = () => {
     });
   };
 
-  // Convert providers to services format for display
-  const getServicesFromProviders = (providers: Provider[]) => {
-    return providers.flatMap(provider => 
-      provider.services.map(service => ({
-        ...service,
-        user_id: provider.id,
-        user: provider
-      }))
-    );
-  };
-
   // For pagination, work with unique providers
   const totalPages = Math.ceil(providers.length / PROVIDERS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROVIDERS_PER_PAGE;
