@@ -29,66 +29,59 @@ const Providers = () => {
   const { searchResults, isLoading: isSearching, performSearch, clearSearch, hasSearched, searchFilters } = useSmartSearch();
 
   useEffect(() => {
-    fetchServicesAndCategories();
+    fetchAllServices();
   }, []);
 
-  const fetchServicesAndCategories = async () => {
+  const fetchAllServices = async () => {
     setLoading(true);
     
-    // Fetch all verified providers (users) instead of services
-    const { data: providersData } = await supabase
-      .from('users')
-      .select('*')
-      .eq('user_type', 'provider')
-      .eq('is_verified', true)
-      .order('created_at', { ascending: false });
+    try {
+      // Fetch all active services from verified providers
+      const { data: servicesData, error } = await supabase
+        .from('services')
+        .select(`
+          *,
+          users!inner(
+            id,
+            name,
+            email,
+            phone,
+            user_type,
+            is_verified,
+            verification_status,
+            profile_image_url,
+            subscription_status,
+            created_at,
+            updated_at
+          )
+        `)
+        .eq('is_active', true)
+        .eq('users.user_type', 'provider')
+        .eq('users.is_verified', true)
+        .eq('users.verification_status', 'verified')
+        .order('created_at', { ascending: false });
 
-    if (providersData) {
-      // For each provider, create a representative service object using provider data
-      const providersWithServices = await Promise.all(
-        providersData.map(async (provider) => {
-          // Get all services from this provider to determine their primary category
-          const { data: userServices } = await supabase
-            .from('services')
-            .select('category, service_name')
-            .eq('user_id', provider.id)
-            .eq('is_active', true);
+      if (error) {
+        console.error('Error fetching services:', error);
+        return;
+      }
 
-          // Determine the most common category or use the first one
-          const categories = userServices?.map(s => s.category) || [];
-          const primaryCategory = categories.length > 0 
-            ? categories.reduce((a, b, i, arr) => 
-                arr.filter(v => v === a).length >= arr.filter(v => v === b).length ? a : b
-              ) 
-            : 'Professional Services';
+      console.log('Fetched services:', servicesData);
 
-          // Create a representative service object that represents the provider
-          const representativeService = {
-            id: `provider-${provider.id}`,
-            user_id: provider.id,
-            service_name: provider.name || 'Service Provider',
-            category: primaryCategory,
-            description: `Professional ${primaryCategory.toLowerCase()} provider`,
-            contact_info: {},
-            location: null,
-            image_url: null,
-            is_active: true,
-            created_at: provider.created_at,
-            updated_at: provider.updated_at,
-          };
-
-          return {
-            ...representativeService,
-            user: provider,
-            contact_info: representativeService.contact_info as { phone?: string; email?: string; }
-          } as Service;
-        })
-      );
-      
-      setServices(providersWithServices);
+      if (servicesData) {
+        // Transform the data to match our Service interface
+        const transformedServices = servicesData.map(service => ({
+          ...service,
+          user: service.users
+        }));
+        
+        setServices(transformedServices);
+      }
+    } catch (error) {
+      console.error('Error in fetchAllServices:', error);
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const handleSmartSearch = (filters: any) => {
@@ -114,6 +107,11 @@ const Providers = () => {
   const paginatedResults = hasSearched 
     ? displayResults.slice(startIndex, endIndex)
     : services.slice(startIndex, endIndex);
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [hasSearched, searchResults.length, services.length]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -156,7 +154,7 @@ const Providers = () => {
                     All Verified Providers
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {services.length} provider{services.length !== 1 ? 's' : ''} available
+                    {services.length} service{services.length !== 1 ? 's' : ''} available
                   </p>
                 </div>
               </div>

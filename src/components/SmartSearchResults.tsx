@@ -49,26 +49,31 @@ export const SmartSearchResults = ({
     user_id: result.user_id,
     service_name: result.service_name,
     category: result.service_category,
-    description: result.service_description,
+    description: result.service_description || 'Professional service provider',
     contact_info: {
-      phone: result.phone,
-      email: result.email
+      phone: result.phone || '',
+      email: result.email || ''
     },
-    location: result.service_location || result.city_or_state,
+    location: result.service_location || result.city_or_state || '',
     image_url: result.profile_image_url,
     is_active: true,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    price_range_min: result.service_price_min || result.price_range_min,
+    price_range_max: result.service_price_max || result.price_range_max,
+    skills: result.skills,
+    tags: result.tags,
     user: {
       id: result.user_id,
-      name: result.name,
-      email: result.email,
-      phone: result.phone,
+      name: result.name || 'Service Provider',
+      email: result.email || '',
+      phone: result.phone || '',
       user_type: 'provider' as const,
       is_verified: true,
       subscription_status: 'monthly' as const,
       verification_status: 'verified' as const,
       profile_image_url: result.profile_image_url,
+      availability_status: result.availability_status,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }
@@ -108,14 +113,14 @@ export const SmartSearchResults = ({
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">No providers found</h3>
           <p className="text-gray-600 mb-6">
-            No providers found matching your service and location. Try changing your search terms or expanding your location.
+            No providers found matching your search criteria. Try adjusting your search terms or expanding your location.
           </p>
           <div className="space-y-2 text-sm text-gray-500 mb-6">
             <p>Try searching for:</p>
             <div className="flex flex-wrap gap-2 justify-center">
-              <Badge variant="outline">"AC repair Lagos"</Badge>
-              <Badge variant="outline">"Wedding makeup"</Badge>
-              <Badge variant="outline">"Math tutor near me"</Badge>
+              <Badge variant="outline">"Hair styling"</Badge>
+              <Badge variant="outline">"Plumbing repair"</Badge>
+              <Badge variant="outline">"Web design"</Badge>
             </div>
           </div>
           <Button onClick={onClearSearch} className="rounded-full">
