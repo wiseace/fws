@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Mail, Lock, Star, Verified, User } from 'lucide-react';
 import { Service } from '@/types/database';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { ContactModal } from './ContactModal';
 import { ProfileModal } from './ProfileModal';
 
@@ -17,6 +18,7 @@ interface ServiceCardProps {
 
 export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
   const { canAccessContactInfo, user } = useAuth();
+  const { toast } = useToast();
   const [imageError, setImageError] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -24,6 +26,24 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
   const defaultImage = "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop";
 
   const handleViewProfile = () => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to view provider profiles.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!canAccessContactInfo) {
+      toast({
+        title: "Subscription required", 
+        description: "You need to be verified and have an active subscription to view provider profiles.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setShowProfileModal(true);
   };
 
