@@ -11,86 +11,105 @@ const services = [
 export const ServicesMarquee = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setIsPaused(true);
-    setStartX(e.pageX - (containerRef.current?.offsetLeft || 0));
-    setScrollLeft(containerRef.current?.scrollLeft || 0);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !containerRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - (containerRef.current.offsetLeft || 0);
-    const walk = (x - startX) * 2;
-    containerRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    setTimeout(() => setIsPaused(false), 1000);
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    setIsDragging(false);
-    setTimeout(() => setIsPaused(false), 500);
-  };
+  const [dragOffset, setDragOffset] = useState(0);
+  const [animationOffset, setAnimationOffset] = useState(0);
+  const animationRef = useRef<number>();
 
   // Create duplicated services for seamless scrolling
   const duplicatedServices = [...services, ...services, ...services];
 
+  useEffect(() => {
+    const animate = () => {
+      if (!isDragging) {
+        setAnimationOffset(prev => (prev - 0.5) % -33.333);
+      }
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isDragging]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragOffset(0);
+    e.preventDefault();
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    
+    const moveX = e.movementX || 0;
+    setDragOffset(prev => prev + (moveX * 0.5));
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    // Gradually reduce drag offset back to 0
+    const resetDrag = () => {
+      setDragOffset(prev => {
+        const newOffset = prev * 0.95;
+        if (Math.abs(newOffset) > 0.1) {
+          requestAnimationFrame(resetDrag);
+          return newOffset;
+        }
+        return 0;
+      });
+    };
+    resetDrag();
+  };
+
+  useEffect(() => {
+    const handleGlobalMouseUp = () => setIsDragging(false);
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      const moveX = e.movementX || 0;
+      setDragOffset(prev => prev + (moveX * 0.5));
+    };
+
+    if (isDragging) {
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+    }
+
+    return () => {
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+    };
+  }, [isDragging]);
+
+  const totalOffset = animationOffset + dragOffset;
+
   return (
     <div className="w-full overflow-hidden py-8 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 relative">
-      {isHovered && (
-        <div className="absolute top-4 right-4 z-10 text-sm text-muted-foreground bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full border">
-          <span className="flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 15l-6-6-6 6"/>
-            </svg>
-            Drag to scroll
-          </span>
-        </div>
-      )}
-      
       <div 
         ref={containerRef}
-        className={`relative overflow-x-auto scrollbar-hide ${
-          isHovered ? 'cursor-grab' : ''
-        } ${isDragging ? 'cursor-grabbing' : ''}`}
+        className="relative cursor-drag-custom select-none"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onMouseEnter={handleMouseEnter}
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        style={{
+          cursor: isDragging ? 'grabbing' : 'grab'
+        }}
       >
         <div 
-          className={`flex whitespace-nowrap transition-transform duration-300 ${
-            !isPaused && !isHovered ? 'animate-marquee-smooth' : ''
-          }`}
+          className="flex whitespace-nowrap transition-transform duration-75 ease-out"
           style={{
-            transform: isHovered && !isDragging ? 'translateX(0)' : undefined,
-            animationPlayState: isPaused || isHovered ? 'paused' : 'running'
+            transform: `translateX(${totalOffset}%)`
           }}
         >
           {duplicatedServices.map((service, index) => (
             <span
               key={index}
-              className={`mx-8 text-lg font-medium transition-all duration-300 select-none ${
-                isHovered 
-                  ? 'text-primary hover:text-primary/80 hover:scale-105' 
-                  : 'text-muted-foreground hover:text-primary'
-              }`}
+              className="mx-8 text-lg font-medium text-muted-foreground hover:text-primary transition-colors duration-300 pointer-events-none"
             >
               {service}
             </span>
