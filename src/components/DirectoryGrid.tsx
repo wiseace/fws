@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Service, User } from '@/types/database';
-import { ServiceCard } from './ServiceCard';
+import { ModernServiceCard } from './ModernServiceCard';
 import { CategoryFilter } from './CategoryFilter';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -118,7 +118,7 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 animate-fade-in-up">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-12 animate-fade-in-up">
         {filteredServices && filteredServices.length > 0 ? (
           filteredServices.map((service, index) => (
             <div 
@@ -126,9 +126,8 @@ export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
               className="animate-fade-in-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <ServiceCard 
-                service={service} 
-                editMode={editMode}
+              <ModernServiceCard 
+                service={service}
               />
             </div>
           ))

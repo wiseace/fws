@@ -18,10 +18,10 @@ export const ServicesMarquee = () => {
   useEffect(() => {
     const animate = () => {
       setAnimationOffset(prev => {
-        const newOffset = prev - 0.15; // Comfortable scrolling speed
-        // Reset smoothly when reaching the end of one cycle
-        if (newOffset <= -33.333) {
-          return newOffset + 33.333;
+        const newOffset = prev - 0.1; // Slower, more comfortable speed
+        // Seamless reset at exactly one third to prevent visible jumps
+        if (newOffset <= -33.333333) {
+          return 0;
         }
         return newOffset;
       });
