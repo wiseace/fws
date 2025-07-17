@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -182,7 +181,7 @@ export const SearchWithGeolocation = ({ onSearch, className = "" }: SearchWithGe
         {/* Search Button */}
         <Button 
           onClick={handleSearch}
-          className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-colors"
+          className="h-12 bg-white hover:bg-gray-50 text-primary border border-gray-200 font-semibold rounded-xl transition-colors"
         >
           SEARCH
         </Button>

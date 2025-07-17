@@ -1,162 +1,164 @@
 
-import { useState, useEffect } from 'react';
+import React from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Service, User } from '@/types/database';
-import { ModernServiceCard } from './ModernServiceCard';
+import { ServiceCard } from './ServiceCard';
 import { CategoryFilter } from './CategoryFilter';
-import { useAuth } from '@/hooks/useAuth';
+import { ModernServiceCard } from './ModernServiceCard';
+import { EditableElement } from './EditableElement';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 
 interface DirectoryGridProps {
   editMode: boolean;
 }
 
-interface ServiceWithUser extends Service {
-  user: User;
-}
-
 export const DirectoryGrid = ({ editMode }: DirectoryGridProps) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [services, setServices] = useState<ServiceWithUser[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
 
-  useEffect(() => {
-    fetchServicesAndCategories();
-  }, []);
+  const { data: services = [], isLoading, error } = useQuery({
+    queryKey: ['services', selectedCategory],
+    queryFn: async () => {
+      console.log('Fetching services for category:', selectedCategory);
+      let query = supabase.from('services').select(`
+        *,
+        users:user_id (
+          name,
+          phone,
+          email,
+          profile_image_url,
+          is_verified
+        )
+      `);
 
-  const fetchServicesAndCategories = async () => {
-    try {
-      setLoading(true);
-      
-      // Fetch services with user data
-      const { data: servicesData, error: servicesError } = await supabase
-        .from('services')
-        .select(`
-          *,
-          user:users(*)
-        `)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
-
-      if (servicesError) {
-        console.error('Error fetching services:', servicesError);
-        setError('Failed to load services');
-        return;
+      if (selectedCategory !== 'All') {
+        query = query.eq('category', selectedCategory);
       }
 
-      // Fetch categories
-      const { data: categoriesData, error: categoriesError } = await supabase
+      const { data, error } = await query;
+      
+      if (error) {
+        console.error('Error fetching services:', error);
+        throw error;
+      }
+      
+      console.log('Services fetched:', data);
+      return data || [];
+    }
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from('categories')
         .select('name')
         .order('name');
-
-      if (categoriesError) {
-        console.error('Error fetching categories:', categoriesError);
+      
+      if (error) {
+        console.error('Error fetching categories:', error);
+        return [];
       }
-
-      setServices((servicesData as ServiceWithUser[]) || []);
       
-      // Extract unique categories from services and merge with database categories
-      const serviceCategories = [...new Set(servicesData?.map(s => s.category) || [])];
-      const dbCategories = categoriesData?.map(c => c.name) || [];
-      const allCategories = [...new Set([...serviceCategories, ...dbCategories])];
-      setCategories(allCategories);
-      
-    } catch (err) {
-      console.error('Error in fetchServicesAndCategories:', err);
-      setError('Failed to load data');
-    } finally {
-      setLoading(false);
+      return data?.map(cat => cat.name) || [];
     }
-  };
+  });
 
   const filteredServices = selectedCategory === 'All' 
     ? services 
     : services.filter(service => service.category === selectedCategory);
 
-  if (loading) {
-    return (
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto text-blue-600" />
-          <p className="mt-4 text-gray-600">Loading services...</p>
-        </div>
-      </section>
-    );
-  }
+  // Limit to 12 services for featured section
+  const featuredServices = filteredServices.slice(0, 12);
 
   if (error) {
+    console.error('Error in DirectoryGrid:', error);
     return (
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <Button onClick={fetchServicesAndCategories}>Try Again</Button>
-        </div>
-      </section>
+      <div className="py-16 px-4 text-center">
+        <p className="text-red-600">Error loading services. Please try again later.</p>
+      </div>
     );
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center mb-12 animate-fade-in-up">
-        <h2 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
-          Featured Services
-        </h2>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Connect with verified service providers in your area
-        </p>
-      </div>
-
-      <div className="animate-fade-in-up">
-        <CategoryFilter 
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          categories={categories}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-12 animate-fade-in-up">
-        {filteredServices && filteredServices.length > 0 ? (
-          filteredServices.map((service, index) => (
-            <div 
-              key={service.id} 
-              className="animate-fade-in-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <ModernServiceCard 
-                service={service}
-              />
-            </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-12 animate-fade-in-up">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-primary/10 flex items-center justify-center">
-              <span className="text-4xl text-primary">🔍</span>
-            </div>
-            <div className="text-muted-foreground text-lg mb-4">
-              No services found in this category.
-            </div>
-            <div className="text-muted-foreground/70">
-              Try selecting a different category or check back later.
-            </div>
-          </div>
-        )}
-      </div>
-
-      {editMode && user && (
-        <div className="mt-8 text-center animate-fade-in-up">
-          <Button 
-            className="bg-gradient-primary hover:opacity-90 transform hover:scale-105 transition-all"
-            onClick={() => window.location.href = '/dashboard'}
-          >
-            + Add New Service
-          </Button>
+    <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <EditableElement
+            editMode={editMode}
+            type="text"
+            className="text-4xl font-bold text-gray-900 mb-4"
+            defaultValue="Browse by Category"
+          />
+          <EditableElement
+            editMode={editMode}
+            type="text"
+            className="text-xl text-gray-600 max-w-3xl mx-auto"
+            defaultValue="Find the perfect service provider for your needs. All professionals are verified and rated by our community."
+          />
         </div>
-      )}
+
+        {/* Category Filter */}
+        <div className="mb-16">
+          <CategoryFilter 
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            categories={categories}
+          />
+        </div>
+
+        {/* Featured Services Section */}
+        <div className="mb-12">
+          <EditableElement
+            editMode={editMode}
+            type="text"
+            className="text-3xl font-bold text-gray-900 mb-8 text-center"
+            defaultValue="Featured Services"
+          />
+          
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(12)].map((_, i) => (
+                <div key={i} className="bg-white rounded-xl shadow-md p-6 animate-pulse">
+                  <div className="w-full h-48 bg-gray-200 rounded-lg mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          ) : featuredServices.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                {featuredServices.map((service) => (
+                  <ModernServiceCard
+                    key={service.id}
+                    service={service}
+                    provider={service.users}
+                  />
+                ))}
+              </div>
+              
+              {/* CTA Button to Services Page */}
+              <div className="text-center">
+                <Button 
+                  onClick={() => window.location.href = '/browse'}
+                  className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                >
+                  View All Services
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">
+                {selectedCategory === 'All' 
+                  ? "No services available at the moment." 
+                  : `No services found in the ${selectedCategory} category.`}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </section>
   );
 };

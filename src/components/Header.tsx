@@ -29,17 +29,17 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
 
           {/* Desktop Navigation - Centered */}
           <nav className="hidden md:flex space-x-12">
-            <a href="/" className="relative text-gray-800 hover:text-blue-600 font-semibold text-lg transition-all duration-300 group">
+            <a href="/" className="relative text-gray-800 hover:text-primary font-semibold text-lg transition-all duration-300 group">
               Home
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </a>
-            <a href="/browse" className="relative text-gray-800 hover:text-blue-600 font-semibold text-lg transition-all duration-300 group">
+            <a href="/browse" className="relative text-gray-800 hover:text-primary font-semibold text-lg transition-all duration-300 group">
               Services
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </a>
-            <a href="/providers" className="relative text-gray-800 hover:text-blue-600 font-semibold text-lg transition-all duration-300 group">
+            <a href="/providers" className="relative text-gray-800 hover:text-primary font-semibold text-lg transition-all duration-300 group">
               Providers
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </a>
           </nav>
 
@@ -68,10 +68,10 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
             ) : (
               <Button 
                 onClick={() => window.location.href = '/auth'}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-2"
+                className="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-2"
               >
                 <LogIn className="w-4 h-4" />
-                <span>Sign In</span>
+                <span>SIGN IN</span>
               </Button>
             )}
 
