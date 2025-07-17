@@ -70,14 +70,25 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Complete Profile',
           completed: false,
           actionHandler: () => {
-            // Scroll to profile tab in dashboard
-            const profileTab = document.querySelector('[value="profile"]') as HTMLElement;
-            if (profileTab) {
-              profileTab.click();
-              setTimeout(() => {
-                profileTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }, 100);
+            // Close wizard first
+            onClose();
+            
+            // Navigate to dashboard and then scroll to profile tab
+            if (window.location.pathname !== '/dashboard') {
+              window.location.href = '/dashboard';
+              return;
             }
+            
+            setTimeout(() => {
+              const profileTab = document.querySelector('[data-value="profile"]') as HTMLElement;
+              if (profileTab) {
+                profileTab.click();
+                setTimeout(() => {
+                  profileTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 200);
+              }
+            }, 100);
+            
             markStepCompleted('profile_completion');
           }
         },
@@ -89,13 +100,23 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Start Verification',
           completed: false,
           actionHandler: () => {
-            const verificationTab = document.querySelector('[value="verification"]') as HTMLElement;
-            if (verificationTab) {
-              verificationTab.click();
-              setTimeout(() => {
-                verificationTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }, 100);
+            onClose();
+            
+            if (window.location.pathname !== '/dashboard') {
+              window.location.href = '/dashboard';
+              return;
             }
+            
+            setTimeout(() => {
+              const verificationTab = document.querySelector('[data-value="verification"]') as HTMLElement;
+              if (verificationTab) {
+                verificationTab.click();
+                setTimeout(() => {
+                  verificationTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 200);
+              }
+            }, 100);
+            
             markStepCompleted('verification_submission');
           }
         },
@@ -116,13 +137,23 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Create Service',
           completed: false,
           actionHandler: () => {
-            const servicesTab = document.querySelector('[value="services"]') as HTMLElement;
-            if (servicesTab) {
-              servicesTab.click();
-              setTimeout(() => {
-                servicesTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }, 100);
+            onClose();
+            
+            if (window.location.pathname !== '/dashboard') {
+              window.location.href = '/dashboard';
+              return;
             }
+            
+            setTimeout(() => {
+              const servicesTab = document.querySelector('[data-value="services"]') as HTMLElement;
+              if (servicesTab) {
+                servicesTab.click();
+                setTimeout(() => {
+                  servicesTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 200);
+              }
+            }, 100);
+            
             markStepCompleted('first_service_creation');
           }
         }
@@ -138,13 +169,23 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Complete Profile',
           completed: false,
           actionHandler: () => {
-            const profileTab = document.querySelector('[value="profile"]') as HTMLElement;
-            if (profileTab) {
-              profileTab.click();
-              setTimeout(() => {
-                profileTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }, 100);
+            onClose();
+            
+            if (window.location.pathname !== '/dashboard') {
+              window.location.href = '/dashboard';
+              return;
             }
+            
+            setTimeout(() => {
+              const profileTab = document.querySelector('[data-value="profile"]') as HTMLElement;
+              if (profileTab) {
+                profileTab.click();
+                setTimeout(() => {
+                  profileTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 200);
+              }
+            }, 100);
+            
             markStepCompleted('profile_completion');
           }
         },
@@ -191,7 +232,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
     }
   };
 
-  const handleStepAction = (step: OnboardingStep) => {
+  const handleStepAction = (step: OnboardingStep, stepIndex: number) => {
+    // Check if this step can be accessed (current step or previous steps completed)
+    const canAccess = stepIndex === 0 || steps.slice(0, stepIndex).every(s => completedSteps.has(s.id));
+    
+    if (!canAccess) {
+      toast({
+        title: "Complete previous steps first",
+        description: "Please complete the previous steps before proceeding.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (step.actionHandler) {
       step.actionHandler();
     } else if (step.actionUrl) {
@@ -231,7 +284,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
       
       {/* Wizard Panel - Compact callout style positioned safely */}
       <div 
-        className={`absolute right-6 top-20 bottom-6 w-80 bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl transform transition-all duration-500 ease-out ${
+        className={`absolute right-6 top-24 bottom-6 w-80 bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl transform transition-all duration-500 ease-out ${
           isVisible ? 'translate-x-0 scale-100 opacity-100 pointer-events-auto animate-slide-in-right' : 'translate-x-full scale-95 opacity-0 pointer-events-none animate-slide-out-right'
         }`}
       >
@@ -276,7 +329,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
                     </div>
                     <p className="text-xs text-gray-600 mb-2">{currentStepData.description}</p>
                     <Button 
-                      onClick={() => handleStepAction(currentStepData)}
+                      onClick={() => handleStepAction(currentStepData, currentStep)}
                       className="w-full bg-gradient-primary hover:opacity-90 text-xs h-8"
                       size="sm"
                     >
@@ -295,15 +348,18 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
             {steps.map((step, index) => {
               const isCompleted = completedSteps.has(step.id);
               const isCurrent = index === currentStep && !isCompleted;
+              const canAccess = index === 0 || steps.slice(0, index).every(s => completedSteps.has(s.id));
+              const isDisabled = !canAccess && !isCompleted;
               
               return (
                  <div 
                   key={step.id}
-                  onClick={() => !isCompleted && handleStepAction(step)}
-                  className={`flex items-center gap-2 p-3 rounded-lg transition-all duration-300 cursor-pointer hover:shadow-sm mb-2 ${
-                    isCurrent ? 'bg-primary/5 border border-primary/20 hover:bg-primary/10' : 
-                    isCompleted ? 'bg-green-50 border border-green-200' : 
-                    'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                  onClick={() => canAccess && handleStepAction(step, index)}
+                  className={`flex items-center gap-2 p-3 rounded-lg transition-all duration-300 mb-2 ${
+                    isDisabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border border-gray-100' :
+                    isCurrent ? 'bg-primary/5 border border-primary/20 hover:bg-primary/10 cursor-pointer hover:shadow-sm' : 
+                    isCompleted ? 'bg-green-50 border border-green-200 cursor-pointer hover:shadow-sm' : 
+                    'bg-gray-50 border border-gray-200 hover:bg-gray-100 cursor-pointer hover:shadow-sm'
                   }`}
                 >
                   <div className={`flex-shrink-0 transition-colors duration-300 ${
