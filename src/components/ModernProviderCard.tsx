@@ -6,47 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { ContactModal } from './ContactModal';
 import { ProfileModal } from './ProfileModal';
-
-interface Provider {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  user_type: 'provider';
-  is_verified: boolean;
-  verification_status: string;
-  profile_image_url?: string;
-  subscription_status: string;
-  subscription_plan?: string;
-  can_access_contact?: boolean;
-  skills?: string[];
-  tags?: string[];
-  service_location?: string;
-  city_or_state?: string;
-  availability_status?: string;
-  price_range_min?: number;
-  price_range_max?: number;
-  last_active?: string;
-  created_at: string;
-  updated_at: string;
-  services: Array<{
-    id: string;
-    service_name: string;
-    category: string;
-    description?: string;
-    image_url?: string;
-    user_id: string;
-    contact_info: any;
-    location?: string;
-    is_active: boolean;
-    created_at: string;
-    updated_at: string;
-    price_range_min?: number;
-    price_range_max?: number;
-    skills?: string[];
-    tags?: string[];
-  }>;
-}
+import type { Provider } from '@/types/database';
 
 interface ModernProviderCardProps {
   provider: Provider;

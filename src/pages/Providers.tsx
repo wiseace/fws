@@ -9,7 +9,7 @@ import { Footer } from '@/components/Footer';
 import { SmartSearchBar } from '@/components/SmartSearchBar';
 import { useSmartSearch } from '@/hooks/useSmartSearch';
 import { SmartSearchResults } from '@/components/SmartSearchResults';
-import { User, Service } from '@/types/database';
+import type { Provider } from '@/types/database';
 import {
   Pagination,
   PaginationContent,
@@ -20,12 +20,6 @@ import {
 } from "@/components/ui/pagination";
 
 const PROVIDERS_PER_PAGE = 12;
-
-// Use the User type from database.ts but ensure it's a provider
-interface Provider extends User {
-  user_type: 'provider';
-  services: Service[];
-}
 
 const Providers = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
@@ -108,14 +102,25 @@ const Providers = () => {
               current.services.some(cs => cs.id === s.id)
             );
             if (!serviceExists) {
-              existingProvider.services.push(...current.services);
+              // Add user_id to each service
+              const servicesWithUserId = current.services.map(service => ({
+                ...service,
+                user_id: current.id
+              }));
+              existingProvider.services.push(...servicesWithUserId);
             }
           } else {
-            // Add new provider - cast to Provider type since we know it's a provider
+            // Add new provider with services that include user_id
+            const servicesWithUserId = current.services.map(service => ({
+              ...service,
+              user_id: current.id
+            }));
+            
             acc.push({
               ...current,
               user_type: 'provider' as const,
-              services: current.services
+              verification_status: current.verification_status || 'not_verified',
+              services: servicesWithUserId
             } as Provider);
           }
           

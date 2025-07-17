@@ -14,7 +14,7 @@ export interface User {
   subscription_status: SubscriptionStatus;
   subscription_plan?: SubscriptionPlan;
   subscription_expiry?: string;
-  verification_status?: VerificationStatus;
+  verification_status: VerificationStatus;
   verification_documents?: any;
   can_access_contact?: boolean;
   profile_image_url?: string;
@@ -86,4 +86,11 @@ export interface ContactRequest {
   message?: string;
   contact_method?: 'phone' | 'email' | 'message';
   created_at: string;
+}
+
+// Provider interface that extends User for the providers page
+export interface Provider extends User {
+  user_type: 'provider';
+  verification_status: VerificationStatus;
+  services: Service[];
 }
