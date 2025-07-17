@@ -185,3 +185,17 @@ All colors MUST be HSL.
 .duration-2000 {
   transition-duration: 2000ms;
 }
+
+/* Enhanced animations for onboarding wizard */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(8, 145, 178, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(8, 145, 178, 0.2);
+  }
+}

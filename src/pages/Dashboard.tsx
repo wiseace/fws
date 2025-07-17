@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { OnboardingWizard } from '@/components/dashboard/OnboardingWizard';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { supabase } from '@/integrations/supabase/client';
 import { Service, Category } from '@/types/database';
@@ -16,11 +18,12 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ProviderVerificationFlow } from '@/components/dashboard/ProviderVerificationFlow';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, User, Settings, CreditCard, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, User, Settings, CreditCard, Loader2, HelpCircle } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, profile, signOut, loading: authLoading, refreshProfile } = useAuth();
   const { toast } = useToast();
+  const { showWizard, dismissWizard, showWizardManually } = useOnboarding();
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -246,6 +249,23 @@ const Dashboard = () => {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
+        {/* Help Button for Manual Wizard Access */}
+        <div className="fixed bottom-6 right-6 z-40">
+          <Button
+            onClick={showWizardManually}
+            className="rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90"
+            title="Show onboarding guide"
+          >
+            <HelpCircle className="h-6 w-6" />
+          </Button>
+        </div>
+
+        {/* Onboarding Wizard */}
+        <OnboardingWizard
+          isVisible={showWizard}
+          onClose={dismissWizard}
+        />
+
         <Header editMode={false} onToggleEdit={() => {}} />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
