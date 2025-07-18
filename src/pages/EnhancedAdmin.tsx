@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, Layo
 import { Loader2 } from 'lucide-react';
 
 const EnhancedAdmin = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, updateUserRole, deleteUser } = useSecureAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('verifications');
@@ -246,12 +246,11 @@ const EnhancedAdmin = () => {
 
   const handleRoleChange = async (userId: string, newRole: 'admin' | 'provider' | 'seeker') => {
     try {
-      const { error } = await supabase
-        .from('users')
-        .update({ user_type: newRole })
-        .eq('id', userId);
+      const result = await updateUserRole(userId, newRole, 'Role updated via enhanced admin panel');
       
-      if (error) throw error;
+      if (!result.success) {
+        throw new Error(result.error?.message || 'Failed to update role');
+      }
       
       toast({
         title: "Role updated",

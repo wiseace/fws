@@ -32,6 +32,49 @@ export const useSecureAuth = () => {
     }
   }, [auth]);
 
+  // Secure admin role update function
+  const updateUserRole = useCallback(async (targetUserId: string, newRole: 'provider' | 'seeker' | 'admin', adminNotes?: string) => {
+    if (!auth.user) {
+      throw new Error('Not authenticated');
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('admin_update_user_role', {
+        target_user_id: targetUserId,
+        new_user_type: newRole,
+        admin_notes: adminNotes
+      });
+
+      if (error) throw error;
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Role update error:', error);
+      return { success: false, error };
+    }
+  }, [auth.user]);
+
+  // Secure admin user deletion function
+  const deleteUser = useCallback(async (targetUserId: string, reason: string) => {
+    if (!auth.user) {
+      throw new Error('Not authenticated');
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('admin_delete_user', {
+        target_user_id: targetUserId,
+        admin_reason: reason
+      });
+
+      if (error) throw error;
+      
+      return { success: true };
+    } catch (error) {
+      console.error('User deletion error:', error);
+      return { success: false, error };
+    }
+  }, [auth.user]);
+
   // Check if user owns a specific resource
   const checkResourceOwnership = useCallback(async (resourceUserId: string) => {
     if (!auth.user) return false;
@@ -69,6 +112,8 @@ export const useSecureAuth = () => {
   return {
     ...auth,
     updateProfile,
+    updateUserRole,
+    deleteUser,
     checkResourceOwnership,
     validateSubscription
   };

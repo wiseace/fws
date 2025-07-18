@@ -9,6 +9,8 @@ import { AddressInput } from '@/components/ui/address-input';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { isValidPhoneNumber } from 'react-phone-number-input';
+import { validateName, validatePhone } from '@/utils/inputValidation';
+import { sanitizeInput } from '@/utils/securityHeaders';
 
 export const ProfileForm = () => {
   const { user, profile } = useAuth();
@@ -30,7 +32,7 @@ export const ProfileForm = () => {
     }
   }, [profile]);
 
-  const validatePhone = (phone: string) => {
+  const validatePhoneNumber = (phone: string) => {
     if (!phone) return true; // Phone is optional
     return isValidPhoneNumber(phone);
   };
@@ -47,21 +49,39 @@ export const ProfileForm = () => {
       return;
     }
 
-    if (formData.phone && !validatePhone(formData.phone)) {
+    // Validate inputs using our security utilities
+    const nameValidation = validateName(formData.name);
+    if (!nameValidation.isValid) {
       toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid phone number with country code.",
+        title: "Invalid Name",
+        description: nameValidation.error,
         variant: "destructive"
       });
       return;
     }
 
+    if (formData.phone) {
+      const phoneValidation = validatePhone(formData.phone);
+      if (!phoneValidation.isValid) {
+        toast({
+          title: "Invalid Phone Number",
+          description: phoneValidation.error,
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
+      // Sanitize inputs before sending
+      const sanitizedName = sanitizeInput(formData.name);
+      const sanitizedPhone = sanitizeInput(formData.phone);
+
       const { error } = await supabase.rpc('update_user_profile', {
-        user_name: formData.name,
-        user_phone: formData.phone
+        user_name: sanitizedName,
+        user_phone: sanitizedPhone
       });
 
       if (error) throw error;

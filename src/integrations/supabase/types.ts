@@ -470,6 +470,18 @@ export type Database = {
       }
     }
     Functions: {
+      admin_delete_user: {
+        Args: { target_user_id: string; admin_reason: string }
+        Returns: undefined
+      }
+      admin_update_user_role: {
+        Args: {
+          target_user_id: string
+          new_user_type: Database["public"]["Enums"]["user_type"]
+          admin_notes?: string
+        }
+        Returns: undefined
+      }
       can_access_contact_info: {
         Args: { user_id: string }
         Returns: boolean

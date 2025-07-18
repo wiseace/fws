@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, Layo
 import { Loader2 } from 'lucide-react';
 
 const Admin = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, updateUserRole, deleteUser } = useSecureAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('verifications');
@@ -239,12 +239,11 @@ const Admin = () => {
 
   const handleRoleChange = async (userId: string, newRole: 'admin' | 'provider' | 'seeker') => {
     try {
-      const { error } = await supabase
-        .from('users')
-        .update({ user_type: newRole })
-        .eq('id', userId);
+      const result = await updateUserRole(userId, newRole, 'Role updated via admin panel');
       
-      if (error) throw error;
+      if (!result.success) {
+        throw new Error(result.error?.message || 'Failed to update role');
+      }
       
       toast({
         title: "Role updated",
@@ -262,14 +261,24 @@ const Admin = () => {
   };
 
   const handleDeleteUser = async (userId: string) => {
+    const reason = prompt('Please provide a reason for deleting this user:');
+    if (!reason || reason.trim() === '') {
+      toast({
+        title: "Error",
+        description: "A reason is required for user deletion.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!confirm('Are you sure you want to delete this user? This will permanently remove the user and ALL their related data (services, verification requests, contact requests).')) return;
     
     try {
-      const { error } = await supabase.rpc('delete_user_and_related_data', {
-        target_user_id: userId
-      });
+      const result = await deleteUser(userId, reason.trim());
       
-      if (error) throw error;
+      if (!result.success) {
+        throw new Error(result.error?.message || 'Failed to delete user');
+      }
       
       toast({
         title: "User deleted",
