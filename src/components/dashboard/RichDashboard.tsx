@@ -78,6 +78,15 @@ export const RichDashboard = () => {
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStep[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [activeTab, setActiveTab] = useState('requests');
+
+  // Handle URL tab parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab && ['requests', 'services', 'verification', 'profile', 'messages'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, []);
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -630,7 +639,7 @@ export const RichDashboard = () => {
                 <CardHeader className="bg-primary text-white rounded-t-lg">
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5" />
-                    Provider Hub
+                    {profile?.user_type === 'seeker' ? "Employer's Hub" : "Provider Hub"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">

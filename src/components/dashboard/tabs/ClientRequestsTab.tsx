@@ -46,8 +46,8 @@ export const ClientRequestsTab = () => {
           .from('contact_requests')
           .select(`
             *,
-            services:service_id (service_name, category),
-            users:seeker_id (name, email)
+            services:service_id!inner (service_name, category),
+            users:seeker_id!inner (name, email)
           `)
           .eq('provider_id', user.id)
           .order('created_at', { ascending: false });
@@ -60,8 +60,8 @@ export const ClientRequestsTab = () => {
           .from('contact_requests')
           .select(`
             *,
-            services:service_id (service_name, category),
-            users:provider_id (name, email)
+            services:service_id!inner (service_name, category),
+            users:provider_id!inner (name, email)
           `)
           .eq('seeker_id', user.id)
           .order('created_at', { ascending: false });
@@ -174,11 +174,8 @@ export const ClientRequestsTab = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => {
-                          if (request.contact_method === 'phone') {
-                            window.open(`tel:${request.users?.email}`, '_blank');
-                          } else {
-                            window.open(`mailto:${request.users?.email}`, '_blank');
-                          }
+                          // Navigate to messages tab for in-platform communication
+                          window.location.href = '/dashboard?tab=messages';
                         }}
                       >
                         Respond
