@@ -46,15 +46,25 @@ const Dashboard = () => {
     }
   }, [user, authLoading]);
 
-  // Handle URL tab parameter
+  // Handle URL tab parameter - process after profile is loaded
   useEffect(() => {
+    if (!profile) return; // Wait for profile to load
+    
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
     if (tabParam && ['services', 'verification', 'profile', 'subscription'].includes(tabParam)) {
       console.log('🎯 Setting active tab from URL:', tabParam);
-      setActiveTab(tabParam);
+      console.log('👤 Profile type:', profile.user_type);
+      
+      // Only set verification tab if user is a provider
+      if (tabParam === 'verification' && profile.user_type !== 'provider') {
+        console.log('⚠️ Verification tab requested but user is not a provider, defaulting to services');
+        setActiveTab('services');
+      } else {
+        setActiveTab(tabParam);
+      }
     }
-  }, []);
+  }, [profile]);
 
   // Separate effect for real-time listeners
   useEffect(() => {
