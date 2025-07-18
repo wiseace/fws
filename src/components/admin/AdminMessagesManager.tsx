@@ -55,36 +55,49 @@ export const AdminMessagesManager = () => {
 
   const fetchConversations = async () => {
     try {
-      const { data, error } = await supabase
+      // First get all messages
+      const { data: messages, error: messagesError } = await supabase
         .from('admin_user_messages')
-        .select(`
-          user_id,
-          message,
-          created_at,
-          is_from_admin,
-          read_by_recipient,
-          message_type,
-          users!inner(name, email)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (messagesError) throw messagesError;
+
+      if (!messages || messages.length === 0) {
+        setConversations([]);
+        return;
+      }
+
+      // Get unique user IDs
+      const userIds = [...new Set(messages.map(m => m.user_id))];
+
+      // Fetch user details
+      const { data: users, error: usersError } = await supabase
+        .from('users')
+        .select('id, name, email')
+        .in('id', userIds);
+
+      if (usersError) throw usersError;
+
+      // Create user lookup map
+      const userMap = new Map(users?.map(u => [u.id, u]) || []);
 
       // Group messages by user and get latest message info
-      const userMap = new Map<string, UserConversation>();
+      const conversationMap = new Map<string, UserConversation>();
       
-      data?.forEach((msg: any) => {
+      messages.forEach((msg: any) => {
         const userId = msg.user_id;
-        const existing = userMap.get(userId);
+        const user = userMap.get(userId);
+        const existing = conversationMap.get(userId);
         
         if (!existing || new Date(msg.created_at) > new Date(existing.latest_message_date)) {
-          userMap.set(userId, {
+          conversationMap.set(userId, {
             user_id: userId,
-            user_name: msg.users?.name || 'Unknown',
-            user_email: msg.users?.email || 'Unknown',
+            user_name: user?.name || 'Unknown User',
+            user_email: user?.email || 'unknown@email.com',
             latest_message: msg.message,
             latest_message_date: msg.created_at,
-            unread_count: data.filter(m => 
+            unread_count: messages.filter(m => 
               m.user_id === userId && 
               !m.is_from_admin && 
               !m.read_by_recipient
@@ -94,7 +107,7 @@ export const AdminMessagesManager = () => {
         }
       });
 
-      setConversations(Array.from(userMap.values()));
+      setConversations(Array.from(conversationMap.values()));
     } catch (error: any) {
       console.error('Error fetching conversations:', error);
     } finally {
@@ -104,27 +117,36 @@ export const AdminMessagesManager = () => {
 
   const fetchMessages = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // Get messages for this user
+      const { data: messages, error: messagesError } = await supabase
         .from('admin_user_messages')
-        .select(`
-          *,
-          users!inner(name, email)
-        `)
+        .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (messagesError) throw messagesError;
 
-      if (data) {
-        const typedMessages = data.map(msg => ({
+      // Get user details
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('name, email')
+        .eq('id', userId)
+        .single();
+
+      if (userError) {
+        console.error('Error fetching user:', userError);
+      }
+
+      if (messages) {
+        const typedMessages = messages.map(msg => ({
           ...msg,
-          user_name: (msg as any).users?.name || 'Unknown',
-          user_email: (msg as any).users?.email || 'Unknown'
+          user_name: user?.name || 'Unknown User',
+          user_email: user?.email || 'unknown@email.com'
         }));
         setMessages(typedMessages);
 
-        // Mark admin messages as read
-        const unreadUserMessages = data.filter(m => !m.is_from_admin && !m.read_by_recipient);
+        // Mark user messages as read by admin
+        const unreadUserMessages = messages.filter(m => !m.is_from_admin && !m.read_by_recipient);
         if (unreadUserMessages.length > 0) {
           await Promise.all(
             unreadUserMessages.map(msg => 
