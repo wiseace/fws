@@ -237,10 +237,16 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
   };
 
   const handleStepAction = (step: OnboardingStep, stepIndex: number) => {
+    console.log('🎯 Step clicked:', step.title, 'Index:', stepIndex);
+    console.log('🔍 Has actionHandler:', !!step.actionHandler);
+    console.log('🔍 Has actionUrl:', !!step.actionUrl);
+    
     // Check if this step can be accessed (current step or previous steps completed)
     const canAccess = stepIndex === 0 || steps.slice(0, stepIndex).every(s => completedSteps.has(s.id));
+    console.log('✅ Can access step:', canAccess);
     
     if (!canAccess) {
+      console.log('❌ Access denied for step');
       toast({
         title: "Complete previous steps first",
         description: "Please complete the previous steps before proceeding.",
@@ -250,9 +256,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
     }
 
     if (step.actionHandler) {
+      console.log('🚀 Executing actionHandler for:', step.title);
       step.actionHandler();
     } else if (step.actionUrl) {
+      console.log('🚀 Navigating to:', step.actionUrl);
       window.location.href = step.actionUrl;
+    } else {
+      console.log('❌ No action defined for step:', step.title);
     }
   };
 
