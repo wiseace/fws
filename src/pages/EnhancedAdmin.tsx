@@ -490,7 +490,9 @@ const EnhancedAdmin = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="px-3 py-1.5 bg-muted rounded-lg">
-                        <span className="text-sm font-medium text-foreground">{verificationRequests.length} pending</span>
+                        <span className="text-sm font-medium text-foreground">
+                          {verificationRequests.filter(r => r.status === 'pending').length} pending
+                        </span>
                       </div>
                       <Button 
                         onClick={fetchVerificationRequests}
