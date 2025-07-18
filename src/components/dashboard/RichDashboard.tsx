@@ -360,7 +360,15 @@ export const RichDashboard = () => {
               </ul>
             </div>
             <Button 
-              onClick={() => setActiveTab('messages')}
+              onClick={() => {
+                setActiveTab('messages');
+                setTimeout(() => {
+                  const element = document.getElementById('messages-tab');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }, 100);
+              }}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
               <MessageSquare className="w-4 h-4 mr-2" />

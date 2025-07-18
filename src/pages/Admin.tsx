@@ -14,6 +14,7 @@ import { UserVerificationModal } from '@/components/admin/UserVerificationModal'
 
 import { User as UserType, VerificationRequest, ContactRequest, Service } from '@/types/database';
 import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard, RefreshCw, Settings, MessageSquare } from 'lucide-react';
+import { AdminMessagesManager } from '@/components/admin/AdminMessagesManager';
 import { Loader2 } from 'lucide-react';
 
 const Admin = () => {
@@ -484,11 +485,12 @@ const Admin = () => {
           <div className="px-6 pb-8">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <div className="flex items-center justify-center">
-                <TabsList className="grid grid-cols-5 w-full max-w-2xl bg-muted/30 p-1 rounded-full h-12">
+                <TabsList className="grid grid-cols-6 w-full max-w-3xl bg-muted/30 p-1 rounded-full h-12">
                   <TabsTrigger value="verifications" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Verifications</TabsTrigger>
                   <TabsTrigger value="users" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Users</TabsTrigger>
                   <TabsTrigger value="contacts" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Contacts</TabsTrigger>
                   <TabsTrigger value="services" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Services</TabsTrigger>
+                  <TabsTrigger value="messages" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Messages</TabsTrigger>
                   <TabsTrigger value="categories" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Categories</TabsTrigger>
                 </TabsList>
               </div>
@@ -930,6 +932,10 @@ const Admin = () => {
                     )}
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="messages" className="space-y-4 animate-fade-in">
+                <AdminMessagesManager />
               </TabsContent>
 
               <TabsContent value="categories" className="space-y-6 animate-fade-in">
