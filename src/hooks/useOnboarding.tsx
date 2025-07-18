@@ -16,6 +16,8 @@ export const useOnboarding = () => {
   const checkOnboardingStatus = async () => {
     if (!user) return;
 
+    console.log('Starting onboarding check for user:', user.id, 'Profile:', profile);
+
     try {
       // Get completed onboarding steps
       let { data: onboardingData, error: onboardingError } = await supabase
@@ -85,7 +87,14 @@ export const useOnboarding = () => {
 
     // Check profile completion - if name, phone, and email are present
     if (!currentCompleted.has('profile_completion')) {
+      console.log('Checking profile completion:', {
+        name: profile.name,
+        phone: profile.phone,
+        email: profile.email,
+        hasAllFields: !!(profile.name && profile.phone && profile.email)
+      });
       if (profile.name && profile.phone && profile.email) {
+        console.log('Profile completion criteria met, marking step for completion');
         stepsToComplete.push('profile_completion');
       }
     }
