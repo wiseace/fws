@@ -32,6 +32,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
   const handleMarkAsRead = () => {
     if (!notification.read) {
       onMarkAsRead(notification.id);
+      onClose(); // Close the modal after marking as read
     }
   };
 
