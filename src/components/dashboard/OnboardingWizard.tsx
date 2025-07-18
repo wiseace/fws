@@ -101,19 +101,27 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Start Verification',
           completed: false,
           actionHandler: () => {
+            console.log('🔥 Verification actionHandler started');
+            console.log('📍 Current pathname:', window.location.pathname);
+            
             onClose();
             
             if (window.location.pathname !== '/dashboard') {
+              console.log('🚀 Redirecting to dashboard...');
               window.location.href = '/dashboard';
               return;
             }
             
+            console.log('✅ Already on dashboard, looking for verification tab...');
             setTimeout(() => {
               const verificationTab = document.querySelector('[data-state="inactive"][data-value="verification"]') as HTMLElement;
+              console.log('🎯 Found verification tab:', !!verificationTab);
               if (verificationTab) {
+                console.log('👆 Clicking verification tab');
                 verificationTab.click();
                 setTimeout(() => {
                   const verificationContent = document.querySelector('[data-state="active"] form, [data-state="active"] .verification-form');
+                  console.log('📝 Found verification content:', !!verificationContent);
                   if (verificationContent) {
                     verificationContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
                   }
