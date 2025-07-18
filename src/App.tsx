@@ -19,6 +19,7 @@ import Pricing from "./pages/Pricing";
 import Provider from "./pages/Provider";
 import Providers from "./pages/Providers";
 import ProviderProfile from "./pages/ProviderProfile";
+import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,11 @@ const App = () => (
             <Route path="/provider-profile" element={
               <ProtectedRoute>
                 <ProviderProfile />
+              </ProtectedRoute>
+            } />
+            <Route path="/notifications" element={
+              <ProtectedRoute>
+                <Notifications />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />

@@ -793,7 +793,12 @@ export const RichDashboard = () => {
                 </div>
                 {notifications.length > 3 && (
                   <div className="mt-3 pt-3 border-t">
-                    <Button variant="ghost" size="sm" className="w-full text-primary hover:text-primary-dark">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full text-primary hover:text-primary-dark"
+                      onClick={() => window.location.href = '/notifications'}
+                    >
                       View All Notifications
                     </Button>
                   </div>
