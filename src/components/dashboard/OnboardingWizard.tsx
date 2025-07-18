@@ -117,26 +117,38 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
             console.log('🔍 User type:', profile?.user_type);
             console.log('🔍 Should show verification tab:', profile?.user_type === 'provider');
             
-            setTimeout(() => {
-              // First, let's see what tabs are available
-              const allTabs = document.querySelectorAll('[data-value]');
-              console.log('📋 All available tabs:', Array.from(allTabs).map(tab => tab.getAttribute('data-value')));
-              
-              const verificationTab = document.querySelector('[data-value="verification"]') as HTMLElement;
-              console.log('🎯 Found verification tab:', !!verificationTab, verificationTab);
-              
-              if (verificationTab) {
-                console.log('👆 Clicking verification tab');
-                verificationTab.click();
-                setTimeout(() => {
-                  const verificationContent = document.querySelector('[data-state="active"] form, [data-state="active"] .verification-form');
-                  console.log('📝 Found verification content:', !!verificationContent);
-                  if (verificationContent) {
-                    verificationContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                }, 300);
-              }
-            }, 200);
+            
+            const waitForTabsAndClick = (retries = 5) => {
+              setTimeout(() => {
+                const allTabs = document.querySelectorAll('[data-value]');
+                console.log(`📋 Attempt ${6-retries}: Found ${allTabs.length} tabs:`, Array.from(allTabs).map(tab => tab.getAttribute('data-value')));
+                
+                if (allTabs.length === 0 && retries > 0) {
+                  console.log(`🔄 No tabs found, retrying... (${retries} attempts left)`);
+                  waitForTabsAndClick(retries - 1);
+                  return;
+                }
+                
+                const verificationTab = document.querySelector('[data-value="verification"]') as HTMLElement;
+                console.log('🎯 Found verification tab:', !!verificationTab);
+                
+                if (verificationTab) {
+                  console.log('👆 Clicking verification tab');
+                  verificationTab.click();
+                  setTimeout(() => {
+                    const verificationContent = document.querySelector('[data-state="active"] form, [data-state="active"] .verification-form');
+                    console.log('📝 Found verification content:', !!verificationContent);
+                    if (verificationContent) {
+                      verificationContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  }, 300);
+                } else {
+                  console.log('❌ Verification tab not found even after retries');
+                }
+              }, 500); // Increased initial delay
+            };
+            
+            waitForTabsAndClick();
           }
         },
         {
