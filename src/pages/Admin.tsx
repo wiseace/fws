@@ -10,9 +10,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { CompactAdminTableControls } from '@/components/admin/CompactAdminTableControls';
+import { UserVerificationModal } from '@/components/admin/UserVerificationModal';
 
 import { User as UserType, VerificationRequest, ContactRequest, Service } from '@/types/database';
-import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard, RefreshCw } from 'lucide-react';
+import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard, RefreshCw, Settings, MessageSquare } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
 const Admin = () => {
@@ -36,6 +37,8 @@ const Admin = () => {
   const [usersPagination, setUsersPagination] = useState<any>({});
   const [contactsPagination, setContactsPagination] = useState<any>({});
   const [servicesPagination, setServicesPagination] = useState<any>({});
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
   useEffect(() => {
     console.log('Admin useEffect - profile:', profile);
@@ -701,7 +704,20 @@ const Admin = () => {
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setIsVerificationModalOpen(true);
+                              }}
+                              className="h-7 px-2 bg-blue-50 hover:bg-blue-100 text-blue-700"
+                            >
+                              <Settings className="w-3 h-3 mr-1" />
+                              Manage
+                            </Button>
+                            
                             <select
                               value={user.user_type}
                               onChange={(e) => handleRoleChange(user.id, e.target.value as any)}
@@ -980,6 +996,19 @@ const Admin = () => {
           </div>
 
         </div>
+
+        {/* User Verification Modal */}
+        <UserVerificationModal
+          user={selectedUser}
+          isOpen={isVerificationModalOpen}
+          onClose={() => {
+            setIsVerificationModalOpen(false);
+            setSelectedUser(null);
+          }}
+          onUserUpdated={() => {
+            fetchAllData();
+          }}
+        />
 
         <Footer editMode={false} />
       </div>

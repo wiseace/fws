@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_user_messages: {
+        Row: {
+          admin_id: string
+          created_at: string
+          id: string
+          is_from_admin: boolean
+          message: string
+          message_type: string
+          read_by_recipient: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          id?: string
+          is_from_admin?: boolean
+          message: string
+          message_type?: string
+          read_by_recipient?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          id?: string
+          is_from_admin?: boolean
+          message?: string
+          message_type?: string
+          read_by_recipient?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -474,6 +510,10 @@ export type Database = {
         Args: { target_user_id: string; admin_reason: string }
         Returns: undefined
       }
+      admin_unverify_user: {
+        Args: { target_user_id: string; admin_reason: string }
+        Returns: undefined
+      }
       admin_update_user_role: {
         Args: {
           target_user_id: string
@@ -528,12 +568,33 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_user_admin_messages: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          admin_id: string
+          message: string
+          message_type: string
+          is_from_admin: boolean
+          read_by_recipient: boolean
+          created_at: string
+          admin_name: string
+        }[]
+      }
       is_current_user_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
       make_user_admin: {
         Args: { user_email: string }
+        Returns: undefined
+      }
+      mark_admin_message_read: {
+        Args: { message_id: string }
+        Returns: undefined
+      }
+      send_admin_reply: {
+        Args: { reply_message: string; reply_type?: string }
         Returns: undefined
       }
       smart_search_providers: {

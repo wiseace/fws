@@ -19,6 +19,7 @@ import {
   TrendingUp, 
   Award, 
   AlertCircle,
+  AlertTriangle,
   MapPin,
   Calendar,
   Settings,
@@ -31,12 +32,14 @@ import {
   Target,
   Zap,
   Shield,
-  HelpCircle
+  HelpCircle,
+  MessageSquare
 } from 'lucide-react';
 import { MyServicesTab } from './tabs/MyServicesTab';
 import { ClientRequestsTab } from './tabs/ClientRequestsTab';
 import { VerificationTab } from './tabs/VerificationTab';
 import { ProfileTab } from './tabs/ProfileTab';
+import { MessagesTab } from './tabs/MessagesTab';
 import { SubscriptionCountdown } from '@/components/SubscriptionCountdown';
 
 interface DashboardStats {
@@ -334,6 +337,38 @@ export const RichDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Unverification Alert */}
+        {profile?.verification_status === 'not_verified' && profile?.user_type === 'provider' && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex-shrink-0">
+                <AlertTriangle className="h-8 w-8 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-red-800">Account Verification Revoked</h3>
+                <p className="text-red-700 text-sm">
+                  Your account verification has been revoked by an administrator. This means your services are no longer visible to users.
+                </p>
+              </div>
+            </div>
+            <div className="bg-red-100 rounded-lg p-4 mb-4">
+              <p className="text-sm text-red-800 font-medium mb-2">What this means:</p>
+              <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
+                <li>Your services are hidden from public view</li>
+                <li>You cannot receive new contact requests</li>
+                <li>Existing clients can still contact you through previous requests</li>
+              </ul>
+            </div>
+            <Button 
+              onClick={() => setActiveTab('messages')}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Check Admin Messages
+            </Button>
+          </div>
+        )}
+
         {/* Welcome Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -644,28 +679,41 @@ export const RichDashboard = () => {
                             >
                               Verification
                             </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              className={`px-4 py-2 rounded-full font-medium transition-all ${
-                                activeTab === 'profile' 
-                                  ? 'bg-foreground text-background shadow-sm' 
-                                  : 'text-muted-foreground hover:text-foreground'
-                              }`}
-                              onClick={() => setActiveTab('profile')}
-                            >
-                              Profile
-                            </Button>
+                             <Button 
+                               variant="ghost" 
+                               size="sm"
+                               className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                 activeTab === 'profile' 
+                                   ? 'bg-foreground text-background shadow-sm' 
+                                   : 'text-muted-foreground hover:text-foreground'
+                               }`}
+                               onClick={() => setActiveTab('profile')}
+                             >
+                               Profile
+                             </Button>
+                             <Button 
+                               variant="ghost" 
+                               size="sm"
+                               className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                 activeTab === 'messages' 
+                                   ? 'bg-foreground text-background shadow-sm' 
+                                   : 'text-muted-foreground hover:text-foreground'
+                               }`}
+                               onClick={() => setActiveTab('messages')}
+                             >
+                               Messages
+                             </Button>
                            </div>
                          </div>
                        </div>
 
                        {/* Tab Content */}
                        <div className="min-h-[300px]">
-                         {activeTab === 'services' && <div id="services-tab" className="animate-fade-in"><MyServicesTab /></div>}
-                         {activeTab === 'requests' && <div id="requests-tab" className="animate-fade-in"><ClientRequestsTab /></div>}
-                         {activeTab === 'verification' && <div id="verification-tab" className="animate-fade-in"><VerificationTab /></div>}
-                         {activeTab === 'profile' && <div id="profile-tab" className="animate-fade-in"><ProfileTab /></div>}
+                          {activeTab === 'services' && <div id="services-tab" className="animate-fade-in"><MyServicesTab /></div>}
+                          {activeTab === 'requests' && <div id="requests-tab" className="animate-fade-in"><ClientRequestsTab /></div>}
+                          {activeTab === 'verification' && <div id="verification-tab" className="animate-fade-in"><VerificationTab /></div>}
+                          {activeTab === 'profile' && <div id="profile-tab" className="animate-fade-in"><ProfileTab /></div>}
+                          {activeTab === 'messages' && <div id="messages-tab" className="animate-fade-in"><MessagesTab /></div>}
                        </div>
 
                   </div>
