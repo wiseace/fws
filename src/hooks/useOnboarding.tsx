@@ -81,110 +81,142 @@ export const useOnboarding = () => {
   };
 
   const autoCompleteSteps = async (currentCompleted: Set<string>) => {
-    if (!user || !profile) return;
-
-    const stepsToComplete: string[] = [];
-
-    // Check profile completion - if name, phone, and email are present
-    // Note: email comes from user.email (auth), not profile.email
-    if (!currentCompleted.has('profile_completion')) {
-      console.log('Checking profile completion:', {
-        name: profile.name,
-        phone: profile.phone,
-        userEmail: user.email,
-        profileEmail: profile.email,
-        hasAllFields: !!(profile.name && profile.phone && user.email)
-      });
-      if (profile.name && profile.phone && user.email) {
-        console.log('Profile completion criteria met, marking step for completion');
-        stepsToComplete.push('profile_completion');
-      } else {
-        console.log('Profile completion criteria NOT met');
-      }
-    } else {
-      console.log('Profile completion already marked as completed');
+    if (!user || !profile) {
+      console.log('🔍 No user or profile available for auto-completion');
+      return;
     }
 
-    // Check verification submission - if verification request exists
+    console.log('🔍 Starting auto-completion check for user:', user.id);
+    
+    try {
+      // Query the new provider_wizard_progress view to get current step completion status
+      const { data: wizardProgress, error: progressError } = await supabase
+        .from('provider_wizard_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (progressError) {
+        console.error('❌ Error fetching wizard progress:', progressError);
+        // Fallback to manual checks if view fails
+        return await fallbackAutoComplete(currentCompleted);
+      }
+
+      console.log('🔍 Wizard progress from view:', wizardProgress);
+
+      const stepsToComplete: string[] = [];
+
+      // Map view results to onboarding step names
+      if (wizardProgress.step_1_complete && !currentCompleted.has('profile_completion')) {
+        console.log('✅ Profile completion criteria met');
+        stepsToComplete.push('profile_completion');
+      }
+
+      if (wizardProgress.step_2_complete && !currentCompleted.has('verification_submission')) {
+        console.log('✅ Verification criteria met');
+        stepsToComplete.push('verification_submission');
+      }
+
+      if (wizardProgress.step_3_complete && !currentCompleted.has('subscription_setup')) {
+        console.log('✅ Plan selection criteria met');
+        stepsToComplete.push('subscription_setup');
+      }
+
+      if (wizardProgress.step_4_complete && !currentCompleted.has('first_service_creation')) {
+        console.log('✅ First service creation criteria met');
+        stepsToComplete.push('first_service_creation');
+      }
+
+      // Complete all identified steps
+      if (stepsToComplete.length > 0) {
+        console.log('🔄 Completing steps:', stepsToComplete);
+        for (const stepName of stepsToComplete) {
+          console.log(`🔄 Calling complete_onboarding_step for: ${stepName}`);
+          const { error: completeError } = await supabase.rpc('complete_onboarding_step', {
+            step_name: stepName
+          });
+          
+          if (completeError) {
+            console.error(`❌ Error completing step ${stepName}:`, completeError);
+          } else {
+            console.log(`✅ Successfully completed step: ${stepName}`);
+            currentCompleted.add(stepName);
+          }
+        }
+        
+        // Update local state with new completed steps
+        setCompletedSteps(new Set(currentCompleted));
+      } else {
+        console.log('ℹ️ No steps need auto-completion');
+      }
+
+    } catch (error) {
+      console.error('❌ Error in autoCompleteSteps:', error);
+    }
+  };
+
+  // Fallback function for manual checks if the view fails
+  const fallbackAutoComplete = async (currentCompleted: Set<string>) => {
+    console.log('🔄 Using fallback auto-completion logic');
+    const stepsToComplete: string[] = [];
+
+    // Check profile completion
+    if (!currentCompleted.has('profile_completion')) {
+      if (profile.name && profile.phone && user.email) {
+        console.log('Profile completion criteria met (fallback)');
+        stepsToComplete.push('profile_completion');
+      }
+    }
+
+    // Check verification submission for providers
     if (!currentCompleted.has('verification_submission') && profile.user_type === 'provider') {
-      console.log('Checking verification submission for provider...');
       const { data: verificationData } = await supabase
         .from('verification_requests')
         .select('id')
         .eq('user_id', user.id)
         .limit(1);
       
-      console.log('Verification data:', verificationData);
       if (verificationData && verificationData.length > 0) {
-        console.log('Verification submission found, marking step for completion');
+        console.log('Verification submission found (fallback)');
         stepsToComplete.push('verification_submission');
-      } else {
-        console.log('No verification submission found');
       }
-    } else if (currentCompleted.has('verification_submission')) {
-      console.log('Verification submission already marked as completed');
     }
 
-    // Check first service creation - if user has at least one service
+    // Check first service creation for providers
     if (!currentCompleted.has('first_service_creation') && profile.user_type === 'provider') {
-      console.log('Checking first service creation for provider...');
       const { data: servicesData } = await supabase
         .from('services')
         .select('id')
         .eq('user_id', user.id)
         .limit(1);
       
-      console.log('Services data:', servicesData);
       if (servicesData && servicesData.length > 0) {
-        console.log('Service found, marking first service creation for completion');
+        console.log('Service found (fallback)');
         stepsToComplete.push('first_service_creation');
-      } else {
-        console.log('No services found');
       }
-    } else if (currentCompleted.has('first_service_creation')) {
-      console.log('First service creation already marked as completed');
     }
 
-    // Check subscription setup - if user has a non-free subscription
+    // Check subscription setup
     if (!currentCompleted.has('subscription_setup')) {
-      console.log('Checking subscription setup:', {
-        subscriptionPlan: profile.subscription_plan,
-        isNotFree: profile.subscription_plan && profile.subscription_plan !== 'free'
-      });
       if (profile.subscription_plan && profile.subscription_plan !== 'free') {
-        console.log('Non-free subscription found, marking subscription setup for completion');
+        console.log('Non-free subscription found (fallback)');
         stepsToComplete.push('subscription_setup');
-      } else {
-        console.log('No non-free subscription found');
       }
-    } else {
-      console.log('Subscription setup already marked as completed');
     }
 
-    // Check browse services for seekers - mark as complete after they visit browse page
-    if (!currentCompleted.has('browse_services') && profile.user_type === 'seeker') {
-      // This will be handled by the browse page itself
-    }
-
-    // Complete the steps in the database
-    console.log('Steps to complete:', stepsToComplete);
+    // Complete the steps
     for (const stepName of stepsToComplete) {
       try {
-        console.log(`Attempting to complete step: ${stepName}`);
         await supabase.rpc('complete_onboarding_step', { step_name: stepName });
         currentCompleted.add(stepName);
-        console.log(`Auto-completed step: ${stepName}`);
+        console.log(`Auto-completed step (fallback): ${stepName}`);
       } catch (error) {
-        console.error(`Error auto-completing step ${stepName}:`, error);
+        console.error(`Error auto-completing step ${stepName} (fallback):`, error);
       }
     }
 
-    // Update local state immediately with the new completed steps
     if (stepsToComplete.length > 0) {
-      console.log('Updating completed steps state:', Array.from(currentCompleted));
       setCompletedSteps(new Set(currentCompleted));
-    } else {
-      console.log('No steps to complete - no state update needed');
     }
   };
 

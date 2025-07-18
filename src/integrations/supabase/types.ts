@@ -71,8 +71,22 @@ export type Database = {
             foreignKeyName: "contact_requests_provider_id_fkey"
             columns: ["provider_id"]
             isOneToOne: false
+            referencedRelation: "provider_wizard_progress"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "contact_requests_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_requests_seeker_id_fkey"
+            columns: ["seeker_id"]
+            isOneToOne: false
+            referencedRelation: "provider_wizard_progress"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "contact_requests_seeker_id_fkey"
@@ -147,6 +161,13 @@ export type Database = {
             foreignKeyName: "services_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "provider_wizard_progress"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "services_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -191,6 +212,13 @@ export type Database = {
             foreignKeyName: "user_notifications_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "provider_wizard_progress"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -225,6 +253,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_onboarding_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "provider_wizard_progress"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "user_onboarding_user_id_fkey"
             columns: ["user_id"]
@@ -378,8 +413,22 @@ export type Database = {
             foreignKeyName: "verification_requests_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
+            referencedRelation: "provider_wizard_progress"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "verification_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "provider_wizard_progress"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "verification_requests_user_id_fkey"
@@ -392,7 +441,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      provider_wizard_progress: {
+        Row: {
+          progress_percent: number | null
+          step_1_complete: boolean | null
+          step_2_complete: boolean | null
+          step_3_complete: boolean | null
+          step_4_complete: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          progress_percent?: never
+          step_1_complete?: never
+          step_2_complete?: never
+          step_3_complete?: never
+          step_4_complete?: never
+          user_id?: string | null
+        }
+        Update: {
+          progress_percent?: never
+          step_1_complete?: never
+          step_2_complete?: never
+          step_3_complete?: never
+          step_4_complete?: never
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_access_contact_info: {
