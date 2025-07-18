@@ -114,8 +114,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
             
             console.log('✅ Already on dashboard, looking for verification tab...');
             setTimeout(() => {
-              const verificationTab = document.querySelector('[data-state="inactive"][data-value="verification"]') as HTMLElement;
-              console.log('🎯 Found verification tab:', !!verificationTab);
+              const verificationTab = document.querySelector('[data-value="verification"]') as HTMLElement;
+              console.log('🎯 Found verification tab:', !!verificationTab, verificationTab);
               if (verificationTab) {
                 console.log('👆 Clicking verification tab');
                 verificationTab.click();
