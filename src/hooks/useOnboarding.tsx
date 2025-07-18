@@ -86,14 +86,16 @@ export const useOnboarding = () => {
     const stepsToComplete: string[] = [];
 
     // Check profile completion - if name, phone, and email are present
+    // Note: email comes from user.email (auth), not profile.email
     if (!currentCompleted.has('profile_completion')) {
       console.log('Checking profile completion:', {
         name: profile.name,
         phone: profile.phone,
-        email: profile.email,
-        hasAllFields: !!(profile.name && profile.phone && profile.email)
+        userEmail: user.email,
+        profileEmail: profile.email,
+        hasAllFields: !!(profile.name && profile.phone && user.email)
       });
-      if (profile.name && profile.phone && profile.email) {
+      if (profile.name && profile.phone && user.email) {
         console.log('Profile completion criteria met, marking step for completion');
         stepsToComplete.push('profile_completion');
       }
