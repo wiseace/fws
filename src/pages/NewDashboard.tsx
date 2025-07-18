@@ -190,11 +190,8 @@ export const NewDashboard = () => {
           <Button
             onClick={showWizardManually}
             className={`rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90 transition-all border-0 ${
-              onboardingProgress < 100 ? 'animate-ping-strong ring-8 ring-primary/70 ring-offset-6 ring-offset-transparent shadow-2xl shadow-primary/60 scale-110' : ''
+              onboardingProgress < 100 ? 'animate-ping-strong ring-4 ring-primary/40 ring-offset-4 ring-offset-background shadow-2xl shadow-primary/40' : ''
             }`}
-            style={{
-              animation: onboardingProgress < 100 ? 'ping-strong 2s cubic-bezier(0, 0, 0.2, 1) infinite' : undefined
-            }}
             title="Show onboarding guide"
           >
             <HelpCircle className="h-6 w-6" />
