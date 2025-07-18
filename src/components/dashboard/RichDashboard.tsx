@@ -237,23 +237,30 @@ export const RichDashboard = () => {
   const handleOnboardingStepClick = (stepName: string, completed: boolean) => {
     if (completed) return; // Don't do anything if already completed
     
+    console.log('🎯 Onboarding step clicked:', stepName, 'completed:', completed);
+    
     switch (stepName) {
       case 'profile_completion':
+        console.log('→ Navigating to profile tab');
         setActiveTab('profile');
         scrollToSection('profile-tab');
         break;
       case 'verification_submission':
+        console.log('→ Navigating to verification tab');
         setActiveTab('verification');
         scrollToSection('verification-tab');
         break;
       case 'first_service_creation':
+        console.log('→ Opening service creation modal');
         handleServiceModalOpen();
         break;
       case 'profile_optimization':
+        console.log('→ Navigating to profile tab for optimization');
         setActiveTab('profile');
         scrollToSection('profile-tab');
         break;
       default:
+        console.log('→ Unknown step:', stepName);
         break;
     }
   };
