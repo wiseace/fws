@@ -13,11 +13,21 @@ import { Footer } from '@/components/Footer';
 import { Category } from '@/types/database';
 import { Plus, Edit2, Trash2, Tag } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { CompactAdminTableControls } from '@/components/admin/CompactAdminTableControls';
 
 const AdminCategories = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [processedCategories, setProcessedCategories] = useState<Category[]>([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    startIndex: 0,
+    endIndex: 0
+  });
   const [loading, setLoading] = useState(true);
   
   // Form state
@@ -35,6 +45,11 @@ const AdminCategories = () => {
     }
   }, [profile]);
 
+  const handleDataChange = (data: Category[], paginationInfo: any) => {
+    setProcessedCategories(data);
+    setPagination(paginationInfo);
+  };
+
   const fetchCategories = async () => {
     setLoading(true);
     try {
@@ -44,7 +59,9 @@ const AdminCategories = () => {
         .order('name');
       
       if (error) throw error;
-      if (data) setCategories(data);
+      if (data) {
+        setCategories(data);
+      }
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast({
@@ -175,15 +192,15 @@ const AdminCategories = () => {
         <Header editMode={false} onToggleEdit={() => {}} />
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Manage Categories</h1>
-              <p className="text-gray-600">Create and manage service categories for providers</p>
+              <h1 className="text-2xl font-bold text-gray-900">Manage Categories</h1>
+              <p className="text-sm text-gray-600">Create and manage service categories for providers</p>
             </div>
             
             <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
               <DialogTrigger asChild>
-                <Button onClick={handleCreateNew} className="bg-blue-600 hover:bg-blue-700">
+                <Button onClick={handleCreateNew} size="sm" className="bg-primary hover:bg-primary/90">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Category
                 </Button>
@@ -241,58 +258,93 @@ const AdminCategories = () => {
             </Dialog>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loading ? (
-              <div className="col-span-full text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <p className="mt-2 text-gray-600">Loading categories...</p>
-              </div>
-            ) : categories.length === 0 ? (
-              <div className="col-span-full text-center py-12">
-                <Tag className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No categories</h3>
-                <p className="mt-1 text-sm text-gray-500">Get started by creating a new category.</p>
-              </div>
-            ) : (
-              categories.map((category) => (
-                <Card key={category.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span className="flex items-center">
-                        {category.icon && <Tag className="w-5 h-5 mr-2" />}
-                        {category.name}
-                      </span>
-                      <div className="flex space-x-1">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEdit(category)}
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDelete(category.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
-                  {category.description && (
-                    <CardContent>
-                      <p className="text-sm text-gray-600">{category.description}</p>
-                      {category.icon && (
-                        <p className="text-xs text-gray-500 mt-2">Icon: {category.icon}</p>
-                      )}
-                    </CardContent>
-                  )}
-                </Card>
-              ))
-            )}
-          </div>
+          <CompactAdminTableControls
+            data={categories}
+            searchFields={['name', 'description']}
+            sortOptions={[
+              { field: 'name', label: 'Name' },
+              { field: 'description', label: 'Description' },
+              { field: 'created_at', label: 'Created Date' }
+            ]}
+            filterOptions={[]}
+            onDataChange={handleDataChange}
+          />
+
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="text-center py-12">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <p className="mt-2 text-sm text-muted-foreground">Loading categories...</p>
+                </div>
+              ) : processedCategories.length === 0 ? (
+                <div className="text-center py-12">
+                  <Tag className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                  <h3 className="mt-2 text-sm font-medium text-foreground">No categories found</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Try adjusting your search terms or create a new category.
+                  </p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b border-border/50">
+                      <TableHead className="font-medium text-xs text-muted-foreground">
+                        Name
+                      </TableHead>
+                      <TableHead className="font-medium text-xs text-muted-foreground">
+                        Description
+                      </TableHead>
+                      <TableHead className="font-medium text-xs text-muted-foreground">Icon</TableHead>
+                      <TableHead className="font-medium text-xs text-muted-foreground w-24">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {processedCategories.map((category) => (
+                      <TableRow key={category.id} className="border-b border-border/30 hover:bg-muted/30 transition-colors">
+                        <TableCell className="py-3">
+                          <div className="flex items-center">
+                            {category.icon && <Tag className="w-4 h-4 mr-2 text-muted-foreground" />}
+                            <span className="font-medium text-sm text-foreground">{category.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3">
+                          <span className="text-sm text-muted-foreground">
+                            {category.description || '-'}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-3">
+                          <span className="text-xs text-muted-foreground font-mono">
+                            {category.icon || '-'}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-3">
+                          <div className="flex items-center space-x-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleEdit(category)}
+                              className="h-7 w-7 p-0 hover:bg-muted"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDelete(category.id)}
+                              className="h-7 w-7 p-0 hover:bg-destructive/10 text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         <Footer editMode={false} />
