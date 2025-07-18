@@ -108,66 +108,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
             
             onClose();
             
-            if (window.location.pathname !== '/dashboard') {
-              console.log('🚀 Using React Router to navigate to dashboard...');
-              navigate('/dashboard');
-              return;
-            }
-            
-            console.log('✅ Already on dashboard, debugging page content...');
-            console.log('👤 Current profile:', profile);
-            console.log('🔍 User type:', profile?.user_type);
-            console.log('🔍 Should show verification tab:', profile?.user_type === 'provider');
-            
-            // Debug what's actually on the page
-            setTimeout(() => {
-              console.log('🔍 Page title:', document.title);
-              console.log('🔍 Body classes:', document.body.className);
-              console.log('🔍 All divs on page:', document.querySelectorAll('div').length);
-              console.log('🔍 All buttons on page:', document.querySelectorAll('button').length);
-              console.log('🔍 Looking for any tab-like elements...');
-              console.log('🔍 Elements with "tab" in class:', document.querySelectorAll('[class*="tab"]').length);
-              console.log('🔍 Elements with data-value:', document.querySelectorAll('[data-value]').length);
-              console.log('🔍 Elements with TabsTrigger:', document.querySelectorAll('[data-state]').length);
-            }, 1000);
-            
-            const waitForTabsAndClick = (retries = 8) => {
-              setTimeout(() => {
-                const allTabs = document.querySelectorAll('[data-value]');
-                console.log(`📋 Attempt ${9-retries}: Found ${allTabs.length} tabs:`, Array.from(allTabs).map(tab => tab.getAttribute('data-value')));
-                
-                if (allTabs.length === 0 && retries > 0) {
-                  console.log(`🔄 No tabs found, retrying... (${retries} attempts left)`);
-                  waitForTabsAndClick(retries - 1);
-                  return;
-                }
-                
-                const verificationTab = document.querySelector('[data-value="verification"]') as HTMLElement;
-                console.log('🎯 Found verification tab:', !!verificationTab);
-                
-                if (verificationTab) {
-                  console.log('👆 Clicking verification tab');
-                  verificationTab.click();
-                  setTimeout(() => {
-                    const verificationContent = document.querySelector('[data-state="active"] form, [data-state="active"] .verification-form');
-                    console.log('📝 Found verification content:', !!verificationContent);
-                    if (verificationContent) {
-                      verificationContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                  }, 300);
-                } else {
-                  console.log('❌ Verification tab not found even after retries');
-                  console.log('💡 Trying alternative approach - manual scroll to verification section...');
-                  const verificationSection = document.querySelector('[data-testid="verification"], .verification-flow, [class*="verification"]');
-                  if (verificationSection) {
-                    console.log('📍 Found verification section, scrolling...');
-                    verificationSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                }
-              }, 1000); // Increased delay
-            };
-            
-            waitForTabsAndClick();
+            // Always use full page navigation to ensure dashboard loads properly
+            console.log('🚀 Navigating to dashboard with verification tab...');
+            window.location.href = '/dashboard?tab=verification';
           }
         },
         {

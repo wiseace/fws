@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('services');
 
   // Form state
   const [serviceName, setServiceName] = useState('');
@@ -44,6 +45,16 @@ const Dashboard = () => {
       initializeDashboard();
     }
   }, [user, authLoading]);
+
+  // Handle URL tab parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam && ['services', 'verification', 'profile', 'subscription'].includes(tabParam)) {
+      console.log('🎯 Setting active tab from URL:', tabParam);
+      setActiveTab(tabParam);
+    }
+  }, []);
 
   // Separate effect for real-time listeners
   useEffect(() => {
@@ -274,7 +285,7 @@ const Dashboard = () => {
             <p className="text-gray-600">Manage your profile and services</p>
           </div>
 
-          <Tabs defaultValue="services" className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList>
               <TabsTrigger value="services">My Services</TabsTrigger>
               {profile?.user_type === 'provider' && (
