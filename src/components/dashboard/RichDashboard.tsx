@@ -77,7 +77,7 @@ export const RichDashboard = () => {
   const [stats, setStats] = useState<DashboardStats>({});
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStep[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [activeTab, setActiveTab] = useState('services');
+  const [activeTab, setActiveTab] = useState('requests');
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -608,7 +608,7 @@ export const RichDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/dashboard'}
+                        onClick={() => setActiveTab('requests')}
                       >
                         <Eye className="h-6 w-6" />
                         My Requests
@@ -624,7 +624,7 @@ export const RichDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/dashboard'}
+                        onClick={() => setActiveTab('profile')}
                       >
                         <Settings className="h-6 w-6" />
                         Profile
@@ -635,8 +635,8 @@ export const RichDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Rich Tabbed Experience for Providers */}
-            {profile?.user_type === 'provider' && (
+            {/* Rich Tabbed Experience for Providers and Seekers */}
+            {(profile?.user_type === 'provider' || profile?.user_type === 'seeker') && (
               <Card className="shadow-lg border-0 bg-background">
                 <CardHeader className="bg-primary text-white rounded-t-lg">
                   <CardTitle className="flex items-center gap-2">
@@ -648,72 +648,78 @@ export const RichDashboard = () => {
                    {/* Tabbed Interface */}
                    <div className="space-y-6">
                       {/* Tab Navigation */}
-                       <div className="mb-6">
-                         <div className="flex items-center justify-center">
-                           <div className="inline-flex items-center bg-muted/30 p-1 rounded-full">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              className={`px-4 py-2 rounded-full font-medium transition-all ${
-                                activeTab === 'services' 
-                                  ? 'bg-foreground text-background shadow-sm' 
-                                  : 'text-muted-foreground hover:text-foreground'
-                              }`}
-                              onClick={() => setActiveTab('services')}
-                            >
-                              My Services ({stats.totalServices || 0})
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              className={`px-4 py-2 rounded-full font-medium transition-all ${
-                                activeTab === 'requests' 
-                                  ? 'bg-foreground text-background shadow-sm' 
-                                  : 'text-muted-foreground hover:text-foreground'
-                              }`}
-                              onClick={() => setActiveTab('requests')}
-                            >
-                              Client Requests
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              className={`px-4 py-2 rounded-full font-medium transition-all ${
-                                activeTab === 'verification' 
-                                  ? 'bg-foreground text-background shadow-sm' 
-                                  : 'text-muted-foreground hover:text-foreground'
-                              }`}
-                              onClick={() => setActiveTab('verification')}
-                            >
-                              Verification
-                            </Button>
+                        <div className="mb-6">
+                          <div className="flex items-center justify-center">
+                            <div className="inline-flex items-center bg-muted/30 p-1 rounded-full">
+                             {profile?.user_type === 'provider' && (
+                               <Button 
+                                 variant="ghost" 
+                                 size="sm"
+                                 className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                   activeTab === 'services' 
+                                     ? 'bg-foreground text-background shadow-sm' 
+                                     : 'text-muted-foreground hover:text-foreground'
+                                 }`}
+                                 onClick={() => setActiveTab('services')}
+                               >
+                                 My Services ({stats.totalServices || 0})
+                               </Button>
+                             )}
                              <Button 
                                variant="ghost" 
                                size="sm"
                                className={`px-4 py-2 rounded-full font-medium transition-all ${
-                                 activeTab === 'profile' 
+                                 activeTab === 'requests' 
                                    ? 'bg-foreground text-background shadow-sm' 
                                    : 'text-muted-foreground hover:text-foreground'
                                }`}
-                               onClick={() => setActiveTab('profile')}
+                               onClick={() => setActiveTab('requests')}
                              >
-                               Profile
+                               {profile?.user_type === 'provider' ? 'Client Requests' : 'My Requests'}
                              </Button>
-                             <Button 
-                               variant="ghost" 
-                               size="sm"
-                               className={`px-4 py-2 rounded-full font-medium transition-all ${
-                                 activeTab === 'messages' 
-                                   ? 'bg-foreground text-background shadow-sm' 
-                                   : 'text-muted-foreground hover:text-foreground'
-                               }`}
-                               onClick={() => setActiveTab('messages')}
-                             >
-                               Messages
-                             </Button>
-                           </div>
-                         </div>
-                       </div>
+                             {profile?.user_type === 'provider' && (
+                               <Button 
+                                 variant="ghost" 
+                                 size="sm"
+                                 className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                   activeTab === 'verification' 
+                                     ? 'bg-foreground text-background shadow-sm' 
+                                     : 'text-muted-foreground hover:text-foreground'
+                                 }`}
+                                 onClick={() => setActiveTab('verification')}
+                               >
+                                 Verification
+                               </Button>
+                             )}
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                  activeTab === 'profile' 
+                                    ? 'bg-foreground text-background shadow-sm' 
+                                    : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                                onClick={() => setActiveTab('profile')}
+                              >
+                                Profile
+                              </Button>
+                              {profile?.user_type === 'provider' && (
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                    activeTab === 'messages' 
+                                      ? 'bg-foreground text-background shadow-sm' 
+                                      : 'text-muted-foreground hover:text-foreground'
+                                  }`}
+                                  onClick={() => setActiveTab('messages')}
+                                >
+                                  Messages
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
 
                        {/* Tab Content */}
                        <div className="min-h-[300px]">
