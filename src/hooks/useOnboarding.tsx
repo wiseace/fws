@@ -98,40 +98,67 @@ export const useOnboarding = () => {
       if (profile.name && profile.phone && user.email) {
         console.log('Profile completion criteria met, marking step for completion');
         stepsToComplete.push('profile_completion');
+      } else {
+        console.log('Profile completion criteria NOT met');
       }
+    } else {
+      console.log('Profile completion already marked as completed');
     }
 
     // Check verification submission - if verification request exists
     if (!currentCompleted.has('verification_submission') && profile.user_type === 'provider') {
+      console.log('Checking verification submission for provider...');
       const { data: verificationData } = await supabase
         .from('verification_requests')
         .select('id')
         .eq('user_id', user.id)
         .limit(1);
       
+      console.log('Verification data:', verificationData);
       if (verificationData && verificationData.length > 0) {
+        console.log('Verification submission found, marking step for completion');
         stepsToComplete.push('verification_submission');
+      } else {
+        console.log('No verification submission found');
       }
+    } else if (currentCompleted.has('verification_submission')) {
+      console.log('Verification submission already marked as completed');
     }
 
     // Check first service creation - if user has at least one service
     if (!currentCompleted.has('first_service_creation') && profile.user_type === 'provider') {
+      console.log('Checking first service creation for provider...');
       const { data: servicesData } = await supabase
         .from('services')
         .select('id')
         .eq('user_id', user.id)
         .limit(1);
       
+      console.log('Services data:', servicesData);
       if (servicesData && servicesData.length > 0) {
+        console.log('Service found, marking first service creation for completion');
         stepsToComplete.push('first_service_creation');
+      } else {
+        console.log('No services found');
       }
+    } else if (currentCompleted.has('first_service_creation')) {
+      console.log('First service creation already marked as completed');
     }
 
     // Check subscription setup - if user has a non-free subscription
     if (!currentCompleted.has('subscription_setup')) {
+      console.log('Checking subscription setup:', {
+        subscriptionPlan: profile.subscription_plan,
+        isNotFree: profile.subscription_plan && profile.subscription_plan !== 'free'
+      });
       if (profile.subscription_plan && profile.subscription_plan !== 'free') {
+        console.log('Non-free subscription found, marking subscription setup for completion');
         stepsToComplete.push('subscription_setup');
+      } else {
+        console.log('No non-free subscription found');
       }
+    } else {
+      console.log('Subscription setup already marked as completed');
     }
 
     // Check browse services for seekers - mark as complete after they visit browse page
@@ -140,8 +167,10 @@ export const useOnboarding = () => {
     }
 
     // Complete the steps in the database
+    console.log('Steps to complete:', stepsToComplete);
     for (const stepName of stepsToComplete) {
       try {
+        console.log(`Attempting to complete step: ${stepName}`);
         await supabase.rpc('complete_onboarding_step', { step_name: stepName });
         currentCompleted.add(stepName);
         console.log(`Auto-completed step: ${stepName}`);
@@ -154,6 +183,8 @@ export const useOnboarding = () => {
     if (stepsToComplete.length > 0) {
       console.log('Updating completed steps state:', Array.from(currentCompleted));
       setCompletedSteps(new Set(currentCompleted));
+    } else {
+      console.log('No steps to complete - no state update needed');
     }
   };
 
