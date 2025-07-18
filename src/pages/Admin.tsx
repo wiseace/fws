@@ -9,9 +9,10 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { CompactAdminTableControls } from '@/components/admin/CompactAdminTableControls';
 
 import { User as UserType, VerificationRequest, ContactRequest, Service } from '@/types/database';
-import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard } from 'lucide-react';
+import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard, RefreshCw } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
 const Admin = () => {
@@ -25,6 +26,16 @@ const Admin = () => {
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [stats, setStats] = useState<any>(null);
+  
+  // Pagination states for each tab
+  const [displayedVerifications, setDisplayedVerifications] = useState<VerificationRequest[]>([]);
+  const [displayedUsers, setDisplayedUsers] = useState<UserType[]>([]);
+  const [displayedContacts, setDisplayedContacts] = useState<ContactRequest[]>([]);
+  const [displayedServices, setDisplayedServices] = useState<Service[]>([]);
+  const [verificationPagination, setVerificationPagination] = useState<any>({});
+  const [usersPagination, setUsersPagination] = useState<any>({});
+  const [contactsPagination, setContactsPagination] = useState<any>({});
+  const [servicesPagination, setServicesPagination] = useState<any>({});
 
   useEffect(() => {
     console.log('Admin useEffect - profile:', profile);
@@ -479,229 +490,241 @@ const Admin = () => {
                 </TabsList>
               </div>
 
-              <TabsContent value="verifications" className="space-y-6 animate-fade-in">
-                <div className="bg-card rounded-2xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary rounded-xl">
-                        <Shield className="h-5 w-5 text-primary-foreground" />
-                      </div>
+              <TabsContent value="verifications" className="space-y-4 animate-fade-in">
+                <div className="bg-card rounded-lg p-4 border border-border">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-5 w-5 text-primary" />
                       <div>
-                        <h2 className="text-xl font-semibold text-foreground">Verification Requests</h2>
-                        <p className="text-sm text-muted-foreground">Review and approve user verification submissions</p>
+                        <h2 className="text-lg font-semibold">Verification Requests</h2>
+                        <p className="text-xs text-muted-foreground">Review and approve user verification submissions</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="px-3 py-1.5 bg-muted rounded-lg">
-                        <span className="text-sm font-medium text-foreground">
-                          {verificationRequests.filter(r => r.status === 'pending').length} pending
-                        </span>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {verificationRequests.filter(r => r.status === 'pending').length} pending
+                      </Badge>
                       <Button 
                         onClick={fetchVerificationRequests}
                         variant="outline"
                         size="sm"
-                        className="rounded-lg"
+                        className="h-7 px-2"
                       >
-                        🔄 Refresh
+                        <RefreshCw className="w-3 h-3" />
                       </Button>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    {verificationRequests.length === 0 ? (
-                      <div className="text-center py-16 bg-muted/30 rounded-xl border border-border">
-                        <div className="p-4 bg-muted rounded-xl w-fit mx-auto mb-4">
-                          <Shield className="h-12 w-12 text-muted-foreground" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-foreground mb-2">No Verification Requests</h3>
-                        <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
-                          Verification requests will appear here when users submit their documents for review.
-                        </p>
-                        <Button 
-                          onClick={fetchVerificationRequests}
-                          variant="outline"
-                          className="rounded-lg"
-                        >
-                          🔄 Check for New Requests
-                        </Button>
+                  <CompactAdminTableControls
+                    data={verificationRequests}
+                    searchFields={['full_name', 'phone_number', 'additional_info']}
+                    filterOptions={[
+                      {
+                        field: 'status',
+                        label: 'Status',
+                        values: [
+                          { value: 'pending', label: 'Pending' },
+                          { value: 'verified', label: 'Verified' },
+                          { value: 'rejected', label: 'Rejected' }
+                        ]
+                      }
+                    ]}
+                    sortOptions={[
+                      { field: 'submitted_at', label: 'Submitted Date' },
+                      { field: 'full_name', label: 'Name' },
+                      { field: 'status', label: 'Status' }
+                    ]}
+                    itemsPerPage={10}
+                    onDataChange={(data, pagination) => {
+                      setDisplayedVerifications(data);
+                      setVerificationPagination(pagination);
+                    }}
+                  />
+
+                  <div className="space-y-2 mt-4">
+                    {displayedVerifications.length === 0 ? (
+                      <div className="text-center py-8 bg-muted/30 rounded-lg">
+                        <Shield className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">No verification requests found</p>
                       </div>
                     ) : (
-                      <div className="grid gap-4">
-                        {verificationRequests.map((request) => (
-                          <div key={request.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
-                            <div className="p-4">
-                              <div className="flex flex-col lg:flex-row gap-4">
-                                <div className="flex-1 space-y-4">
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex items-center gap-3">
-                                      <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
-                                        <User className="h-6 w-6 text-muted-foreground" />
-                                      </div>
-                                      <div>
-                                        <h3 className="text-base font-semibold text-foreground">{request.full_name}</h3>
-                                        <p className="text-sm text-muted-foreground">{(request as any).user?.email}</p>
-                                      </div>
-                                    </div>
-                                    <Badge variant={
-                                      request.status === 'pending' ? 'secondary' 
-                                      : request.status === 'verified' ? 'default'
-                                      : 'destructive'
-                                    } className="rounded-lg">
-                                      {request.status?.toUpperCase()}
-                                    </Badge>
-                                  </div>
-                                  
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div className="p-3 bg-muted/50 rounded-lg border border-border">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-lg">📱</span>
-                                        <span className="text-xs font-medium text-muted-foreground">Phone Number</span>
-                                      </div>
-                                      <p className="text-sm font-medium text-foreground">{request.phone_number}</p>
-                                    </div>
-                                    <div className="p-3 bg-muted/50 rounded-lg border border-border">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-lg">📅</span>
-                                        <span className="text-xs font-medium text-muted-foreground">Submitted Date</span>
-                                      </div>
-                                      <p className="text-sm font-medium text-foreground">
-                                        {request.submitted_at ? new Date(request.submitted_at).toLocaleDateString('en-US', {
-                                          year: 'numeric',
-                                          month: 'long',
-                                          day: 'numeric'
-                                        }) : 'N/A'}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  
-                                  {request.additional_info && (
-                                    <div className="p-3 bg-muted/50 rounded-lg border border-border">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-lg">💬</span>
-                                        <span className="text-xs font-medium text-muted-foreground">Additional Information</span>
-                                      </div>
-                                      <p className="text-sm text-foreground leading-relaxed">{request.additional_info}</p>
-                                    </div>
-                                  )}
+                      displayedVerifications.map((request) => (
+                        <div key={request.id} className="bg-muted/20 rounded-lg p-3 border border-border/50 hover:bg-muted/40 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 flex-1">
+                              <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+                                <User className="h-4 w-4 text-muted-foreground" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="text-sm font-semibold text-foreground truncate">{request.full_name}</h3>
+                                  <Badge variant={
+                                    request.status === 'pending' ? 'secondary' 
+                                    : request.status === 'verified' ? 'default'
+                                    : 'destructive'
+                                  } className="text-xs h-4 px-2">
+                                    {request.status}
+                                  </Badge>
                                 </div>
-                                
-                                {request.status === 'pending' && (
-                                  <div className="flex flex-col gap-2 lg:w-40">
-                                    <Button
-                                      size="sm"
-                                      onClick={() => handleVerificationAction(request.id, 'verified')}
-                                      className="bg-green-600 hover:bg-green-700 text-white rounded-lg"
-                                    >
-                                      <CheckCircle className="w-4 h-4 mr-2" />
-                                      Approve
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="destructive"
-                                      onClick={() => handleVerificationAction(request.id, 'rejected')}
-                                      className="rounded-lg"
-                                    >
-                                      <XCircle className="w-4 h-4 mr-2" />
-                                      Reject
-                                    </Button>
-                                  </div>
-                                )}
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                  <span>📧 {(request as any).user?.email}</span>
+                                  <span>📱 {request.phone_number}</span>
+                                  <span>📅 {request.submitted_at ? new Date(request.submitted_at).toLocaleDateString() : 'N/A'}</span>
+                                </div>
                               </div>
                             </div>
+                            
+                            {request.status === 'pending' && (
+                              <div className="flex gap-1">
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleVerificationAction(request.id, 'verified')}
+                                  className="h-7 px-2 bg-green-600 hover:bg-green-700 text-white"
+                                >
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  Approve
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => handleVerificationAction(request.id, 'rejected')}
+                                  className="h-7 px-2"
+                                >
+                                  <XCircle className="w-3 h-3 mr-1" />
+                                  Reject
+                                </Button>
+                              </div>
+                            )}
                           </div>
-                        ))}
-                      </div>
+                          
+                          {request.additional_info && (
+                            <div className="mt-2 p-2 bg-muted/50 rounded text-xs text-foreground">
+                              <span className="font-medium">Note:</span> {request.additional_info}
+                            </div>
+                          )}
+                        </div>
+                      ))
                     )}
                   </div>
                 </div>
               </TabsContent>
 
-              <TabsContent value="users" className="space-y-6 animate-fade-in">
-                <div className="bg-card rounded-2xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary rounded-xl">
-                        <Users className="h-5 w-5 text-primary-foreground" />
-                      </div>
+              <TabsContent value="users" className="space-y-4 animate-fade-in">
+                <div className="bg-card rounded-lg p-4 border border-border">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-5 w-5 text-primary" />
                       <div>
-                        <h2 className="text-xl font-semibold text-foreground">User Management</h2>
-                        <p className="text-sm text-muted-foreground">Manage user roles, permissions, and accounts</p>
+                        <h2 className="text-lg font-semibold">User Management</h2>
+                        <p className="text-xs text-muted-foreground">Manage user roles, permissions, and accounts</p>
                       </div>
                     </div>
-                    <div className="px-3 py-1.5 bg-muted rounded-lg">
-                      <span className="text-sm font-medium text-foreground">{users.length} total users</span>
-                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {users.length} total users
+                    </Badge>
                   </div>
 
-                  <div className="grid gap-4">
-                    {users.map((user) => (
-                      <div key={user.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4 flex-1">
-                              <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
-                                <User className="h-6 w-6 text-muted-foreground" />
-                              </div>
-                              
-                              <div className="flex-1 space-y-2">
-                                <div>
-                                  <h3 className="text-base font-semibold text-foreground">{user.name}</h3>
-                                  <p className="text-sm text-muted-foreground">{user.email}</p>
-                                </div>
-                                
-                                <div className="flex flex-wrap gap-2">
+                  <CompactAdminTableControls
+                    data={users}
+                    searchFields={['name', 'email', 'phone']}
+                    filterOptions={[
+                      {
+                        field: 'user_type',
+                        label: 'Role',
+                        values: [
+                          { value: 'admin', label: 'Admin' },
+                          { value: 'provider', label: 'Provider' },
+                          { value: 'seeker', label: 'Seeker' }
+                        ]
+                      },
+                      {
+                        field: 'verification_status',
+                        label: 'Verification',
+                        values: [
+                          { value: 'verified', label: 'Verified' },
+                          { value: 'not_verified', label: 'Not Verified' },
+                          { value: 'pending', label: 'Pending' }
+                        ]
+                      },
+                      {
+                        field: 'subscription_plan',
+                        label: 'Subscription',
+                        values: [
+                          { value: 'free', label: 'Free' },
+                          { value: 'monthly', label: 'Monthly' },
+                          { value: 'yearly', label: 'Yearly' }
+                        ]
+                      }
+                    ]}
+                    sortOptions={[
+                      { field: 'created_at', label: 'Join Date' },
+                      { field: 'name', label: 'Name' },
+                      { field: 'user_type', label: 'Role' },
+                      { field: 'last_active', label: 'Last Active' }
+                    ]}
+                    itemsPerPage={15}
+                    onDataChange={(data, pagination) => {
+                      setDisplayedUsers(data);
+                      setUsersPagination(pagination);
+                    }}
+                  />
+
+                  <div className="space-y-2 mt-4">
+                    {displayedUsers.map((user) => (
+                      <div key={user.id} className="bg-muted/20 rounded-lg p-3 border border-border/50 hover:bg-muted/40 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+                              <User className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-sm font-semibold text-foreground truncate">{user.name}</h3>
+                                <div className="flex gap-1">
                                   <Badge variant={
                                     user.user_type === 'admin' ? 'destructive'
                                     : user.user_type === 'provider' ? 'default' 
                                     : 'secondary'
-                                  } className="rounded-lg text-xs">
-                                    {user.user_type === 'admin' ? '👑 Admin' : user.user_type === 'provider' ? '🏢 Provider' : '👤 Seeker'}
+                                  } className="text-xs h-4 px-2">
+                                    {user.user_type}
                                   </Badge>
-                                  
-                                  <Badge variant={user.is_verified ? 'default' : 'secondary'} className="rounded-lg text-xs">
-                                    {user.is_verified ? '✅ Verified' : '⏳ Unverified'}
-                                  </Badge>
-                                  
-                                  <Badge variant={user.subscription_plan === 'free' ? 'secondary' : 'default'} className="rounded-lg text-xs">
-                                    {user.subscription_plan === 'free' ? '🆓 Free' : '💎 Premium'}
+                                  <Badge variant={user.is_verified ? 'default' : 'secondary'} className="text-xs h-4 px-2">
+                                    {user.is_verified ? 'verified' : 'unverified'}
                                   </Badge>
                                 </div>
                               </div>
+                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                <span>📧 {user.email}</span>
+                                {user.phone && <span>📱 {user.phone}</span>}
+                                <span>📅 {new Date(user.created_at).toLocaleDateString()}</span>
+                              </div>
                             </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={user.user_type}
+                              onChange={(e) => handleRoleChange(user.id, e.target.value as any)}
+                              className="border border-border rounded px-2 py-1 text-xs bg-background min-w-[80px]"
+                              disabled={user.email === 'hi@ariyo.dev'}
+                            >
+                              <option value="seeker">Seeker</option>
+                              <option value="provider">Provider</option>
+                              <option value="admin">Admin</option>
+                            </select>
                             
-                            <div className="flex items-center gap-3">
-                              <div className="flex flex-col gap-1">
-                                <label className="text-xs font-medium text-muted-foreground">Role</label>
-                                <select
-                                  value={user.user_type}
-                                  onChange={(e) => handleRoleChange(user.id, e.target.value as any)}
-                                  className="border border-border rounded-lg px-2 py-1 text-xs bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-colors min-w-[100px]"
-                                  disabled={user.email === 'hi@ariyo.dev'}
-                                >
-                                  <option value="seeker">👤 Seeker</option>
-                                  <option value="provider">🏢 Provider</option>
-                                  <option value="admin">👑 Admin</option>
-                                </select>
-                              </div>
-                              
-                              {user.email === 'hi@ariyo.dev' ? (
-                                <div className="flex items-center gap-1 px-2 py-1 bg-muted rounded-lg border border-border">
-                                  <Shield className="w-3 h-3" />
-                                  <span className="text-xs font-medium">Protected</span>
-                                </div>
-                              ) : (
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => handleDeleteUser(user.id)}
-                                  className="rounded-lg"
-                                >
-                                  <Trash2 className="w-3 h-3 mr-1" />
-                                  Delete
-                                </Button>
-                              )}
-                            </div>
+                            {user.email === 'hi@ariyo.dev' ? (
+                              <Badge variant="outline" className="text-xs">Protected</Badge>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleDeleteUser(user.id)}
+                                className="h-7 px-2"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -710,192 +733,185 @@ const Admin = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="contacts" className="space-y-6 animate-fade-in">
-                <div className="bg-card rounded-2xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary rounded-xl">
-                        <User className="h-5 w-5 text-primary-foreground" />
-                      </div>
+              <TabsContent value="contacts" className="space-y-4 animate-fade-in">
+                <div className="bg-card rounded-lg p-4 border border-border">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <User className="h-5 w-5 text-primary" />
                       <div>
-                        <h2 className="text-xl font-semibold text-foreground">Contact Requests</h2>
-                        <p className="text-sm text-muted-foreground">Monitor service contact activity and user engagement</p>
+                        <h2 className="text-lg font-semibold">Contact Requests</h2>
+                        <p className="text-xs text-muted-foreground">Monitor service contact activity and user engagement</p>
                       </div>
                     </div>
-                    <div className="px-3 py-1.5 bg-muted rounded-lg">
-                      <span className="text-sm font-medium text-foreground">{contactRequests.length} total contacts</span>
-                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {contactRequests.length} total contacts
+                    </Badge>
                   </div>
 
-                  <div className="space-y-4">
-                    {contactRequests.length === 0 ? (
-                      <div className="text-center py-16 bg-muted/30 rounded-xl border border-border">
-                        <div className="p-4 bg-muted rounded-xl w-fit mx-auto mb-4">
-                          <User className="h-12 w-12 text-muted-foreground" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-foreground mb-2">No Contact Requests</h3>
-                        <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                          Contact requests will appear here when users reach out to providers for services.
-                        </p>
+                  <CompactAdminTableControls
+                    data={contactRequests}
+                    searchFields={['message', 'contact_method']}
+                    filterOptions={[
+                      {
+                        field: 'contact_method',
+                        label: 'Contact Method',
+                        values: [
+                          { value: 'email', label: 'Email' },
+                          { value: 'phone', label: 'Phone' },
+                          { value: 'whatsapp', label: 'WhatsApp' }
+                        ]
+                      }
+                    ]}
+                    sortOptions={[
+                      { field: 'created_at', label: 'Contact Date' },
+                      { field: 'contact_method', label: 'Contact Method' }
+                    ]}
+                    itemsPerPage={10}
+                    onDataChange={(data, pagination) => {
+                      setDisplayedContacts(data);
+                      setContactsPagination(pagination);
+                    }}
+                  />
+
+                  <div className="space-y-2 mt-4">
+                    {displayedContacts.length === 0 ? (
+                      <div className="text-center py-8 bg-muted/30 rounded-lg">
+                        <User className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">No contact requests found</p>
                       </div>
                     ) : (
-                      <div className="grid gap-4">
-                        {contactRequests.map((request) => (
-                          <div key={request.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
-                            <div className="p-4">
-                              <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
-                                  <span className="text-lg">💬</span>
+                      displayedContacts.map((request) => (
+                        <div key={request.id} className="bg-muted/20 rounded-lg p-3 border border-border/50 hover:bg-muted/40 transition-colors">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3 flex-1">
+                              <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+                                <span className="text-sm">💬</span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-sm font-semibold text-blue-600">{(request as any).seeker?.name}</span>
+                                  <span className="text-xs text-muted-foreground">→</span>
+                                  <span className="text-sm font-semibold text-green-600">{(request as any).provider?.name}</span>
+                                  <Badge variant="secondary" className="text-xs h-4 px-2">
+                                    {(request as any).service?.service_name}
+                                  </Badge>
                                 </div>
-                                
-                                <div className="flex-1 space-y-3">
-                                  <div className="flex items-start justify-between">
-                                    <div>
-                                      <h3 className="text-base font-semibold text-foreground mb-1">
-                                        <span className="text-blue-600">{(request as any).seeker?.name}</span>
-                                        <span className="text-muted-foreground mx-1">→</span>
-                                        <span className="text-green-600">{(request as any).provider?.name}</span>
-                                      </h3>
-                                      <div className="flex items-center gap-2">
-                                        <Badge variant="secondary" className="rounded-lg text-xs">
-                                          🔧 {(request as any).service?.service_name}
-                                        </Badge>
-                                        <Badge variant="outline" className="rounded-lg text-xs">
-                                          📧 {request.contact_method}
-                                        </Badge>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="text-right">
-                                      <p className="text-xs text-muted-foreground">
-                                        {new Date(request.created_at).toLocaleDateString('en-US', { 
-                                          month: 'short',
-                                          day: 'numeric',
-                                          year: 'numeric'
-                                        })}
-                                      </p>
-                                      <p className="text-xs text-muted-foreground">
-                                        {new Date(request.created_at).toLocaleTimeString('en-US', { 
-                                          hour: '2-digit',
-                                          minute: '2-digit'
-                                        })}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  
-                                  {request.message && (
-                                    <div className="p-3 bg-muted/50 rounded-lg border border-border">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-sm">💭</span>
-                                        <span className="text-xs font-medium text-muted-foreground">Message</span>
-                                      </div>
-                                      <p className="text-sm text-foreground leading-relaxed">{request.message}</p>
-                                    </div>
-                                  )}
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                  <span>📧 {request.contact_method}</span>
+                                  <span>📅 {new Date(request.created_at).toLocaleDateString()}</span>
+                                  <span>🕒 {new Date(request.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
+                          
+                          {request.message && (
+                            <div className="mt-2 p-2 bg-muted/50 rounded text-xs text-foreground">
+                              <span className="font-medium">Message:</span> {request.message}
+                            </div>
+                          )}
+                        </div>
+                      ))
                     )}
                   </div>
                 </div>
               </TabsContent>
 
-              <TabsContent value="services" className="space-y-6 animate-fade-in">
-                <div className="bg-card rounded-2xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary rounded-xl">
-                        <Eye className="h-5 w-5 text-primary-foreground" />
-                      </div>
+              <TabsContent value="services" className="space-y-4 animate-fade-in">
+                <div className="bg-card rounded-lg p-4 border border-border">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Eye className="h-5 w-5 text-primary" />
                       <div>
-                        <h2 className="text-xl font-semibold text-foreground">All Services</h2>
-                        <p className="text-sm text-muted-foreground">Overview of all platform services and providers</p>
+                        <h2 className="text-lg font-semibold">All Services</h2>
+                        <p className="text-xs text-muted-foreground">Overview of all platform services and providers</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="px-3 py-1.5 bg-muted rounded-lg">
-                        <span className="text-sm font-medium text-foreground">{services.length} total</span>
-                      </div>
-                      <div className="px-3 py-1.5 bg-green-100 rounded-lg">
-                        <span className="text-sm font-medium text-green-700">{services.filter(s => s.is_active).length} active</span>
-                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        {services.length} total
+                      </Badge>
+                      <Badge variant="default" className="text-xs">
+                        {services.filter(s => s.is_active).length} active
+                      </Badge>
                     </div>
                   </div>
 
-                  <div className="grid gap-4">
-                    {services.map((service) => (
-                      <div key={service.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
-                        <div className="p-4">
-                          <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
-                              <span className="text-lg">🛠️</span>
-                            </div>
-                            
-                            <div className="flex-1 space-y-3">
-                              <div className="flex items-start justify-between">
-                                <div>
-                                  <h3 className="text-base font-semibold text-foreground mb-1">{service.service_name}</h3>
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-sm">👤</span>
-                                    <span className="text-sm text-muted-foreground">Provider:</span>
-                                    <span className="text-sm font-medium text-foreground">{(service as any).user?.name}</span>
-                                  </div>
-                                </div>
-                                
-                                <Badge variant={service.is_active ? 'default' : 'destructive'} className="rounded-lg text-xs">
-                                  {service.is_active ? '🟢 Active' : '🔴 Inactive'}
-                                </Badge>
+                  <CompactAdminTableControls
+                    data={services}
+                    searchFields={['service_name', 'description', 'category', 'location']}
+                    filterOptions={[
+                      {
+                        field: 'is_active',
+                        label: 'Status',
+                        values: [
+                          { value: 'true', label: 'Active' },
+                          { value: 'false', label: 'Inactive' }
+                        ]
+                      },
+                      {
+                        field: 'category',
+                        label: 'Category',
+                        values: Array.from(new Set(services.map(s => s.category))).map(cat => ({ 
+                          value: cat, 
+                          label: cat 
+                        }))
+                      }
+                    ]}
+                    sortOptions={[
+                      { field: 'created_at', label: 'Created Date' },
+                      { field: 'service_name', label: 'Service Name' },
+                      { field: 'category', label: 'Category' },
+                      { field: 'is_active', label: 'Status' }
+                    ]}
+                    itemsPerPage={12}
+                    onDataChange={(data, pagination) => {
+                      setDisplayedServices(data);
+                      setServicesPagination(pagination);
+                    }}
+                  />
+
+                  <div className="space-y-2 mt-4">
+                    {displayedServices.length === 0 ? (
+                      <div className="text-center py-8 bg-muted/30 rounded-lg">
+                        <Eye className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">No services found</p>
+                      </div>
+                    ) : (
+                      displayedServices.map((service) => (
+                        <div key={service.id} className="bg-muted/20 rounded-lg p-3 border border-border/50 hover:bg-muted/40 transition-colors">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3 flex-1">
+                              <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+                                <span className="text-sm">🛠️</span>
                               </div>
-                              
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                <div className="p-2 bg-muted/50 rounded-lg border border-border">
-                                  <div className="flex items-center gap-1 mb-1">
-                                    <span className="text-sm">📂</span>
-                                    <span className="text-xs font-medium text-muted-foreground">Category</span>
-                                  </div>
-                                  <p className="text-xs font-medium text-foreground">{service.category}</p>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="text-sm font-semibold text-foreground truncate">{service.service_name}</h3>
+                                  <Badge variant={service.is_active ? 'default' : 'destructive'} className="text-xs h-4 px-2">
+                                    {service.is_active ? 'active' : 'inactive'}
+                                  </Badge>
+                                  <Badge variant="secondary" className="text-xs h-4 px-2">
+                                    {service.category}
+                                  </Badge>
                                 </div>
-                                
-                                <div className="p-2 bg-muted/50 rounded-lg border border-border">
-                                  <div className="flex items-center gap-1 mb-1">
-                                    <span className="text-sm">📍</span>
-                                    <span className="text-xs font-medium text-muted-foreground">Location</span>
-                                  </div>
-                                  <p className="text-xs font-medium text-foreground">{service.location || 'Not specified'}</p>
-                                </div>
-                                
-                                <div className="p-2 bg-muted/50 rounded-lg border border-border">
-                                  <div className="flex items-center gap-1 mb-1">
-                                    <span className="text-sm">📅</span>
-                                    <span className="text-xs font-medium text-muted-foreground">Created</span>
-                                  </div>
-                                  <p className="text-xs font-medium text-foreground">
-                                    {new Date(service.created_at).toLocaleDateString('en-US', {
-                                      month: 'short',
-                                      day: 'numeric',
-                                      year: 'numeric'
-                                    })}
-                                  </p>
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                  <span>👤 {(service as any).user?.name}</span>
+                                  <span>📍 {service.location || 'Not specified'}</span>
+                                  <span>📅 {new Date(service.created_at).toLocaleDateString()}</span>
                                 </div>
                               </div>
-                              
-                              {service.description && (
-                                <div className="p-3 bg-muted/50 rounded-lg border border-border">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-sm">📝</span>
-                                    <span className="text-xs font-medium text-muted-foreground">Description</span>
-                                  </div>
-                                  <p className="text-sm text-foreground leading-relaxed">{service.description}</p>
-                                </div>
-                              )}
                             </div>
                           </div>
+                          
+                          {service.description && (
+                            <div className="mt-2 p-2 bg-muted/50 rounded text-xs text-foreground">
+                              <span className="font-medium">Description:</span> {service.description}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </div>
               </TabsContent>
