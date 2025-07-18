@@ -513,18 +513,6 @@ export const RichDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-primary-light text-white border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white/80 text-sm font-medium">Explore</p>
-                      <p className="text-lg font-bold">Browse Services</p>
-                    </div>
-                    <Search className="h-8 w-8 text-white/80" />
-                  </div>
-                </CardContent>
-              </Card>
-
               <Card className="bg-secondary text-white border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
@@ -537,6 +525,7 @@ export const RichDashboard = () => {
                   </div>
                 </CardContent>
               </Card>
+
             </>
           )}
         </div>
@@ -616,18 +605,18 @@ export const RichDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/pricing'}
-                      >
-                        <Star className="h-6 w-6" />
-                        Upgrade
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
                         onClick={() => setActiveTab('profile')}
                       >
                         <Settings className="h-6 w-6" />
                         Profile
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                        onClick={() => window.location.href = '/pricing'}
+                      >
+                        <Star className="h-6 w-6" />
+                        Upgrade Plan
                       </Button>
                     </>
                   )}

@@ -17,13 +17,65 @@ const Pricing = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [subscribedPlan, setSubscribedPlan] = useState<string>('');
 
-  const plans = [
+  // Different pricing for providers vs seekers
+  const isProvider = profile?.user_type === 'provider';
+  
+  const plans = isProvider ? [
     {
       id: 'monthly',
-      name: 'Monthly',
+      name: 'Provider Monthly',
+      price: '$29.99',
+      period: '/month',
+      description: 'Perfect for growing service providers',
+      features: [
+        'Create unlimited services',
+        'Receive client contact requests',
+        'Business verification badge',
+        'Analytics dashboard',
+        'Priority customer support'
+      ],
+      popular: false,
+      duration: '1 month'
+    },
+    {
+      id: 'semi_annual',
+      name: 'Provider Semi-Annual',
+      price: '$149.99',
+      period: '/6 months',
+      description: 'Best value for established providers',
+      features: [
+        'Everything in Monthly',
+        'Featured listing priority',
+        'Advanced analytics',
+        'Custom portfolio showcase',
+        '2 months free'
+      ],
+      popular: true,
+      duration: '6 months'
+    },
+    {
+      id: 'yearly',
+      name: 'Provider Yearly',
+      price: '$259.99',
+      period: '/year',
+      description: 'Maximum exposure for professionals',
+      features: [
+        'Everything in Semi-Annual',
+        'Premium badge highlighting',
+        'Lead generation tools',
+        'Dedicated account manager',
+        '4+ months free'
+      ],
+      popular: false,
+      duration: '1 year'
+    }
+  ] : [
+    {
+      id: 'monthly',
+      name: 'Seeker Monthly',
       price: '$9.99',
       period: '/month',
-      description: 'Perfect for occasional use',
+      description: 'Perfect for occasional service needs',
       features: [
         'Access to all service provider contacts',
         'Basic search and filtering',
@@ -35,10 +87,10 @@ const Pricing = () => {
     },
     {
       id: 'semi_annual',
-      name: 'Semi-Annual',
+      name: 'Seeker Semi-Annual',
       price: '$49.99',
       period: '/6 months',
-      description: 'Best value for regular users',
+      description: 'Best value for regular service users',
       features: [
         'Everything in Monthly',
         'Priority customer support',
@@ -51,10 +103,10 @@ const Pricing = () => {
     },
     {
       id: 'yearly',
-      name: 'Yearly',
+      name: 'Seeker Yearly',
       price: '$89.99',
       period: '/year',
-      description: 'Maximum savings for power users',
+      description: 'Maximum savings for frequent users',
       features: [
         'Everything in Semi-Annual',
         'Premium customer support',
@@ -162,11 +214,13 @@ const Pricing = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose Your Plan
+            {isProvider ? 'Provider Plans' : 'Service Seeker Plans'}
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Get verified and unlock access to professional service providers in your area. 
-            All plans include full access to provider contact information.
+            {isProvider 
+              ? 'Choose the perfect plan to showcase your services and grow your business.'
+              : 'Get access to professional service providers in your area. All plans include full access to provider contact information.'
+            }
           </p>
         </div>
 
@@ -262,8 +316,10 @@ const Pricing = () => {
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">Do I need to be verified?</h3>
               <p className="text-gray-600">
-                Yes, to access provider contact information, you need both an active subscription 
-                and a verified account. Visit your dashboard to start the verification process.
+                {isProvider 
+                  ? 'Yes, as a service provider, you need both an active subscription and account verification to receive client requests. Visit your dashboard to start the verification process.'
+                  : 'As a service seeker, you only need an active subscription to contact providers. No additional verification is required.'
+                }
               </p>
             </div>
           </div>
