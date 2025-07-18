@@ -479,7 +479,7 @@ export type Database = {
         Returns: boolean
       }
       complete_onboarding_step: {
-        Args: { step_name: string }
+        Args: { input_step_name: string }
         Returns: undefined
       }
       create_contact_request: {

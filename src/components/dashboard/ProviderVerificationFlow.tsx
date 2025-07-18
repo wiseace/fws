@@ -111,7 +111,7 @@ export const ProviderVerificationFlow = () => {
       }
 
       // Mark onboarding step as complete
-      await supabase.rpc('complete_onboarding_step', { step_name: 'verification_submission' });
+      await supabase.rpc('complete_onboarding_step', { input_step_name: 'verification_submission' });
 
       // Create notification
       await supabase

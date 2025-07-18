@@ -97,7 +97,7 @@ export const MyServicesTab = () => {
     if (services.length === 0) {
       try {
         await supabase.rpc('complete_onboarding_step', {
-          step_name: 'first_service_creation'
+          input_step_name: 'first_service_creation'
         });
       } catch (error) {
         console.error('Error completing first service step:', error);

@@ -220,7 +220,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
 
     try {
       const { error } = await supabase.rpc('complete_onboarding_step', {
-        step_name: stepName
+        input_step_name: stepName
       });
 
       if (error) throw error;

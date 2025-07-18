@@ -133,7 +133,7 @@ export const useOnboarding = () => {
         for (const stepName of stepsToComplete) {
           console.log(`🔄 Calling complete_onboarding_step for: ${stepName}`);
           const { error: completeError } = await supabase.rpc('complete_onboarding_step', {
-            step_name: stepName
+            input_step_name: stepName
           });
           
           if (completeError) {
@@ -207,7 +207,7 @@ export const useOnboarding = () => {
     // Complete the steps
     for (const stepName of stepsToComplete) {
       try {
-        await supabase.rpc('complete_onboarding_step', { step_name: stepName });
+        await supabase.rpc('complete_onboarding_step', { input_step_name: stepName });
         currentCompleted.add(stepName);
         console.log(`Auto-completed step (fallback): ${stepName}`);
       } catch (error) {
@@ -303,7 +303,7 @@ export const useOnboarding = () => {
     if (!user) return;
     
     try {
-      await supabase.rpc('complete_onboarding_step', { step_name: stepName });
+      await supabase.rpc('complete_onboarding_step', { input_step_name: stepName });
       setCompletedSteps(prev => new Set(prev).add(stepName));
       console.log(`Manually completed step: ${stepName}`);
     } catch (error) {
