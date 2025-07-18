@@ -28,7 +28,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           </div>
 
           {/* Desktop Navigation - Centered */}
-          <nav className="hidden md:flex space-x-12">
+          <nav className="hidden md:flex space-x-8">
             <a href="/" className="relative text-gray-800 hover:text-primary font-semibold text-lg transition-all duration-300 group">
               Home
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
@@ -39,6 +39,10 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
             </a>
             <a href="/providers" className="relative text-gray-800 hover:text-primary font-semibold text-lg transition-all duration-300 group">
               Providers
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="/pricing" className="relative text-primary hover:text-primary/80 font-semibold text-lg transition-all duration-300 group bg-primary/10 px-3 py-1 rounded-lg">
+              Pricing
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </a>
           </nav>
@@ -93,6 +97,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
               <a href="/" className="px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition-all duration-300">Home</a>
               <a href="/browse" className="px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition-all duration-300">Browse Services</a>
               <a href="/providers" className="px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition-all duration-300">Providers</a>
+              <a href="/pricing" className="px-4 py-3 text-primary hover:bg-primary/10 hover:text-primary/80 rounded-lg font-medium transition-all duration-300 bg-primary/5 border border-primary/20">Pricing Plans</a>
             </div>
           </div>
         )}

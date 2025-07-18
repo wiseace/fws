@@ -80,6 +80,20 @@ export const RichDashboard = () => {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   
+  // Check for subscription success from URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    
+    if (success === 'subscription') {
+      toast({
+        title: "🎉 Subscription Active!",
+        description: "Welcome to your premium plan! You now have full access to all features.",
+      });
+      // Clean up URL
+      window.history.replaceState({}, document.title, '/dashboard');
+    }
+  }, [toast]);
 
   useEffect(() => {
     if (user && profile) {

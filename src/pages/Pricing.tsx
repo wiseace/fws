@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -6,13 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { Check, Star, Crown } from 'lucide-react';
+import { Check, Star, Crown, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const Pricing = () => {
   const { user, profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState<string>('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [subscribedPlan, setSubscribedPlan] = useState<string>('');
 
   const plans = [
     {
@@ -64,6 +67,20 @@ const Pricing = () => {
     }
   ];
 
+  // Check URL for success parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const plan = urlParams.get('plan');
+    
+    if (success === 'true' && plan) {
+      setSubscribedPlan(plan);
+      setShowSuccessModal(true);
+      // Clean up URL
+      window.history.replaceState({}, document.title, '/pricing');
+    }
+  }, []);
+
   const handleSubscribe = async (planId: string) => {
     if (!user) {
       toast({
@@ -109,13 +126,17 @@ const Pricing = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Subscription successful!",
-        description: `You're now subscribed to the ${plans.find(p => p.id === planId)?.name} plan.`
-      });
+      const planName = plans.find(p => p.id === planId)?.name || planId;
+      setSubscribedPlan(planName);
+      setShowSuccessModal(true);
 
       // Refresh user profile
       await refreshProfile();
+
+      // Redirect to dashboard after modal
+      setTimeout(() => {
+        window.location.href = '/dashboard?success=subscription';
+      }, 3000);
 
     } catch (error: any) {
       toast({
@@ -126,6 +147,11 @@ const Pricing = () => {
     } finally {
       setLoading('');
     }
+  };
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    window.location.href = '/dashboard?success=subscription';
   };
 
   return (
@@ -245,6 +271,52 @@ const Pricing = () => {
       </div>
 
       <Footer editMode={false} />
+      
+      {/* Success Modal */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-2xl font-bold text-green-600 flex items-center gap-2">
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <Check className="w-5 h-5 text-green-600" />
+                </div>
+                Subscription Successful!
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSuccessModal(false)}
+                className="h-8 w-8 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </DialogHeader>
+          <div className="text-center py-4">
+            <div className="mb-4">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Crown className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Welcome to {subscribedPlan} Plan!</h3>
+              <p className="text-gray-600 mb-4">
+                You now have full access to all service provider contacts and premium features.
+              </p>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-green-800">
+                  <strong>What's next?</strong> You'll be redirected to your dashboard where you can start browsing and contacting providers.
+                </p>
+              </div>
+            </div>
+            <Button 
+              onClick={handleSuccessModalClose}
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              Go to Dashboard
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

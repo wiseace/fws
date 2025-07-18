@@ -58,6 +58,20 @@ export const HeroSection = ({ editMode }: HeroSectionProps) => {
             onSearch={handleSearch} 
             className="max-w-4xl mx-auto shadow-2xl backdrop-blur-sm" 
           />
+          
+          {/* Pricing CTA */}
+          <div className="mt-12">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 max-w-md mx-auto">
+              <h3 className="text-xl font-semibold text-white mb-2">Unlock Full Access</h3>
+              <p className="text-gray-200 text-sm mb-4">Get verified and access all service provider contacts</p>
+              <a 
+                href="/pricing" 
+                className="inline-block bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              >
+                View Pricing Plans
+              </a>
+            </div>
+          </div>
         </div>
       </section>
       
