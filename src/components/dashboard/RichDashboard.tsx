@@ -703,50 +703,6 @@ export const RichDashboard = () => {
             )}
 
 
-            {/* Getting Started Progress Card - Provider Only */}
-            {profile?.user_type === 'provider' && onboardingSteps.length > 0 && (
-              <Card className="shadow-lg border-0 bg-secondary/10 border-secondary/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-secondary-dark">
-                    <Target className="h-5 w-5" />
-                    Getting Started Progress
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-secondary-dark">
-                        {onboardingSteps.filter(step => step.completed).length} of {onboardingSteps.length} steps completed
-                      </span>
-                      <Badge variant="secondary" className="bg-secondary/20 text-secondary-darker">
-                        {onboardingSteps.length > 0 ? Math.round((onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100) : 0}% Complete
-                      </Badge>
-                    </div>
-                    <Progress 
-                      value={onboardingSteps.length > 0 ? (onboardingSteps.filter(step => step.completed).length / onboardingSteps.length) * 100 : 0} 
-                      className="h-2"
-                    />
-                    <div className="grid grid-cols-1 gap-2">
-                      {onboardingSteps.map((step) => (
-                        <button 
-                          key={step.id} 
-                          onClick={() => handleOnboardingStepClick(step.step_name, step.completed)}
-                          className={`flex items-center gap-3 text-sm p-3 rounded-md transition-colors hover:bg-secondary/20 text-left ${
-                            step.completed ? 'text-green-700 bg-green-50' : 'text-secondary-dark cursor-pointer bg-white'
-                          }`}
-                        >
-                          {getStepIcon(step.step_name, step.completed)}
-                          <span className="font-medium">{getStepTitle(step.step_name)}</span>
-                          {step.completed && (
-                            <CheckCircle className="h-4 w-4 text-green-600 ml-auto" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
           </div>
         </div>
