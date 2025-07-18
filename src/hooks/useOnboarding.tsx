@@ -182,8 +182,11 @@ export const useOnboarding = () => {
     }
   };
 
-  const shouldShowOnboardingWizard = async (completed: Set<string>): Promise<boolean> => {
+  const shouldShowOnboardingWizard = async (completed: Set<string>, isManualTrigger = false): Promise<boolean> => {
     if (!profile) return false;
+
+    // If manually triggered, always show (override dismissal logic)
+    if (isManualTrigger) return true;
 
     // Don't show if user has dismissed wizard recently (check localStorage)
     const dismissedKey = `onboarding_dismissed_${user?.id}`;
@@ -215,6 +218,11 @@ export const useOnboarding = () => {
   };
 
   const showWizardManually = () => {
+    // Clear dismissal timestamp when manually showing wizard
+    if (user) {
+      const dismissedKey = `onboarding_dismissed_${user.id}`;
+      localStorage.removeItem(dismissedKey);
+    }
     setShowWizard(true);
   };
 
