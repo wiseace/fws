@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { OnboardingWizard } from '@/components/dashboard/OnboardingWizard';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +30,8 @@ import {
   BookOpen,
   Target,
   Zap,
-  Shield
+  Shield,
+  HelpCircle
 } from 'lucide-react';
 import { MyServicesTab } from './tabs/MyServicesTab';
 import { ClientRequestsTab } from './tabs/ClientRequestsTab';
@@ -67,6 +70,7 @@ interface Notification {
 export const RichDashboard = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const { showWizard, dismissWizard, showWizardManually } = useOnboarding();
   const [stats, setStats] = useState<DashboardStats>({});
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStep[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -333,6 +337,16 @@ export const RichDashboard = () => {
               </p>
             </div>
             <div className="flex items-center gap-4">
+              {/* Onboarding Wizard Trigger */}
+              <Button 
+                variant="outline" 
+                onClick={showWizardManually}
+                className="flex items-center gap-2 bg-primary/5 border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-200"
+              >
+                <HelpCircle className="h-4 w-4" />
+                Help & Setup
+              </Button>
+              
               {profile?.user_type === 'admin' && (
                 <Button 
                   variant="outline" 
@@ -714,6 +728,12 @@ export const RichDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Onboarding Wizard */}
+      <OnboardingWizard
+        isVisible={showWizard}
+        onClose={dismissWizard}
+      />
 
       {/* Notification Modal */}
       <NotificationModal
