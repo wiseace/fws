@@ -366,6 +366,16 @@ export const RichDashboard = () => {
                 )}
               </Button>
               
+              {/* Subscription Plans Button */}
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = '/pricing'}
+                className="flex items-center gap-2 bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 text-amber-700 hover:from-amber-100 hover:to-yellow-100 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              >
+                <Star className="h-4 w-4" />
+                Upgrade Plan
+              </Button>
+              
               {profile?.user_type === 'admin' && (
                 <Button 
                   variant="outline" 
