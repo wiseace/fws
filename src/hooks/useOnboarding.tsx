@@ -148,8 +148,9 @@ export const useOnboarding = () => {
       }
     }
 
-    // Update local state with the new completed steps
+    // Update local state immediately with the new completed steps
     if (stepsToComplete.length > 0) {
+      console.log('Updating completed steps state:', Array.from(currentCompleted));
       setCompletedSteps(new Set(currentCompleted));
     }
   };
