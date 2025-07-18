@@ -358,7 +358,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
               return (
                  <div 
                   key={step.id}
-                  onClick={() => canAccess && handleStepAction(step, index)}
+                  onClick={() => !isDisabled && handleStepAction(step, index)}
                   className={`flex items-center gap-2 p-3 rounded-lg transition-all duration-300 mb-2 ${
                     isDisabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border border-gray-100' :
                     isCurrent ? 'bg-primary/5 border border-primary/20 hover:bg-primary/10 cursor-pointer hover:shadow-sm' : 
