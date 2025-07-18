@@ -83,6 +83,7 @@ const Providers = () => {
         .eq('user_type', 'provider')
         .eq('is_verified', true)
         .eq('verification_status', 'verified')
+        .neq('subscription_plan', 'free')
         .eq('services.is_active', true)
         .order('created_at', { ascending: false });
 

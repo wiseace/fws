@@ -50,9 +50,13 @@ const Browse = () => {
       .from('services')
       .select(`
         *,
-        user:users(*)
+        user:users!inner(*)
       `)
       .eq('is_active', true)
+      .eq('user.user_type', 'provider')
+      .eq('user.is_verified', true)
+      .eq('user.verification_status', 'verified')
+      .neq('user.subscription_plan', 'free')
       .order('created_at', { ascending: false });
     
     if (data) {
