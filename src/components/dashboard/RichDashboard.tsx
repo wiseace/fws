@@ -70,7 +70,7 @@ interface Notification {
 export const RichDashboard = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
-  const { showWizard, dismissWizard, showWizardManually } = useOnboarding();
+  const { showWizard, dismissWizard, showWizardManually, onboardingProgress } = useOnboarding();
   const [stats, setStats] = useState<DashboardStats>({});
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStep[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -341,10 +341,15 @@ export const RichDashboard = () => {
               <Button 
                 variant="outline" 
                 onClick={showWizardManually}
-                className="flex items-center gap-2 bg-primary/5 border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-200"
+                className={`flex items-center gap-2 bg-primary/5 border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-200 ${
+                  onboardingProgress < 100 ? 'animate-pulse ring-2 ring-primary/30 ring-offset-2 shadow-lg shadow-primary/20' : ''
+                }`}
               >
-                <HelpCircle className="h-4 w-4" />
+                <HelpCircle className={`h-4 w-4 ${onboardingProgress < 100 ? 'animate-bounce' : ''}`} />
                 Help & Setup
+                {onboardingProgress < 100 && (
+                  <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full animate-ping"></span>
+                )}
               </Button>
               
               {profile?.user_type === 'admin' && (

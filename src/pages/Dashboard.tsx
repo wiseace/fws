@@ -270,17 +270,6 @@ const Dashboard = () => {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
-        {/* Help Button for Manual Wizard Access */}
-        <div className="fixed bottom-6 right-6 z-40">
-          <Button
-            onClick={showWizardManually}
-            className="rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90"
-            title="Show onboarding guide"
-          >
-            <HelpCircle className="h-6 w-6" />
-          </Button>
-        </div>
-
         {/* Onboarding Wizard */}
         <OnboardingWizard
           isVisible={showWizard}
