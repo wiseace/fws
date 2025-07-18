@@ -105,12 +105,33 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           actionHandler: () => {
             console.log('🔥 Verification actionHandler started');
             console.log('📍 Current pathname:', window.location.pathname);
+            console.log('🔒 User authenticated:', !!user);
+            console.log('👤 Profile loaded:', !!profile);
             
             onClose();
             
-            // Always use full page navigation to ensure dashboard loads properly
-            console.log('🚀 Navigating to dashboard with verification tab...');
-            window.location.href = '/dashboard?tab=verification';
+            // Try multiple navigation approaches
+            console.log('🚀 Attempting navigation to dashboard...');
+            
+            // First try React Router
+            try {
+              console.log('📍 Method 1: Using React Router navigate');
+              navigate('/dashboard?tab=verification');
+              
+              // Wait a bit and check if navigation worked
+              setTimeout(() => {
+                console.log('🔍 After navigate - current path:', window.location.pathname);
+                if (window.location.pathname !== '/dashboard') {
+                  console.log('⚠️ React Router navigate failed, trying window.location...');
+                  window.location.href = '/dashboard?tab=verification';
+                }
+              }, 500);
+              
+            } catch (error) {
+              console.error('❌ Navigation error:', error);
+              console.log('🔄 Fallback: Using window.location');
+              window.location.href = '/dashboard?tab=verification';
+            }
           }
         },
         {
