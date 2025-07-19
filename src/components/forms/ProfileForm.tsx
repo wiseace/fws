@@ -27,7 +27,7 @@ export const ProfileForm = () => {
       setFormData({
         name: profile.name || '',
         phone: profile.phone || '',
-        address: '' // Address field would need to be added to database
+        address: (profile as any).address || '' // Temporarily cast until types are updated
       });
     }
   }, [profile]);
@@ -78,13 +78,20 @@ export const ProfileForm = () => {
       // Sanitize inputs before sending
       const sanitizedName = sanitizeInput(formData.name);
       const sanitizedPhone = sanitizeInput(formData.phone);
+      const sanitizedAddress = sanitizeInput(formData.address);
 
       const { error } = await supabase.rpc('update_user_profile', {
         user_name: sanitizedName,
         user_phone: sanitizedPhone
       });
 
-      if (error) throw error;
+      // Update address separately since it's not in the RPC function yet
+      const { error: addressError } = await supabase
+        .from('users')
+        .update({ address: sanitizedAddress })
+        .eq('id', user?.id);
+
+      if (error || addressError) throw error || addressError;
 
       toast({
         title: "Profile Updated",

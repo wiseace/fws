@@ -307,6 +307,7 @@ export type Database = {
       }
       users: {
         Row: {
+          address: string | null
           availability_status: string | null
           can_access_contact: boolean | null
           city_or_state: string | null
@@ -336,6 +337,7 @@ export type Database = {
             | null
         }
         Insert: {
+          address?: string | null
           availability_status?: string | null
           can_access_contact?: boolean | null
           city_or_state?: string | null
@@ -365,6 +367,7 @@ export type Database = {
             | null
         }
         Update: {
+          address?: string | null
           availability_status?: string | null
           can_access_contact?: boolean | null
           city_or_state?: string | null
