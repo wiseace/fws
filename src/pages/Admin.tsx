@@ -12,7 +12,7 @@ import { Footer } from '@/components/Footer';
 import { CompactAdminTableControls } from '@/components/admin/CompactAdminTableControls';
 import { UserVerificationModal } from '@/components/admin/UserVerificationModal';
 
-import { User as UserType, VerificationRequest, ContactRequest, Service } from '@/types/database';
+import { User as UserType, VerificationRequest, Service } from '@/types/database';
 import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard, RefreshCw, Settings, MessageSquare } from 'lucide-react';
 import { AdminMessagesManager } from '@/components/admin/AdminMessagesManager';
 import { Loader2 } from 'lucide-react';
@@ -25,18 +25,15 @@ const Admin = () => {
   
   const [users, setUsers] = useState<UserType[]>([]);
   const [verificationRequests, setVerificationRequests] = useState<VerificationRequest[]>([]);
-  const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [stats, setStats] = useState<any>(null);
   
   // Pagination states for each tab
   const [displayedVerifications, setDisplayedVerifications] = useState<VerificationRequest[]>([]);
   const [displayedUsers, setDisplayedUsers] = useState<UserType[]>([]);
-  const [displayedContacts, setDisplayedContacts] = useState<ContactRequest[]>([]);
   const [displayedServices, setDisplayedServices] = useState<Service[]>([]);
   const [verificationPagination, setVerificationPagination] = useState<any>({});
   const [usersPagination, setUsersPagination] = useState<any>({});
-  const [contactsPagination, setContactsPagination] = useState<any>({});
   const [servicesPagination, setServicesPagination] = useState<any>({});
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
@@ -49,7 +46,7 @@ const Admin = () => {
       // Clear existing state to avoid stale data
       setVerificationRequests([]);
       setUsers([]);
-      setContactRequests([]);
+      
       setServices([]);
       setStats(null);
       fetchAllData();
@@ -100,23 +97,10 @@ const Admin = () => {
       )
       .subscribe();
 
-    const contactsChannel = supabase
-      .channel('admin-contacts-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'contact_requests' },
-        () => {
-          console.log('Contact requests changed, refreshing...');
-          fetchContactRequests();
-        }
-      )
-      .subscribe();
-
     return () => {
       usersChannel.unsubscribe();
       verificationChannel.unsubscribe();
       servicesChannel.unsubscribe();
-      contactsChannel.unsubscribe();
     };
   }, [profile?.user_type]);
 
@@ -126,7 +110,6 @@ const Admin = () => {
       await Promise.all([
         fetchUsers(),
         fetchVerificationRequests(),
-        fetchContactRequests(),
         fetchServices(),
         fetchStats()
       ]);
@@ -185,20 +168,6 @@ const Admin = () => {
     }
   };
 
-  const fetchContactRequests = async () => {
-    const { data, error } = await supabase
-      .from('contact_requests')
-      .select(`
-        *,
-        seeker:users!seeker_id(name, email),
-        provider:users!provider_id(name, email),
-        service:services(service_name)
-      `)
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    if (data) setContactRequests(data as any);
-  };
 
   const fetchServices = async () => {
     const { data, error } = await supabase
@@ -286,7 +255,7 @@ const Admin = () => {
       return;
     }
 
-    if (!confirm('Are you sure you want to delete this user? This will permanently remove the user and ALL their related data (services, verification requests, contact requests).')) return;
+    if (!confirm('Are you sure you want to delete this user? This will permanently remove the user and ALL their related data (services, verification requests).')) return;
     
     try {
       const result = await deleteUser(userId, reason.trim());
@@ -461,23 +430,6 @@ const Admin = () => {
                   </div>
                 </CardContent>
               </Card>
-              
-              <Card 
-                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
-                onClick={() => setActiveTab('contacts')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-4 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl shadow-md">
-                      <User className="h-8 w-8 text-white" />
-                    </div>
-                    <div>
-                      <p className="caption-text font-medium text-teal-700 mb-2">Contact Requests</p>
-                      <p className="text-[2rem] font-bold text-teal-900">{stats.total_contacts}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           )}
 
@@ -485,10 +437,9 @@ const Admin = () => {
           <div className="px-6 pb-8">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <div className="flex items-center justify-center">
-                <TabsList className="grid grid-cols-6 w-full max-w-3xl bg-muted/30 p-1 rounded-full h-12">
+                <TabsList className="grid grid-cols-4 w-full max-w-3xl bg-muted/30 p-1 rounded-full h-12">
                   <TabsTrigger value="verifications" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Verifications</TabsTrigger>
                   <TabsTrigger value="users" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Users</TabsTrigger>
-                  <TabsTrigger value="contacts" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Contacts</TabsTrigger>
                   <TabsTrigger value="services" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Services</TabsTrigger>
                   <TabsTrigger value="messages" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Messages</TabsTrigger>
                   <TabsTrigger value="categories" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Categories</TabsTrigger>
@@ -751,89 +702,6 @@ const Admin = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="contacts" className="space-y-4 animate-fade-in">
-                <div className="bg-card rounded-lg p-4 border border-border">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-primary" />
-                      <div>
-                        <h2 className="text-lg font-semibold">Contact Requests</h2>
-                        <p className="text-xs text-muted-foreground">Monitor service contact activity and user engagement</p>
-                      </div>
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      {contactRequests.length} total contacts
-                    </Badge>
-                  </div>
-
-                  <CompactAdminTableControls
-                    data={contactRequests}
-                    searchFields={['message', 'contact_method']}
-                    filterOptions={[
-                      {
-                        field: 'contact_method',
-                        label: 'Contact Method',
-                        values: [
-                          { value: 'email', label: 'Email' },
-                          { value: 'phone', label: 'Phone' },
-                          { value: 'whatsapp', label: 'WhatsApp' }
-                        ]
-                      }
-                    ]}
-                    sortOptions={[
-                      { field: 'created_at', label: 'Contact Date' },
-                      { field: 'contact_method', label: 'Contact Method' }
-                    ]}
-                    itemsPerPage={10}
-                    onDataChange={(data, pagination) => {
-                      setDisplayedContacts(data);
-                      setContactsPagination(pagination);
-                    }}
-                  />
-
-                  <div className="space-y-2 mt-4">
-                    {displayedContacts.length === 0 ? (
-                      <div className="text-center py-8 bg-muted/30 rounded-lg">
-                        <User className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No contact requests found</p>
-                      </div>
-                    ) : (
-                      displayedContacts.map((request) => (
-                        <div key={request.id} className="bg-muted/20 rounded-lg p-3 border border-border/50 hover:bg-muted/40 transition-colors">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-3 flex-1">
-                              <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
-                                <span className="text-sm">💬</span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-sm font-semibold text-blue-600">{(request as any).seeker?.name}</span>
-                                  <span className="text-xs text-muted-foreground">→</span>
-                                  <span className="text-sm font-semibold text-green-600">{(request as any).provider?.name}</span>
-                                  <Badge variant="secondary" className="text-xs h-4 px-2">
-                                    {(request as any).service?.service_name}
-                                  </Badge>
-                                </div>
-                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                  <span>📧 {request.contact_method}</span>
-                                  <span>📅 {new Date(request.created_at).toLocaleDateString()}</span>
-                                  <span>🕒 {new Date(request.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {request.message && (
-                            <div className="mt-2 p-2 bg-muted/50 rounded text-xs text-foreground">
-                              <span className="font-medium">Message:</span> {request.message}
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
 
               <TabsContent value="services" className="space-y-4 animate-fade-in">
                 <div className="bg-card rounded-lg p-4 border border-border">
