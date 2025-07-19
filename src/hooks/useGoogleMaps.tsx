@@ -24,6 +24,8 @@ export interface GoogleMapsAutocompleteResult {
 export const useGoogleMaps = () => {
   const getAutocomplete = useCallback(async (input: string): Promise<GoogleMapsAutocompleteResult[]> => {
     try {
+      console.log('Making Google Maps autocomplete request for:', input);
+      
       const { data, error } = await supabase.functions.invoke('google-maps-proxy', {
         body: {
           endpoint: 'places-autocomplete',
@@ -32,9 +34,16 @@ export const useGoogleMaps = () => {
         }
       });
 
-      if (error) throw error;
+      console.log('Google Maps response:', { data, error });
 
-      return data?.predictions || [];
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      const predictions = data?.predictions || [];
+      console.log('Extracted predictions:', predictions);
+      return predictions;
     } catch (error) {
       console.error('Google Maps autocomplete error:', error);
       return [];

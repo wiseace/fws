@@ -35,7 +35,9 @@ export const SecureGooglePlacesInput = ({
 
     setLoading(true);
     try {
+      console.log('Searching for:', query);
       const results = await getAutocomplete(query);
+      console.log('Got results:', results);
       setSuggestions(results);
     } catch (error) {
       console.error('Error fetching address suggestions:', error);
