@@ -92,6 +92,9 @@ export const ProfileForm = () => {
         title: "Profile Updated",
         description: "Your profile has been updated successfully."
       });
+
+      // Refresh the page to reload user data from auth context
+      window.location.reload();
     } catch (error: any) {
       toast({
         title: "Error",
