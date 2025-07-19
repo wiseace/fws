@@ -39,7 +39,7 @@ import { MyServicesTab } from './tabs/MyServicesTab';
 // Removed ClientRequestsTab - no longer needed
 import { VerificationTab } from './tabs/VerificationTab';
 import { ProfileTab } from './tabs/ProfileTab';
-import { MessagesTab } from './tabs/MessagesTab';
+// Removed MessagesTab - no longer needed
 import { SubscriptionCountdown } from '@/components/SubscriptionCountdown';
 
 interface DashboardStats {
@@ -83,7 +83,7 @@ export const RichDashboard = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
-    if (tab && ['services', 'verification', 'profile', 'messages'].includes(tab)) {
+    if (tab && ['services', 'verification', 'profile'].includes(tab)) {
       setActiveTab(tab);
     } else {
       // Set default tab based on user type
@@ -354,19 +354,11 @@ export const RichDashboard = () => {
               </ul>
             </div>
             <Button 
-              onClick={() => {
-                setActiveTab('messages');
-                setTimeout(() => {
-                  const element = document.getElementById('messages-tab');
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }, 100);
-              }}
+              onClick={() => window.location.href = '/notifications'}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
               <MessageSquare className="w-4 h-4 mr-2" />
-              Check Admin Messages
+              Check Notifications
             </Button>
           </div>
         )}
@@ -674,32 +666,19 @@ export const RichDashboard = () => {
                               >
                                 Profile
                               </Button>
-                              {profile?.user_type === 'provider' && (
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm"
-                                  className={`px-4 py-2 rounded-full font-medium transition-all ${
-                                    activeTab === 'messages' 
-                                      ? 'bg-foreground text-background shadow-sm' 
-                                      : 'text-muted-foreground hover:text-foreground'
-                                  }`}
-                                  onClick={() => setActiveTab('messages')}
-                                >
-                                  Messages
-                                </Button>
-                              )}
+                               {/* Removed Messages tab - no longer needed */}
                             </div>
                           </div>
                         </div>
 
                        {/* Tab Content */}
-                       <div className="min-h-[300px]">
-                          {activeTab === 'services' && <div id="services-tab" className="animate-fade-in"><MyServicesTab /></div>}
-                          {/* Removed Client Requests Tab - Direct contact now available */}
-                          {activeTab === 'verification' && <div id="verification-tab" className="animate-fade-in"><VerificationTab /></div>}
-                          {activeTab === 'profile' && <div id="profile-tab" className="animate-fade-in"><ProfileTab /></div>}
-                          {activeTab === 'messages' && <div id="messages-tab" className="animate-fade-in"><MessagesTab /></div>}
-                       </div>
+                        <div className="min-h-[300px]">
+                           {activeTab === 'services' && <div id="services-tab" className="animate-fade-in"><MyServicesTab /></div>}
+                           {/* Removed Client Requests Tab - Direct contact now available */}
+                           {activeTab === 'verification' && <div id="verification-tab" className="animate-fade-in"><VerificationTab /></div>}
+                           {activeTab === 'profile' && <div id="profile-tab" className="animate-fade-in"><ProfileTab /></div>}
+                           {/* Removed Messages tab - no longer needed */}
+                        </div>
 
                   </div>
                 </CardContent>
