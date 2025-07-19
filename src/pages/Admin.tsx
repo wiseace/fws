@@ -479,23 +479,22 @@ const Admin = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-4">
+            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105">
+              <CardContent className="p-4" onClick={() => window.location.href = '/admin/categories'}>
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-amber-500 rounded-lg">
                     <Settings className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-amber-900">Categories</h3>
-                    <p className="text-sm text-amber-700">Manage service categories</p>
+                    <h3 className="font-semibold text-amber-900">Manage Categories</h3>
+                    <p className="text-sm text-amber-700">Quick access to categories</p>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setActiveTab('categories')}
                     className="border-amber-300 text-amber-700 hover:bg-amber-50"
                   >
-                    Edit
+                    Access
                   </Button>
                 </div>
               </CardContent>
