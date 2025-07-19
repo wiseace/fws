@@ -475,7 +475,7 @@ export const RichDashboard = () => {
             </>
           ) : (
             <>
-              <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
+              <Card className="bg-primary text-primary-foreground border-0 shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all duration-300" onClick={() => window.location.href = '/browse'}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -488,7 +488,7 @@ export const RichDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-brand-success text-white border-0 shadow-lg">
+              <Card className="bg-brand-success text-white border-0 shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all duration-300" onClick={() => window.location.href = '/browse'}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -501,7 +501,7 @@ export const RichDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-secondary text-white border-0 shadow-lg">
+              <Card className="bg-secondary text-white border-0 shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all duration-300" onClick={() => setActiveTab('profile')}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -510,6 +510,19 @@ export const RichDashboard = () => {
                       <p className="text-xs text-white/70">Complete</p>
                     </div>
                     <Award className="h-8 w-8 text-white/80" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white border-0 shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all duration-300" onClick={() => window.location.href = '/pricing'}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-white/80 text-sm font-medium">Subscription</p>
+                      <p className="text-2xl font-bold">Upgrade</p>
+                      <p className="text-xs text-white/70">Premium Features</p>
+                    </div>
+                    <Star className="h-8 w-8 text-white/80" />
                   </div>
                 </CardContent>
               </Card>
@@ -569,42 +582,42 @@ export const RichDashboard = () => {
                           BROWSE
                         </Button>
                     </>
-                  ) : (
-                    <>
-                      <Button 
-                        variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/browse'}
-                      >
-                        <Search className="h-6 w-6" />
-                        Browse Services
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                          className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => setActiveTab('profile')}
-                      >
-                        <Settings className="h-6 w-6" />
-                        Profile
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => setActiveTab('profile')}
-                      >
-                        <Settings className="h-6 w-6" />
-                        Profile
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => window.location.href = '/pricing'}
-                      >
-                        <Star className="h-6 w-6" />
-                        Upgrade Plan
-                      </Button>
-                    </>
-                  )}
+                   ) : (
+                     <>
+                       <Button 
+                         variant="outline" 
+                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                         onClick={() => window.location.href = '/browse'}
+                       >
+                         <Search className="h-6 w-6" />
+                         Browse Services
+                       </Button>
+                       <Button 
+                         variant="outline" 
+                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                         onClick={() => setActiveTab('profile')}
+                       >
+                         <Settings className="h-6 w-6" />
+                         Profile
+                       </Button>
+                       <Button 
+                         variant="outline" 
+                         className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                         onClick={() => window.location.href = '/pricing'}
+                       >
+                         <Star className="h-6 w-6" />
+                         Upgrade Plan
+                       </Button>
+                       <Button 
+                         variant="outline" 
+                         className="h-20 flex-col gap-2 hover:bg-secondary hover:text-white"
+                         onClick={() => window.location.href = '/providers'}
+                       >
+                         <Users className="h-6 w-6" />
+                         Browse Providers
+                       </Button>
+                     </>
+                   )}
                 </div>
               </CardContent>
             </Card>
