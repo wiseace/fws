@@ -42,7 +42,7 @@ const App = () => (
             } />
             <Route path="/admin" element={
               <AdminRoute>
-                <EnhancedDashboard />
+                <Admin />
               </AdminRoute>
             } />
             <Route path="/admin/categories" element={
