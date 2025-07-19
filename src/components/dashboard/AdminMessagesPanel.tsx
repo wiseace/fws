@@ -36,7 +36,8 @@ export const AdminMessagesPanel = () => {
       if (error) throw error;
       
       if (data) {
-        setMessages(data);
+        // Reverse the order to show oldest messages first (like a normal chat)
+        setMessages(data.reverse());
         // Mark unread messages as read
         const unreadMessages = data.filter(m => !m.read_by_recipient && m.is_from_admin);
         if (unreadMessages.length > 0) {
