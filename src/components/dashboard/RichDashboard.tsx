@@ -39,7 +39,7 @@ import { MyServicesTab } from './tabs/MyServicesTab';
 // Removed ClientRequestsTab - no longer needed
 import { VerificationTab } from './tabs/VerificationTab';
 import { ProfileTab } from './tabs/ProfileTab';
-// Removed MessagesTab - no longer needed
+import { MessagesTab } from './tabs/MessagesTab';
 import { SubscriptionCountdown } from '@/components/SubscriptionCountdown';
 
 interface DashboardStats {
@@ -83,7 +83,7 @@ export const RichDashboard = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
-    if (tab && ['services', 'verification', 'profile'].includes(tab)) {
+    if (tab && ['services', 'verification', 'profile', 'messages'].includes(tab)) {
       setActiveTab(tab);
     } else {
       // Set default tab based on user type
@@ -666,7 +666,20 @@ export const RichDashboard = () => {
                               >
                                 Profile
                               </Button>
-                               {/* Removed Messages tab - no longer needed */}
+                              {profile?.user_type === 'provider' && (
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  className={`px-4 py-2 rounded-full font-medium transition-all ${
+                                    activeTab === 'messages' 
+                                      ? 'bg-foreground text-background shadow-sm' 
+                                      : 'text-muted-foreground hover:text-foreground'
+                                  }`}
+                                  onClick={() => setActiveTab('messages')}
+                                >
+                                  Admin Messages
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -677,7 +690,7 @@ export const RichDashboard = () => {
                            {/* Removed Client Requests Tab - Direct contact now available */}
                            {activeTab === 'verification' && <div id="verification-tab" className="animate-fade-in"><VerificationTab /></div>}
                            {activeTab === 'profile' && <div id="profile-tab" className="animate-fade-in"><ProfileTab /></div>}
-                           {/* Removed Messages tab - no longer needed */}
+                           {activeTab === 'messages' && <div id="messages-tab" className="animate-fade-in"><MessagesTab /></div>}
                         </div>
 
                   </div>
