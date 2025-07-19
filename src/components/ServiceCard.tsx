@@ -7,7 +7,7 @@ import { MapPin, Phone, Mail, Lock, Star, Verified, User } from 'lucide-react';
 import { Service } from '@/types/database';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { ContactModal } from './ContactModal';
+import { DirectContactModal } from './DirectContactModal';
 import { ProfileModal } from './ProfileModal';
 
 interface ServiceCardProps {
@@ -186,7 +186,7 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
         </CardContent>
       </Card>
 
-      <ContactModal 
+      <DirectContactModal 
         service={service}
         isOpen={showContactModal}
         onClose={() => setShowContactModal(false)}

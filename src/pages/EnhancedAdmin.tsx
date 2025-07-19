@@ -92,23 +92,13 @@ const EnhancedAdmin = () => {
       )
       .subscribe();
 
-    const contactsChannel = supabase
-      .channel('admin-contacts-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'contact_requests' },
-        () => {
-          console.log('Contact requests changed, refreshing...');
-          fetchContactRequests();
-        }
-      )
-      .subscribe();
+    // Contact requests feature removed
 
     return () => {
       usersChannel.unsubscribe();
       verificationChannel.unsubscribe();
       servicesChannel.unsubscribe();
-      contactsChannel.unsubscribe();
+      // contactsChannel.unsubscribe(); // Removed
     };
   }, [profile?.user_type]);
 
@@ -118,7 +108,7 @@ const EnhancedAdmin = () => {
       await Promise.all([
         fetchUsers(),
         fetchVerificationRequests(),
-        fetchContactRequests(),
+        // Removed contact requests fetching
         fetchServices(),
         fetchStats()
       ]);
@@ -177,20 +167,7 @@ const EnhancedAdmin = () => {
     }
   };
 
-  const fetchContactRequests = async () => {
-    const { data, error } = await supabase
-      .from('contact_requests')
-      .select(`
-        *,
-        seeker:users!seeker_id(name, email),
-        provider:users!provider_id(name, email),
-        service:services(service_name)
-      `)
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    if (data) setContactRequests(data as any);
-  };
+  // Contact requests feature removed - now using direct contact
 
   const fetchServices = async () => {
     const { data, error } = await supabase
@@ -444,22 +421,7 @@ const EnhancedAdmin = () => {
                 </CardContent>
               </Card>
               
-              <Card 
-                className="cursor-pointer hover:bg-muted/50 transition-colors duration-200"
-                onClick={() => setActiveTab('contacts')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-3 bg-teal-600 rounded-xl">
-                      <User className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Contact Requests</p>
-                      <p className="text-2xl font-bold text-foreground">{stats.total_contacts}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Contact requests feature removed */}
             </div>
           )}
 
@@ -467,10 +429,9 @@ const EnhancedAdmin = () => {
           <div className="px-6 pb-8">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <div className="flex items-center justify-center">
-                <TabsList className="grid grid-cols-5 w-full max-w-2xl bg-muted/30 p-1 rounded-full h-12">
+                <TabsList className="grid grid-cols-4 w-full max-w-2xl bg-muted/30 p-1 rounded-full h-12">
                   <TabsTrigger value="verifications" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Verifications</TabsTrigger>
                   <TabsTrigger value="users" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Users</TabsTrigger>
-                  <TabsTrigger value="contacts" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Contacts</TabsTrigger>
                   <TabsTrigger value="services" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Services</TabsTrigger>
                   <TabsTrigger value="categories" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Categories</TabsTrigger>
                 </TabsList>

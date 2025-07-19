@@ -36,7 +36,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { MyServicesTab } from './tabs/MyServicesTab';
-import { ClientRequestsTab } from './tabs/ClientRequestsTab';
+// Removed ClientRequestsTab - no longer needed
 import { VerificationTab } from './tabs/VerificationTab';
 import { ProfileTab } from './tabs/ProfileTab';
 import { MessagesTab } from './tabs/MessagesTab';
@@ -77,16 +77,19 @@ export const RichDashboard = () => {
   const [stats, setStats] = useState<DashboardStats>({});
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStep[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [activeTab, setActiveTab] = useState('requests');
+  const [activeTab, setActiveTab] = useState(profile?.user_type === 'provider' ? 'services' : 'profile');
 
   // Handle URL tab parameter
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
-    if (tab && ['requests', 'services', 'verification', 'profile', 'messages'].includes(tab)) {
+    if (tab && ['services', 'verification', 'profile', 'messages'].includes(tab)) {
       setActiveTab(tab);
+    } else {
+      // Set default tab based on user type
+      setActiveTab(profile?.user_type === 'provider' ? 'services' : 'profile');
     }
-  }, []);
+  }, [profile?.user_type]);
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -134,36 +137,18 @@ export const RichDashboard = () => {
         .select('id, is_active')
         .eq('user_id', user?.id);
 
-      const { data: contacts } = await supabase
-        .from('contact_requests')
-        .select('id, created_at')
-        .eq('provider_id', user?.id);
-
       const totalServices = services?.length || 0;
       const activeServices = services?.filter(s => s.is_active).length || 0;
-      const contactRequests = contacts?.length || 0;
-      
-      // Calculate this week's requests
-      const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      const thisWeekRequests = contacts?.filter(c => c.created_at > oneWeekAgo).length || 0;
 
       setStats({
         totalServices,
         activeServices,
-        contactRequests,
-        thisWeekRequests,
         verificationStatus: profile?.verification_status,
         subscriptionPlan: profile?.subscription_plan,
         profileCompletion: calculateProfileCompletion()
       });
     } else if (profile?.user_type === 'seeker') {
-      const { data: contacts } = await supabase
-        .from('contact_requests')
-        .select('id')
-        .eq('seeker_id', user?.id);
-
       setStats({
-        contactRequests: contacts?.length || 0,
         subscriptionPlan: profile?.subscription_plan,
         profileCompletion: calculateProfileCompletion()
       });
@@ -502,10 +487,11 @@ export const RichDashboard = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-primary-foreground/80 text-sm font-medium">Service Requests</p>
-                      <p className="text-3xl font-bold">{stats.contactRequests || 0}</p>
+                      <p className="text-primary-foreground/80 text-sm font-medium">Employer's Hub</p>
+                      <p className="text-2xl font-bold">Discover</p>
+                      <p className="text-xs text-primary-foreground/70">Quality Services</p>
                     </div>
-                    <Users className="h-8 w-8 text-primary-foreground/80" />
+                    <Search className="h-8 w-8 text-primary-foreground/80" />
                   </div>
                 </CardContent>
               </Card>
@@ -514,10 +500,11 @@ export const RichDashboard = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white/80 text-sm font-medium">Subscription</p>
-                      <p className="text-xl font-bold capitalize">{stats.subscriptionPlan || 'Free'}</p>
+                      <p className="text-white/80 text-sm font-medium">Browse</p>
+                      <p className="text-2xl font-bold">Services</p>
+                      <p className="text-xs text-white/70">Find Providers</p>
                     </div>
-                    <Star className="h-8 w-8 text-white/80" />
+                    <Users className="h-8 w-8 text-white/80" />
                   </div>
                 </CardContent>
               </Card>
@@ -576,13 +563,10 @@ export const RichDashboard = () => {
                        <Button 
                          variant="outline" 
                          className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                         onClick={() => {
-                           setActiveTab('requests');
-                           scrollToSection('requests-tab');
-                         }}
+                          onClick={() => window.location.href = '/browse'}
                        >
                          <Eye className="h-6 w-6" />
-                         VIEW REQUESTS
+                         BROWSE SERVICES
                        </Button>
                         <Button 
                           variant="outline" 
@@ -605,11 +589,11 @@ export const RichDashboard = () => {
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
-                        onClick={() => setActiveTab('requests')}
+                          className="h-20 flex-col gap-2 hover:bg-primary hover:text-white"
+                        onClick={() => setActiveTab('profile')}
                       >
-                        <Eye className="h-6 w-6" />
-                        My Requests
+                        <Settings className="h-6 w-6" />
+                        Profile
                       </Button>
                       <Button 
                         variant="outline" 
@@ -663,18 +647,7 @@ export const RichDashboard = () => {
                                  My Services ({stats.totalServices || 0})
                                </Button>
                              )}
-                             <Button 
-                               variant="ghost" 
-                               size="sm"
-                               className={`px-4 py-2 rounded-full font-medium transition-all ${
-                                 activeTab === 'requests' 
-                                   ? 'bg-foreground text-background shadow-sm' 
-                                   : 'text-muted-foreground hover:text-foreground'
-                               }`}
-                               onClick={() => setActiveTab('requests')}
-                             >
-                               {profile?.user_type === 'provider' ? 'Client Requests' : 'My Requests'}
-                             </Button>
+                {/* Removed requests button - now using direct contact */}
                              {profile?.user_type === 'provider' && (
                                <Button 
                                  variant="ghost" 
@@ -722,7 +695,7 @@ export const RichDashboard = () => {
                        {/* Tab Content */}
                        <div className="min-h-[300px]">
                           {activeTab === 'services' && <div id="services-tab" className="animate-fade-in"><MyServicesTab /></div>}
-                          {activeTab === 'requests' && <div id="requests-tab" className="animate-fade-in"><ClientRequestsTab /></div>}
+                          {/* Removed Client Requests Tab - Direct contact now available */}
                           {activeTab === 'verification' && <div id="verification-tab" className="animate-fade-in"><VerificationTab /></div>}
                           {activeTab === 'profile' && <div id="profile-tab" className="animate-fade-in"><ProfileTab /></div>}
                           {activeTab === 'messages' && <div id="messages-tab" className="animate-fade-in"><MessagesTab /></div>}

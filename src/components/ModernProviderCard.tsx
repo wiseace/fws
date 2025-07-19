@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { User, MapPin, Star, Verified, Phone, Mail, Calendar } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { ContactModal } from './ContactModal';
+import { DirectContactModal } from './DirectContactModal';
 import { ProfileModal } from './ProfileModal';
 import type { Provider } from '@/types/database';
 
@@ -219,7 +219,7 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
       </div>
 
       {primaryService && (
-        <ContactModal 
+        <DirectContactModal 
           service={{
             ...primaryService,
             user_id: provider.id,
