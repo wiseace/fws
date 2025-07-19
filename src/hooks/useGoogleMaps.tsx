@@ -25,6 +25,7 @@ export const useGoogleMaps = () => {
   const getAutocomplete = useCallback(async (input: string): Promise<GoogleMapsAutocompleteResult[]> => {
     try {
       console.log('Making Google Maps autocomplete request for:', input);
+      console.log('Calling supabase.functions.invoke with google-maps-proxy');
       
       const { data, error } = await supabase.functions.invoke('google-maps-proxy', {
         body: {
@@ -34,7 +35,7 @@ export const useGoogleMaps = () => {
         }
       });
 
-      console.log('Google Maps response:', { data, error });
+      console.log('Supabase function response:', { data, error });
 
       if (error) {
         console.error('Supabase function error:', error);

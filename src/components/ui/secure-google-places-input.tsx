@@ -20,6 +20,7 @@ export const SecureGooglePlacesInput = ({
   disabled, 
   className
 }: SecureGooglePlacesInputProps) => {
+  console.log('SecureGooglePlacesInput component rendered with value:', value);
   const [suggestions, setSuggestions] = useState<GoogleMapsAutocompleteResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,7 @@ export const SecureGooglePlacesInput = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
+    console.log('Input changed to:', newValue);
     onChange?.(newValue);
     
     // Debounce the search

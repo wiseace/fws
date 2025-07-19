@@ -37,6 +37,7 @@ export const AddressInput = ({
   className,
   useGooglePlaces = false
 }: AddressInputProps) => {
+  console.log('AddressInput rendered with useGooglePlaces:', useGooglePlaces);
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
