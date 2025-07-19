@@ -360,9 +360,9 @@ const Admin = () => {
             </div>
           </div>
 
-          {/* Enhanced Stats Grid */}
+          {/* Enhanced Stats Grid - Better balanced layout */}
           {stats && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <Card 
                 className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105" 
                 onClick={() => setActiveTab('users')}
@@ -433,16 +433,84 @@ const Admin = () => {
             </div>
           )}
 
+          {/* Quick Actions Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200 hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-indigo-500 rounded-lg">
+                    <Shield className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-indigo-900">Verification Center</h3>
+                    <p className="text-sm text-indigo-700">Review pending verifications</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setActiveTab('verifications')}
+                    className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+                  >
+                    Manage
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-teal-500 rounded-lg">
+                    <MessageSquare className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-teal-900">Messages Center</h3>
+                    <p className="text-sm text-teal-700">Handle user communications</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setActiveTab('messages')}
+                    className="border-teal-300 text-teal-700 hover:bg-teal-50"
+                  >
+                    View
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-amber-500 rounded-lg">
+                    <Settings className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-amber-900">Categories</h3>
+                    <p className="text-sm text-amber-700">Manage service categories</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setActiveTab('categories')}
+                    className="border-amber-300 text-amber-700 hover:bg-amber-50"
+                  >
+                    Edit
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Modern Tabs Interface */}
           <div className="px-6 pb-8">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <div className="flex items-center justify-center">
-                <TabsList className="grid grid-cols-4 w-full max-w-3xl bg-muted/30 p-1 rounded-full h-12">
+                <TabsList className="grid grid-cols-4 w-full max-w-2xl bg-muted/30 p-1 rounded-full h-12">
                   <TabsTrigger value="verifications" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Verifications</TabsTrigger>
                   <TabsTrigger value="users" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Users</TabsTrigger>
                   <TabsTrigger value="services" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Services</TabsTrigger>
                   <TabsTrigger value="messages" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Messages</TabsTrigger>
-                  <TabsTrigger value="categories" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Categories</TabsTrigger>
                 </TabsList>
               </div>
 
