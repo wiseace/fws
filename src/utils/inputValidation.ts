@@ -210,7 +210,7 @@ export const validateFile = (file: File, allowedTypes: string[], maxSize: number
 };
 
 // Generic form validation helper
-export const validateForm = (data: Record<string, any>, rules: Record<string, (value: any) => { isValid: boolean; error?: string }>): { isValid: boolean; errors: Record<string, string> } => {
+export const validateForm = (data: Record<string, unknown>, rules: Record<string, (value: unknown) => { isValid: boolean; error?: string }>): { isValid: boolean; errors: Record<string, string> } => {
   const errors: Record<string, string> = {};
   
   for (const [field, validator] of Object.entries(rules)) {

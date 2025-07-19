@@ -45,7 +45,7 @@ const AdminCategories = () => {
     }
   }, [profile]);
 
-  const handleDataChange = (data: Category[], paginationInfo: any) => {
+  const handleDataChange = (data: Category[], paginationInfo: { currentPage: number; totalPages: number; totalItems: number; startIndex: number; endIndex: number }) => {
     setProcessedCategories(data);
     setPagination(paginationInfo);
   };

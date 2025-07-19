@@ -139,7 +139,14 @@ const Providers = () => {
     }
   };
 
-  const handleSmartSearch = (filters: any) => {
+  const handleSmartSearch = (filters: {
+    searchTerm?: string;
+    location?: string;
+    userLocation?: { lat: number; lng: number };
+    minPrice?: number;
+    maxPrice?: number;
+    availabilityOnly?: boolean;
+  }) => {
     console.log('Smart search triggered with:', filters);
     performSearch({
       searchTerm: filters.searchTerm,

@@ -105,15 +105,15 @@ export const validateAuthToken = (token: string): boolean => {
 };
 
 // Authorization helpers
-export const hasAdminRole = (userProfile: any): boolean => {
+export const hasAdminRole = (userProfile: { user_type?: string; is_verified?: boolean }): boolean => {
   return userProfile?.user_type === 'admin' && userProfile?.is_verified === true;
 };
 
-export const hasVerifiedStatus = (userProfile: any): boolean => {
+export const hasVerifiedStatus = (userProfile: { verification_status?: string }): boolean => {
   return userProfile?.verification_status === 'verified';
 };
 
-export const hasActiveSubscription = (userProfile: any): boolean => {
+export const hasActiveSubscription = (userProfile: { subscription_plan?: string; subscription_expiry?: string }): boolean => {
   if (!userProfile?.subscription_plan || userProfile.subscription_plan === 'free') {
     return false;
   }
