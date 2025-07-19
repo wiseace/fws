@@ -3,7 +3,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Verified, Award } from 'lucide-react';
 
 interface ProviderVerificationProps {
-  user: any;
+  user: {
+    verification_status: string;
+    is_verified?: boolean;
+  };
 }
 
 export const ProviderVerification = ({ user }: ProviderVerificationProps) => {

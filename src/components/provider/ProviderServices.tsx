@@ -3,7 +3,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 interface ProviderServicesProps {
-  services: any[];
+  services: Array<{
+    id: string;
+    service_name: string;
+    category: string;
+    description?: string;
+    image_url?: string;
+    is_active: boolean;
+  }>;
 }
 
 export const ProviderServices = ({ services }: ProviderServicesProps) => {

@@ -4,7 +4,12 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Mail, Star, Calendar, Lock } from 'lucide-react';
 
 interface ProviderInfoProps {
-  mainService: any;
+  mainService: {
+    service_name: string;
+    category: string;
+    description?: string;
+    location?: string;
+  };
   canAccessContactInfo: boolean;
   contactInfo: { phone: string | null; email: string | null };
   onContactClick: () => void;

@@ -6,11 +6,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { DirectContactModal } from './DirectContactModal';
 import { ProfileModal } from './ProfileModal';
-import type { Provider } from '@/types/database';
+import type { Provider, Service } from '@/types/database';
 
 interface ModernProviderCardProps {
   provider: Provider;
-  onContactClick?: (service: any) => void;
+  onContactClick?: (service: Service) => void;
 }
 
 export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderCardProps) => {

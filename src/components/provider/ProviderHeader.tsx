@@ -3,8 +3,21 @@ import { Card } from '@/components/ui/card';
 import { Verified } from 'lucide-react';
 
 interface ProviderHeaderProps {
-  user: any;
-  mainService: any;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+    profile_image_url?: string;
+    verification_status: string;
+    is_verified?: boolean;
+  };
+  mainService: {
+    service_name: string;
+    category: string;
+    description?: string;
+    image_url?: string;
+  };
 }
 
 export const ProviderHeader = ({ user, mainService }: ProviderHeaderProps) => {

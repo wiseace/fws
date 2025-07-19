@@ -31,7 +31,15 @@ interface SmartSearchResultsProps {
   results: SearchResult[];
   isLoading: boolean;
   hasSearched: boolean;
-  searchFilters: any;
+  searchFilters: {
+    category?: string;
+    location?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    availability?: boolean;
+    searchTerm?: string;
+    availabilityOnly?: boolean;
+  };
   onClearSearch: () => void;
 }
 
@@ -183,7 +191,7 @@ export const SmartSearchResults = ({
                 {searchFilters.location}
               </Badge>
             )}
-            {searchFilters.availabilityOnly && (
+            {searchFilters.availability && (
               <Badge variant="outline" className="bg-yellow-50 text-yellow-700">
                 <Clock className="w-3 h-3 mr-1" />
                 Available Now
