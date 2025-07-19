@@ -634,7 +634,9 @@ export type Database = {
         }[]
       }
       update_user_profile: {
-        Args: { user_name?: string; user_phone?: string }
+        Args:
+          | { user_name?: string; user_phone?: string }
+          | { user_name?: string; user_phone?: string; user_address?: string }
         Returns: undefined
       }
       update_verification_status: {

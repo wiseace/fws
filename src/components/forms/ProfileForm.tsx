@@ -82,16 +82,11 @@ export const ProfileForm = () => {
 
       const { error } = await supabase.rpc('update_user_profile', {
         user_name: sanitizedName,
-        user_phone: sanitizedPhone
+        user_phone: sanitizedPhone,
+        user_address: sanitizedAddress
       });
 
-      // Update address separately since it's not in the RPC function yet
-      const { error: addressError } = await supabase
-        .from('users')
-        .update({ address: sanitizedAddress })
-        .eq('id', user?.id);
-
-      if (error || addressError) throw error || addressError;
+      if (error) throw error;
 
       toast({
         title: "Profile Updated",
