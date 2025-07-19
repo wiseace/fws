@@ -11,7 +11,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { AdminTableControls } from '@/components/admin/AdminTableControls';
 
-import { User as UserType, VerificationRequest, ContactRequest, Service } from '@/types/database';
+import { User as UserType, VerificationRequest, Service } from '@/types/database';
 import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
@@ -23,14 +23,12 @@ const EnhancedAdmin = () => {
   
   const [users, setUsers] = useState<UserType[]>([]);
   const [verificationRequests, setVerificationRequests] = useState<VerificationRequest[]>([]);
-  const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [stats, setStats] = useState<any>(null);
 
   // Pagination states for each tab
   const [displayedUsers, setDisplayedUsers] = useState<UserType[]>([]);
   const [displayedVerifications, setDisplayedVerifications] = useState<VerificationRequest[]>([]);
-  const [displayedContacts, setDisplayedContacts] = useState<ContactRequest[]>([]);
   const [displayedServices, setDisplayedServices] = useState<Service[]>([]);
 
   useEffect(() => {
@@ -41,7 +39,6 @@ const EnhancedAdmin = () => {
       // Clear existing state to avoid stale data
       setVerificationRequests([]);
       setUsers([]);
-      setContactRequests([]);
       setServices([]);
       setStats(null);
       fetchAllData();
@@ -726,120 +723,6 @@ const EnhancedAdmin = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="contacts" className="space-y-6 animate-fade-in">
-                <div className="bg-card rounded-2xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary rounded-xl">
-                        <User className="h-5 w-5 text-primary-foreground" />
-                      </div>
-                      <div>
-                        <h2 className="text-xl font-semibold text-foreground">Contact Requests</h2>
-                        <p className="text-sm text-muted-foreground">Monitor service contact activity and user engagement</p>
-                      </div>
-                    </div>
-                    <div className="px-3 py-1.5 bg-muted rounded-lg">
-                      <span className="text-sm font-medium text-foreground">{contactRequests.length} total contacts</span>
-                    </div>
-                  </div>
-
-                  <AdminTableControls
-                    data={contactRequests}
-                    searchPlaceholder="Search contacts by seeker, provider, or service..."
-                    searchFields={['message', 'contact_method']}
-                    filterOptions={[
-                      {
-                        label: 'Contact Method',
-                        field: 'contact_method',
-                        options: [
-                          { label: 'Email', value: 'email', count: contactRequests.filter(c => c.contact_method === 'email').length },
-                          { label: 'Phone', value: 'phone', count: contactRequests.filter(c => c.contact_method === 'phone').length }
-                        ]
-                      }
-                    ]}
-                    sortOptions={[
-                      { label: 'Created Date', value: 'created_at' },
-                      { label: 'Contact Method', value: 'contact_method' }
-                    ]}
-                    itemsPerPage={8}
-                    onDataChange={(data) => setDisplayedContacts(data)}
-                  />
-
-                  <div className="space-y-4 mt-6">
-                    {displayedContacts.length === 0 ? (
-                      <div className="text-center py-16 bg-muted/30 rounded-xl border border-border">
-                        <div className="p-4 bg-muted rounded-xl w-fit mx-auto mb-4">
-                          <User className="h-12 w-12 text-muted-foreground" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-foreground mb-2">No Contact Requests</h3>
-                        <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                          Contact requests will appear here when users reach out to providers for services.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="grid gap-4">
-                        {displayedContacts.map((request) => (
-                          <div key={request.id} className="bg-card rounded-xl border border-border hover:bg-muted/30 transition-colors duration-200">
-                            <div className="p-4">
-                              <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
-                                  <span className="text-lg">💬</span>
-                                </div>
-                                
-                                <div className="flex-1 space-y-3">
-                                  <div className="flex items-start justify-between">
-                                    <div>
-                                      <h3 className="text-base font-semibold text-foreground mb-1">
-                                        <span className="text-blue-600">{(request as any).seeker?.name}</span>
-                                        <span className="text-muted-foreground mx-1">→</span>
-                                        <span className="text-green-600">{(request as any).provider?.name}</span>
-                                      </h3>
-                                      <div className="flex items-center gap-2">
-                                        <Badge variant="secondary" className="rounded-lg text-xs">
-                                          🔧 {(request as any).service?.service_name}
-                                        </Badge>
-                                        <Badge variant="outline" className="rounded-lg text-xs">
-                                          📧 {request.contact_method}
-                                        </Badge>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="text-right">
-                                      <p className="text-xs text-muted-foreground">
-                                        {new Date(request.created_at).toLocaleDateString('en-US', { 
-                                          month: 'short',
-                                          day: 'numeric',
-                                          year: 'numeric'
-                                        })}
-                                      </p>
-                                      <p className="text-xs text-muted-foreground">
-                                        {new Date(request.created_at).toLocaleTimeString('en-US', { 
-                                          hour: '2-digit',
-                                          minute: '2-digit'
-                                        })}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  
-                                  {request.message && (
-                                    <div className="p-3 bg-muted/50 rounded-lg border border-border">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-sm">💭</span>
-                                        <span className="text-xs font-medium text-muted-foreground">Message</span>
-                                      </div>
-                                      <p className="text-sm text-foreground leading-relaxed">{request.message}</p>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
 
               <TabsContent value="services" className="space-y-6 animate-fade-in">
                 <div className="bg-card rounded-2xl p-6 border border-border">
