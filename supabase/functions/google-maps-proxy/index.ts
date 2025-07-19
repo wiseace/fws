@@ -67,23 +67,42 @@ serve(async (req) => {
         
         console.log('Making NEW Places API autocomplete request for:', input);
         
-        // NEW Places API uses POST with JSON body
-        response = await fetch(`https://places.googleapis.com/v1/places:autocomplete`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Goog-Api-Key': googleMapsApiKey
-          },
-          body: JSON.stringify({
-            input: input,
-            includedPrimaryTypes: ['address'],
-            languageCode: 'en',
-            regionCode: 'NG'  // Focus on Nigeria
-          })
-        });
+        try {
+          // NEW Places API uses POST with JSON body
+          response = await fetch(`https://places.googleapis.com/v1/places:autocomplete`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Goog-Api-Key': googleMapsApiKey
+            },
+            body: JSON.stringify({
+              input: input,
+              includedPrimaryTypes: ['address'],
+              languageCode: 'en',
+              regionCode: 'NG'  // Focus on Nigeria
+            })
+          });
+          
+          if (!response.ok) {
+            console.error('Places API HTTP error:', response.status, response.statusText);
+            const errorText = await response.text();
+            console.error('Places API error response:', errorText);
+            throw new Error(`Places API error: ${response.status} ${response.statusText}`);
+          }
+        } catch (fetchError) {
+          console.error('Fetch error:', fetchError);
+          throw fetchError;
+        }
         
-        data = await response.json();
-        console.log('NEW Places API response:', JSON.stringify(data, null, 2));
+        try {
+          data = await response.json();
+          console.log('NEW Places API response:', JSON.stringify(data, null, 2));
+        } catch (jsonError) {
+          console.error('Failed to parse JSON response:', jsonError);
+          const textResponse = await response.text();
+          console.error('Raw response text:', textResponse);
+          throw new Error('Invalid JSON response from Places API');
+        }
         
         // Transform NEW Places API response to match expected format
         // The NEW API returns { suggestions: [...] } where each suggestion has placePrediction
@@ -107,6 +126,7 @@ serve(async (req) => {
           console.log('Transformed data:', JSON.stringify(data, null, 2));
         } else {
           console.log('No suggestions found in response or wrong format');
+          console.log('Available data keys:', Object.keys(data));
           data = { predictions: [] };
         }
         break;
