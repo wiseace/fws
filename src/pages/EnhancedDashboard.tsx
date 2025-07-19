@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { Service, Category, ContactRequest, User } from '@/types/database';
+import { Service, Category, ContactRequest, User, getContactPhone, getContactEmail } from '@/types/database';
 import { 
   Plus, 
   Eye, 
@@ -591,21 +591,21 @@ const EnhancedDashboard = () => {
                                       Created {new Date(service.created_at).toLocaleDateString()}
                                     </span>
                                   </div>
-                                  {(service.contact_info?.phone || service.contact_info?.email) && (
-                                    <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
-                                      {service.contact_info?.phone && (
-                                        <span className="flex items-center">
-                                          <Phone className="w-4 h-4 mr-1" />
-                                          {service.contact_info.phone}
-                                        </span>
-                                      )}
-                                      {service.contact_info?.email && (
-                                        <span className="flex items-center">
-                                          <Mail className="w-4 h-4 mr-1" />
-                                          {service.contact_info.email}
-                                        </span>
-                                      )}
-                                    </div>
+                  {(getContactPhone(service.contact_info) || getContactEmail(service.contact_info)) && (
+                    <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
+                      {getContactPhone(service.contact_info) && (
+                        <span className="flex items-center">
+                          <Phone className="w-4 h-4 mr-1" />
+                          {getContactPhone(service.contact_info)}
+                        </span>
+                      )}
+                      {getContactEmail(service.contact_info) && (
+                        <span className="flex items-center">
+                          <Mail className="w-4 h-4 mr-1" />
+                          {getContactEmail(service.contact_info)}
+                        </span>
+                      )}
+                    </div>
                                   )}
                                 </div>
                                 <div className="flex space-x-2">

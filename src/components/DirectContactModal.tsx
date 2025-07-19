@@ -2,7 +2,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Service } from '@/types/database';
+import { Service, getContactPhone, getContactEmail } from '@/types/database';
 import { Phone, Mail, MessageSquare, Verified, ExternalLink } from 'lucide-react';
 import { SubscriptionGate } from './SubscriptionGate';
 import { useState } from 'react';
@@ -25,7 +25,8 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
   };
 
   const handleWhatsAppClick = () => {
-    if (!service.contact_info?.phone) {
+    const phone = getContactPhone(service.contact_info);
+    if (!phone) {
       toast({
         title: "Contact Info Unavailable",
         description: "WhatsApp number not available for this provider.",
@@ -35,13 +36,14 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
     }
     
     // Clean phone number for WhatsApp
-    const cleanPhone = service.contact_info.phone.replace(/[^\d+]/g, '');
+    const cleanPhone = phone.replace(/[^\d+]/g, '');
     const whatsappUrl = `https://wa.me/${cleanPhone}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handlePhoneClick = () => {
-    if (!service.contact_info?.phone) {
+    const phone = getContactPhone(service.contact_info);
+    if (!phone) {
       toast({
         title: "Contact Info Unavailable",
         description: "Phone number not available for this provider.",
@@ -50,11 +52,12 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
       return;
     }
     
-    window.location.href = `tel:${service.contact_info.phone}`;
+    window.location.href = `tel:${phone}`;
   };
 
   const handleEmailClick = () => {
-    if (!service.contact_info?.email) {
+    const email = getContactEmail(service.contact_info);
+    if (!email) {
       toast({
         title: "Contact Info Unavailable",
         description: "Email address not available for this provider.",
@@ -65,7 +68,7 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
     
     const subject = encodeURIComponent(`Inquiry about ${service.service_name}`);
     const body = encodeURIComponent(`Hi ${service.user?.name},\n\nI'm interested in your ${service.service_name} service. Could you please provide more information?\n\nThanks!`);
-    window.location.href = `mailto:${service.contact_info.email}?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -147,7 +150,7 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
               <h4 className="font-medium text-sm text-muted-foreground">Choose your preferred contact method:</h4>
               
               {/* WhatsApp */}
-              {service.contact_info?.phone && (
+                  {getContactPhone(service.contact_info) && (
                 <Button
                   onClick={handleWhatsAppClick}
                   className="w-full justify-start gap-3 h-12 bg-green-600 hover:bg-green-700 text-white"
@@ -155,14 +158,14 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
                   <MessageSquare className="w-5 h-5" />
                   <div className="text-left">
                     <div className="font-medium">WhatsApp</div>
-                    <div className="text-xs opacity-90">{service.contact_info.phone}</div>
+                    <div className="text-xs opacity-90">{getContactPhone(service.contact_info)}</div>
                   </div>
                   <ExternalLink className="w-4 h-4 ml-auto" />
                 </Button>
               )}
 
               {/* Phone Call */}
-              {service.contact_info?.phone && (
+              {getContactPhone(service.contact_info) && (
                 <Button
                   onClick={handlePhoneClick}
                   variant="outline"
@@ -171,14 +174,14 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
                   <Phone className="w-5 h-5 text-blue-600" />
                   <div className="text-left">
                     <div className="font-medium">Phone Call</div>
-                    <div className="text-xs text-muted-foreground">{service.contact_info.phone}</div>
+                    <div className="text-xs text-muted-foreground">{getContactPhone(service.contact_info)}</div>
                   </div>
                   <ExternalLink className="w-4 h-4 ml-auto text-blue-600" />
                 </Button>
               )}
 
               {/* Email */}
-              {service.contact_info?.email && (
+              {getContactEmail(service.contact_info) && (
                 <Button
                   onClick={handleEmailClick}
                   variant="outline"
@@ -187,7 +190,7 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
                   <Mail className="w-5 h-5 text-gray-600" />
                   <div className="text-left">
                     <div className="font-medium">Email</div>
-                    <div className="text-xs text-muted-foreground">{service.contact_info.email}</div>
+                    <div className="text-xs text-muted-foreground">{getContactEmail(service.contact_info)}</div>
                   </div>
                   <ExternalLink className="w-4 h-4 ml-auto text-gray-600" />
                 </Button>

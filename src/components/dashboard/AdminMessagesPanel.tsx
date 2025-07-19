@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { MessageSquare, Send, AlertTriangle, Clock, Eye } from 'lucide-react';
 
@@ -24,6 +25,7 @@ export const AdminMessagesPanel = () => {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const { toast } = useToast();
+  const { profile } = useAuth();
 
   useEffect(() => {
     fetchMessages();
@@ -127,7 +129,8 @@ export const AdminMessagesPanel = () => {
     );
   }
 
-  const hasUnverificationMessage = messages.some(m => m.message_type === 'unverification' && m.is_from_admin);
+  // Check if user is currently unverified (not just if there's an unverification message)
+  const isCurrentlyUnverified = profile?.verification_status === 'not_verified' && profile?.user_type === 'provider';
 
   return (
     <Card>
@@ -135,13 +138,13 @@ export const AdminMessagesPanel = () => {
         <CardTitle className="flex items-center gap-2">
           <MessageSquare className="h-5 w-5" />
           Admin Messages
-          {hasUnverificationMessage && (
+          {isCurrentlyUnverified && (
             <Badge variant="destructive" className="ml-2">Action Required</Badge>
           )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {hasUnverificationMessage && (
+        {isCurrentlyUnverified && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="h-5 w-5 text-red-600" />

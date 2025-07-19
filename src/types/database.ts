@@ -1,4 +1,6 @@
 
+import type { Json } from '@/integrations/supabase/types';
+
 export type UserType = 'provider' | 'seeker' | 'admin';
 export type SubscriptionStatus = 'free' | 'monthly' | 'semi_annual' | 'yearly';
 export type SubscriptionPlan = 'free' | 'monthly' | 'semi_annual' | 'yearly';
@@ -15,7 +17,7 @@ export interface User {
   subscription_plan?: SubscriptionPlan;
   subscription_expiry?: string;
   verification_status: VerificationStatus;
-  verification_documents?: any;
+  verification_documents?: Json;
   can_access_contact?: boolean;
   profile_image_url?: string;
   skills?: string[];
@@ -39,7 +41,7 @@ export interface Service {
   contact_info: {
     phone?: string;
     email?: string;
-  } | any; // Allow Json type from database
+  } | Json; // Allow Json type from database
   location?: string;
   image_url?: string;
   is_active: boolean;
@@ -94,3 +96,22 @@ export interface Provider extends User {
   verification_status: VerificationStatus;
   services: Service[];
 }
+
+// Type guards and utility functions
+export const isContactInfo = (contactInfo: Json | { phone?: string; email?: string; }): contactInfo is { phone?: string; email?: string; } => {
+  return typeof contactInfo === 'object' && contactInfo !== null && !Array.isArray(contactInfo);
+};
+
+export const getContactPhone = (contactInfo: Json | { phone?: string; email?: string; }): string => {
+  if (isContactInfo(contactInfo)) {
+    return contactInfo.phone || '';
+  }
+  return '';
+};
+
+export const getContactEmail = (contactInfo: Json | { phone?: string; email?: string; }): string => {
+  if (isContactInfo(contactInfo)) {
+    return contactInfo.email || '';
+  }
+  return '';
+};

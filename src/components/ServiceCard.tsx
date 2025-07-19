@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Mail, Lock, Star, Verified, User } from 'lucide-react';
-import { Service } from '@/types/database';
+import { Service, getContactPhone, getContactEmail } from '@/types/database';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { DirectContactModal } from './DirectContactModal';
@@ -140,16 +140,16 @@ export const ServiceCard = ({ service, onContactClick }: ServiceCardProps) => {
             <div className="space-y-2 mb-4">
               {canAccessContactInfo ? (
                 <>
-                  {service.contact_info.phone && (
+                  {getContactPhone(service.contact_info) && (
                     <div className="flex items-center text-gray-700">
                       <Phone className="w-4 h-4 mr-2 text-blue-600" />
-                      <span className="text-sm">{service.contact_info.phone}</span>
+                      <span className="text-sm">{getContactPhone(service.contact_info)}</span>
                     </div>
                   )}
-                  {service.contact_info.email && (
+                  {getContactEmail(service.contact_info) && (
                     <div className="flex items-center text-gray-700">
                       <Mail className="w-4 h-4 mr-2 text-blue-600" />
-                      <span className="text-sm">{service.contact_info.email}</span>
+                      <span className="text-sm">{getContactEmail(service.contact_info)}</span>
                     </div>
                   )}
                 </>
