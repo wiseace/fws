@@ -64,24 +64,15 @@ serve(async (req) => {
     switch (endpoint) {
       case 'places-autocomplete':
         const input = requestBody.input
+        const types = requestBody.types || 'address'
         
-        console.log('Making NEW Places API autocomplete request for:', input);
+        console.log('Making LEGACY Places API autocomplete request for:', input);
+        
+        // Use LEGACY Places API (more compatible with Edge Functions)
+        const autocompleteUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input || '')}&types=${types}&components=country:ng&key=${googleMapsApiKey}`;
         
         try {
-          // NEW Places API uses POST with JSON body
-          response = await fetch(`https://places.googleapis.com/v1/places:autocomplete`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Goog-Api-Key': googleMapsApiKey
-            },
-            body: JSON.stringify({
-              input: input,
-              includedPrimaryTypes: ['address'],
-              languageCode: 'en',
-              regionCode: 'NG'  // Focus on Nigeria
-            })
-          });
+          response = await fetch(autocompleteUrl);
           
           if (!response.ok) {
             console.error('Places API HTTP error:', response.status, response.statusText);
@@ -96,7 +87,7 @@ serve(async (req) => {
         
         try {
           data = await response.json();
-          console.log('NEW Places API response:', JSON.stringify(data, null, 2));
+          console.log('LEGACY Places API response:', JSON.stringify(data, null, 2));
         } catch (jsonError) {
           console.error('Failed to parse JSON response:', jsonError);
           const textResponse = await response.text();
@@ -104,31 +95,8 @@ serve(async (req) => {
           throw new Error('Invalid JSON response from Places API');
         }
         
-        // Transform NEW Places API response to match expected format
-        // The NEW API returns { suggestions: [...] } where each suggestion has placePrediction
-        if (data.suggestions && Array.isArray(data.suggestions)) {
-          console.log('Found suggestions, transforming...');
-          const transformedPredictions = data.suggestions.map((suggestion: any) => {
-            console.log('Processing suggestion:', JSON.stringify(suggestion, null, 2));
-            return {
-              description: suggestion.placePrediction?.text?.text || suggestion.text?.text || 'Unknown location',
-              place_id: suggestion.placePrediction?.placeId || 'unknown',
-              structured_formatting: {
-                main_text: suggestion.placePrediction?.structuredFormat?.mainText?.text || '',
-                secondary_text: suggestion.placePrediction?.structuredFormat?.secondaryText?.text || ''
-              }
-            };
-          });
-          
-          data = {
-            predictions: transformedPredictions
-          };
-          console.log('Transformed data:', JSON.stringify(data, null, 2));
-        } else {
-          console.log('No suggestions found in response or wrong format');
-          console.log('Available data keys:', Object.keys(data));
-          data = { predictions: [] };
-        }
+        // Legacy API already returns the correct format: { predictions: [...] }
+        console.log('Using legacy API response directly - no transformation needed');
         break;
         
       case 'place-details':
