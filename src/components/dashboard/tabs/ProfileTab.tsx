@@ -322,44 +322,6 @@ export const ProfileTab = () => {
         </Card>
       </div>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button 
-              variant="outline" 
-              onClick={() => window.location.href = '/pricing'}
-              className="flex items-center gap-2"
-            >
-              <CreditCard className="h-4 w-4" />
-              Upgrade Plan
-            </Button>
-            
-            {profile?.user_type === 'provider' && (
-              <Button 
-                variant="outline" 
-                onClick={() => window.location.href = '/provider-profile'}
-                className="flex items-center gap-2"
-              >
-                <Settings className="h-4 w-4" />
-                Provider Settings
-              </Button>
-            )}
-            
-            <Button 
-              variant="outline" 
-              onClick={() => window.location.href = '/browse'}
-              className="flex items-center gap-2"
-            >
-              <User className="h-4 w-4" />
-              Browse Services
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
