@@ -434,7 +434,7 @@ const Admin = () => {
           )}
 
           {/* Quick Actions Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
@@ -474,27 +474,6 @@ const Admin = () => {
                     className="border-teal-300 text-teal-700 hover:bg-teal-50"
                   >
                     View
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105">
-              <CardContent className="p-4" onClick={() => window.location.href = '/admin/categories'}>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-amber-500 rounded-lg">
-                    <Settings className="h-5 w-5 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-amber-900">Manage Categories</h3>
-                    <p className="text-sm text-amber-700">Quick access to categories</p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-amber-300 text-amber-700 hover:bg-amber-50"
-                  >
-                    Access
                   </Button>
                 </div>
               </CardContent>
