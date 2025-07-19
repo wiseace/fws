@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react';
+import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
@@ -26,9 +27,7 @@ interface ServiceSuggestion {
 }
 
 interface LocationSuggestion {
-  display_name: string;
-  lat: string;
-  lon: string;
+  description: string;
   place_id: string;
 }
 
@@ -49,6 +48,7 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
   // Location suggestions state
   const [locationSuggestions, setLocationSuggestions] = useState<LocationSuggestion[]>([]);
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
+  const { getAutocomplete, getPlaceDetails } = useGoogleMaps();
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
 
   // Refs for debouncing
@@ -92,7 +92,7 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
     }
   };
 
-  // Fetch location suggestions from Nominatim API
+  // Fetch location suggestions from Google Places API
   const fetchLocationSuggestions = async (query: string) => {
     if (!query || query.length < 3) {
       setLocationSuggestions([]);
@@ -101,11 +101,8 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
 
     setIsLoadingLocations(true);
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=ng&q=${encodeURIComponent(query)}`
-      );
-      const data = await response.json();
-      setLocationSuggestions(data || []);
+      const suggestions = await getAutocomplete(query);
+      setLocationSuggestions(suggestions || []);
     } catch (error) {
       console.error('Error fetching location suggestions:', error);
       setLocationSuggestions([]);
@@ -172,14 +169,23 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
   };
 
   // Handle location suggestion selection
-  const handleLocationSuggestionClick = (suggestion: LocationSuggestion) => {
-    setLocation(suggestion.display_name);
-    setUserLocation({
-      lat: parseFloat(suggestion.lat),
-      lng: parseFloat(suggestion.lon)
-    });
+  const handleLocationSuggestionClick = async (suggestion: LocationSuggestion) => {
+    setLocation(suggestion.description);
     setLocationSuggestions([]);
     setShowLocationSuggestions(false);
+    
+    // Get coordinates from place details
+    try {
+      const placeDetails = await getPlaceDetails(suggestion.place_id);
+      if (placeDetails) {
+        setUserLocation({
+          lat: placeDetails.latitude,
+          lng: placeDetails.longitude
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching place details:', error);
+    }
   };
 
   const handleGetLocation = () => {
@@ -349,7 +355,7 @@ export const SmartSearchBar = ({ onSearch, className = "" }: SmartSearchBarProps
                   >
                     <div className="flex items-center">
                       <MapPin className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />
-                      <span className="text-gray-900 text-sm">{suggestion.display_name}</span>
+                      <span className="text-gray-900 text-sm">{suggestion.description}</span>
                     </div>
                   </div>
                 ))}

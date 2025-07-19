@@ -32,6 +32,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { AddressInput } from '@/components/ui/address-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const EnhancedDashboard = () => {
@@ -507,10 +508,11 @@ const EnhancedDashboard = () => {
                             </div>
                             <div>
                               <Label htmlFor="location">Location</Label>
-                              <Input
-                                id="location"
+                              <AddressInput
                                 value={serviceForm.location}
-                                onChange={(e) => setServiceForm({ ...serviceForm, location: e.target.value })}
+                                onChange={(value) => setServiceForm({ ...serviceForm, location: value })}
+                                placeholder="Start typing your address..."
+                                useGooglePlaces={true}
                               />
                             </div>
                             <div className="grid grid-cols-2 gap-4">

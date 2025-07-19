@@ -166,7 +166,7 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
           phone: profile.phone, 
           email: profile.email 
         },
-        location: profile.phone, // Use user's location from profile/verification
+        location: (profile as any).formatted_address || (profile as any).address || '', // Use user's address from profile
         image_url: finalImageUrl
       };
 

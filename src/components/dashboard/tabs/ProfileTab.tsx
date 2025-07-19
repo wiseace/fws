@@ -252,9 +252,10 @@ export const ProfileTab = () => {
                   onChange={setAddress}
                   placeholder="Start typing your address..."
                   disabled={loading}
+                  useGooglePlaces={true}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  We'll suggest addresses as you type using OpenStreetMap
+                  We'll suggest addresses as you type using Google Places
                 </p>
               </div>
               
