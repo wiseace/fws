@@ -83,20 +83,31 @@ serve(async (req) => {
         });
         
         data = await response.json();
-        console.log('NEW Places API response:', data);
+        console.log('NEW Places API response:', JSON.stringify(data, null, 2));
         
         // Transform NEW Places API response to match expected format
-        if (data.suggestions) {
-          data = {
-            predictions: data.suggestions.map((suggestion: any) => ({
-              description: suggestion.placePrediction?.text?.text || '',
-              place_id: suggestion.placePrediction?.placeId || '',
+        // The NEW API returns { suggestions: [...] } where each suggestion has placePrediction
+        if (data.suggestions && Array.isArray(data.suggestions)) {
+          console.log('Found suggestions, transforming...');
+          const transformedPredictions = data.suggestions.map((suggestion: any) => {
+            console.log('Processing suggestion:', JSON.stringify(suggestion, null, 2));
+            return {
+              description: suggestion.placePrediction?.text?.text || suggestion.text?.text || 'Unknown location',
+              place_id: suggestion.placePrediction?.placeId || 'unknown',
               structured_formatting: {
                 main_text: suggestion.placePrediction?.structuredFormat?.mainText?.text || '',
                 secondary_text: suggestion.placePrediction?.structuredFormat?.secondaryText?.text || ''
               }
-            }))
+            };
+          });
+          
+          data = {
+            predictions: transformedPredictions
           };
+          console.log('Transformed data:', JSON.stringify(data, null, 2));
+        } else {
+          console.log('No suggestions found in response or wrong format');
+          data = { predictions: [] };
         }
         break;
         
