@@ -28,7 +28,7 @@ export const ProfileTab = () => {
     if (profile) {
       setName(profile.name || '');
       setPhone(profile.phone || '');
-      setAddress(''); // Address field would need to be added to database
+      setAddress((profile as any).address || '');
       // Use uploaded profile image or fallback to generated avatar
       setProfileImage(profile.profile_image_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile.name}`);
     }
@@ -117,6 +117,7 @@ export const ProfileTab = () => {
         .update({
           name: name,
           phone: phone,
+          address: address,
           profile_image_url: uploadedImageUrl || profileImage,
           updated_at: new Date().toISOString()
         })
