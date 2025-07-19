@@ -143,51 +143,72 @@ export type Database = {
       services: {
         Row: {
           category: string
+          city: string | null
           contact_info: Json
+          country: string | null
           created_at: string
           description: string | null
+          formatted_address: string | null
           id: string
           image_url: string | null
           is_active: boolean
+          latitude: number | null
           location: string | null
+          longitude: number | null
+          postal_code: string | null
           price_range_max: number | null
           price_range_min: number | null
           service_name: string
           skills: string[] | null
+          state: string | null
           tags: string[] | null
           updated_at: string
           user_id: string
         }
         Insert: {
           category: string
+          city?: string | null
           contact_info?: Json
+          country?: string | null
           created_at?: string
           description?: string | null
+          formatted_address?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
+          postal_code?: string | null
           price_range_max?: number | null
           price_range_min?: number | null
           service_name: string
           skills?: string[] | null
+          state?: string | null
           tags?: string[] | null
           updated_at?: string
           user_id: string
         }
         Update: {
           category?: string
+          city?: string | null
           contact_info?: Json
+          country?: string | null
           created_at?: string
           description?: string | null
+          formatted_address?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
+          postal_code?: string | null
           price_range_max?: number | null
           price_range_min?: number | null
           service_name?: string
           skills?: string[] | null
+          state?: string | null
           tags?: string[] | null
           updated_at?: string
           user_id?: string
@@ -310,19 +331,26 @@ export type Database = {
           address: string | null
           availability_status: string | null
           can_access_contact: boolean | null
+          city: string | null
           city_or_state: string | null
+          country: string | null
           created_at: string
           email: string
+          formatted_address: string | null
           id: string
           is_verified: boolean
           last_active: string | null
+          latitude: number | null
+          longitude: number | null
           name: string
           phone: string | null
+          postal_code: string | null
           price_range_max: number | null
           price_range_min: number | null
           profile_image_url: string | null
           service_location: string | null
           skills: string[] | null
+          state: string | null
           subscription_expiry: string | null
           subscription_plan:
             | Database["public"]["Enums"]["subscription_plan"]
@@ -340,19 +368,26 @@ export type Database = {
           address?: string | null
           availability_status?: string | null
           can_access_contact?: boolean | null
+          city?: string | null
           city_or_state?: string | null
+          country?: string | null
           created_at?: string
           email: string
+          formatted_address?: string | null
           id: string
           is_verified?: boolean
           last_active?: string | null
+          latitude?: number | null
+          longitude?: number | null
           name: string
           phone?: string | null
+          postal_code?: string | null
           price_range_max?: number | null
           price_range_min?: number | null
           profile_image_url?: string | null
           service_location?: string | null
           skills?: string[] | null
+          state?: string | null
           subscription_expiry?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
@@ -370,19 +405,26 @@ export type Database = {
           address?: string | null
           availability_status?: string | null
           can_access_contact?: boolean | null
+          city?: string | null
           city_or_state?: string | null
+          country?: string | null
           created_at?: string
           email?: string
+          formatted_address?: string | null
           id?: string
           is_verified?: boolean
           last_active?: string | null
+          latitude?: number | null
+          longitude?: number | null
           name?: string
           phone?: string | null
+          postal_code?: string | null
           price_range_max?: number | null
           price_range_min?: number | null
           profile_image_url?: string | null
           service_location?: string | null
           skills?: string[] | null
+          state?: string | null
           subscription_expiry?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
@@ -634,7 +676,20 @@ export type Database = {
         }[]
       }
       update_user_profile: {
-        Args: { user_name?: string; user_phone?: string; user_address?: string }
+        Args:
+          | { user_name?: string; user_phone?: string; user_address?: string }
+          | {
+              user_name?: string
+              user_phone?: string
+              user_address?: string
+              user_latitude?: number
+              user_longitude?: number
+              user_city?: string
+              user_state?: string
+              user_country?: string
+              user_postal_code?: string
+              user_formatted_address?: string
+            }
         Returns: undefined
       }
       update_verification_status: {

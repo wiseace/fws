@@ -1,47 +1,31 @@
 import { useState, useRef, useEffect } from 'react';
 import { Input } from './input';
-import { SecureGooglePlacesInput } from './secure-google-places-input';
 import { cn } from '@/lib/utils';
+import { useGoogleMaps, GoogleMapsAutocompleteResult, GoogleMapsPlace } from '@/hooks/useGoogleMaps';
 
-interface AddressInputProps {
+interface SecureGooglePlacesInputProps {
   value?: string;
   onChange?: (value: string) => void;
-  onPlaceSelect?: (place: {
-    formatted_address: string;
-    latitude: number;
-    longitude: number;
-    city?: string;
-    state?: string;
-    country?: string;
-    postal_code?: string;
-  }) => void;
+  onPlaceSelect?: (place: GoogleMapsPlace) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-  useGooglePlaces?: boolean;
 }
 
-interface AddressSuggestion {
-  display_name: string;
-  lat: string;
-  lon: string;
-  place_id: string;
-}
-
-export const AddressInput = ({ 
+export const SecureGooglePlacesInput = ({ 
   value = '', 
   onChange, 
   onPlaceSelect,
   placeholder = "Enter address", 
   disabled, 
-  className,
-  useGooglePlaces = false
-}: AddressInputProps) => {
-  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+  className
+}: SecureGooglePlacesInputProps) => {
+  const [suggestions, setSuggestions] = useState<GoogleMapsAutocompleteResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout>();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { getAutocomplete, getPlaceDetails } = useGoogleMaps();
 
   const searchAddresses = async (query: string) => {
     if (!query || query.length < 3) {
@@ -51,11 +35,8 @@ export const AddressInput = ({
 
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(query)}`
-      );
-      const data = await response.json();
-      setSuggestions(data || []);
+      const results = await getAutocomplete(query);
+      setSuggestions(results);
     } catch (error) {
       console.error('Error fetching address suggestions:', error);
       setSuggestions([]);
@@ -79,10 +60,24 @@ export const AddressInput = ({
     }, 300);
   };
 
-  const handleSuggestionClick = (suggestion: AddressSuggestion) => {
-    onChange?.(suggestion.display_name);
-    setSuggestions([]);
-    setShowSuggestions(false);
+  const handleSuggestionClick = async (suggestion: GoogleMapsAutocompleteResult) => {
+    setLoading(true);
+    try {
+      const placeDetails = await getPlaceDetails(suggestion.place_id);
+      if (placeDetails) {
+        onChange?.(placeDetails.formatted_address);
+        onPlaceSelect?.(placeDetails);
+      } else {
+        onChange?.(suggestion.description);
+      }
+    } catch (error) {
+      console.error('Error getting place details:', error);
+      onChange?.(suggestion.description);
+    } finally {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      setLoading(false);
+    }
   };
 
   const handleInputFocus = () => {
@@ -106,21 +101,6 @@ export const AddressInput = ({
     };
   }, []);
 
-  // Use Google Places if enabled (through secure edge function)
-  if (useGooglePlaces) {
-    return (
-      <SecureGooglePlacesInput
-        value={value}
-        onChange={onChange}
-        onPlaceSelect={onPlaceSelect}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={className}
-      />
-    );
-  }
-
-  // Fallback to Nominatim (OpenStreetMap) implementation
   return (
     <div className="relative">
       <Input
@@ -143,7 +123,14 @@ export const AddressInput = ({
               className="px-3 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm border-b last:border-b-0"
               onClick={() => handleSuggestionClick(suggestion)}
             >
-              {suggestion.display_name}
+              <div className="font-medium">
+                {suggestion.structured_formatting?.main_text || suggestion.description}
+              </div>
+              {suggestion.structured_formatting?.secondary_text && (
+                <div className="text-xs text-muted-foreground">
+                  {suggestion.structured_formatting.secondary_text}
+                </div>
+              )}
             </div>
           ))}
         </div>
