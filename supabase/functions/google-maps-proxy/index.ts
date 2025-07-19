@@ -6,6 +6,8 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  console.log('Google Maps Proxy called with method:', req.method);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -13,6 +15,7 @@ serve(async (req) => {
 
   try {
     const googleMapsApiKey = Deno.env.get('GOOGLE_MAPS_API_KEY')
+    console.log('Google Maps API Key available:', !!googleMapsApiKey);
     
     if (!googleMapsApiKey) {
       return new Response(
@@ -27,8 +30,12 @@ serve(async (req) => {
     // Parse request body
     let requestBody
     try {
-      requestBody = await req.json()
+      const text = await req.text();
+      console.log('Raw request body:', text);
+      requestBody = JSON.parse(text);
+      console.log('Parsed request body:', requestBody);
     } catch (error) {
+      console.error('JSON parsing error:', error);
       return new Response(
         JSON.stringify({ error: 'Invalid JSON body' }),
         { 

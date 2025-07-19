@@ -108,6 +108,7 @@ export const AddressInput = ({
 
   // Use Google Places if enabled (through secure edge function)
   if (useGooglePlaces) {
+    console.log('Using Google Places for address input');
     return (
       <SecureGooglePlacesInput
         value={value}

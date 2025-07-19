@@ -57,6 +57,7 @@ export const SecureGooglePlacesInput = ({
     }
     
     debounceTimeoutRef.current = setTimeout(() => {
+      console.log('Debounced search triggered for:', newValue);
       searchAddresses(newValue);
       setShowSuggestions(true);
     }, 300);
