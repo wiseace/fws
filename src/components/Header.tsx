@@ -18,12 +18,12 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white/80 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/30 px-6 py-4 backdrop-saturate-150">
-          <div className="flex justify-between items-center h-14">
+        <div className="bg-white/80 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/30 px-4 sm:px-6 py-3 sm:py-4 backdrop-saturate-150">
+          <div className="flex justify-between items-center h-12 sm:h-14">
           {/* Logo */}
           <div className="flex items-center">
             <div className="cursor-pointer" onClick={() => window.location.href = '/'}>
-              <img src={findWhoSabiLogo} alt="FindWhoSabi" className="h-10 w-auto" />
+              <img src={findWhoSabiLogo} alt="FindWhoSabi" className="h-8 sm:h-10 w-auto max-w-[120px] sm:max-w-none" />
             </div>
           </div>
 
@@ -44,14 +44,14 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
 
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 rounded-xl px-4 py-2 transition-all duration-300">
-                    <User className="w-5 h-5 text-blue-600" />
-                    <span className="hidden lg:inline text-gray-800 font-medium">{profile?.name}</span>
+                  <Button variant="ghost" className="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 rounded-xl px-2 sm:px-4 py-2 transition-all duration-300">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                    <span className="hidden md:inline text-gray-800 font-medium text-sm sm:text-base truncate max-w-[80px] sm:max-w-none">{profile?.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-white/95 backdrop-blur-lg border border-gray-200 rounded-xl shadow-xl">
@@ -68,10 +68,11 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
             ) : (
               <Button 
                 onClick={() => window.location.href = '/auth'}
-                className="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-2"
+                className="bg-primary hover:bg-primary/90 text-white font-semibold px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm"
               >
-                <LogIn className="w-4 h-4" />
-                <span>SIGN IN</span>
+                <LogIn className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">SIGN IN</span>
+                <span className="xs:hidden">IN</span>
               </Button>
             )}
 

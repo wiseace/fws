@@ -330,7 +330,7 @@ export const RichDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
         {/* Unverification Alert */}
         {profile?.verification_status === 'not_verified' && profile?.user_type === 'provider' && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-6">
@@ -364,34 +364,36 @@ export const RichDashboard = () => {
         )}
 
         {/* Welcome Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
-                <div className="p-2 bg-primary rounded-lg">
-                  <LayoutDashboard className="h-8 w-8 text-white" />
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2 flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-primary rounded-lg flex-shrink-0">
+                  <LayoutDashboard className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white" />
                 </div>
-                {getGreeting()}, {profile?.name}!
+                <span className="truncate">{getGreeting()}, {profile?.name}!</span>
               </h1>
-              <p className="text-xl text-muted-foreground">
+              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground">
                 {profile?.user_type === 'provider' 
                   ? "Manage your services and grow your business" 
                   : "Discover amazing services and connect with providers"}
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               {/* Onboarding Wizard Trigger */}
               <Button 
                 variant="outline" 
                 onClick={showWizardManually}
-                className={`flex items-center gap-2 bg-primary/5 border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-200 ${
+                size="sm"
+                className={`flex items-center gap-1 sm:gap-2 bg-primary/5 border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 ${
                   onboardingProgress < 100 ? 'animate-pulse ring-2 ring-primary/30 ring-offset-2 shadow-lg shadow-primary/20' : ''
                 }`}
               >
-                <HelpCircle className={`h-4 w-4 ${onboardingProgress < 100 ? 'animate-bounce' : ''}`} />
-                Help & Setup
+                <HelpCircle className={`h-3 w-3 sm:h-4 sm:w-4 ${onboardingProgress < 100 ? 'animate-bounce' : ''}`} />
+                <span className="hidden sm:inline">Help & Setup</span>
+                <span className="sm:hidden">Help</span>
                 {onboardingProgress < 100 && (
-                  <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full animate-ping"></span>
+                  <span className="absolute -top-1 -right-1 h-2 w-2 sm:h-3 sm:w-3 bg-red-500 rounded-full animate-ping"></span>
                 )}
               </Button>
               
@@ -399,10 +401,12 @@ export const RichDashboard = () => {
               <Button 
                 variant="outline" 
                 onClick={() => window.location.href = '/pricing'}
-                className="flex items-center gap-2 bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 text-amber-700 hover:from-amber-100 hover:to-yellow-100 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                size="sm"
+                className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 text-amber-700 hover:from-amber-100 hover:to-yellow-100 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4"
               >
-                <Star className="h-4 w-4" />
-                Upgrade Plan
+                <Star className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Upgrade Plan</span>
+                <span className="sm:hidden">Upgrade</span>
               </Button>
               
               {profile?.user_type === 'admin' && (
@@ -420,55 +424,55 @@ export const RichDashboard = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
           {profile?.user_type === 'provider' ? (
             <>
               <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-primary-foreground/80 text-sm font-medium">Total Services</p>
-                      <p className="text-3xl font-bold">{stats.totalServices || 0}</p>
+                <CardContent className="p-3 sm:p-4 lg:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-primary-foreground/80 text-xs sm:text-sm font-medium truncate">Total Services</p>
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-bold">{stats.totalServices || 0}</p>
                     </div>
-                    <Star className="h-8 w-8 text-primary-foreground/80" />
+                    <Star className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-primary-foreground/80 self-end sm:self-auto" />
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="bg-brand-success text-white border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white/80 text-sm font-medium">Active Services</p>
-                      <p className="text-3xl font-bold">{stats.activeServices || 0}</p>
+                <CardContent className="p-3 sm:p-4 lg:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white/80 text-xs sm:text-sm font-medium truncate">Active Services</p>
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-bold">{stats.activeServices || 0}</p>
                     </div>
-                    <CheckCircle className="h-8 w-8 text-white/80" />
+                    <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white/80 self-end sm:self-auto" />
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="bg-primary-light text-white border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white/80 text-sm font-medium">This Week</p>
-                      <p className="text-3xl font-bold">{stats.thisWeekRequests || 0}</p>
+                <CardContent className="p-3 sm:p-4 lg:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white/80 text-xs sm:text-sm font-medium truncate">This Week</p>
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-bold">{stats.thisWeekRequests || 0}</p>
                       <p className="text-xs text-white/70">New Requests</p>
                     </div>
-                    <TrendingUp className="h-8 w-8 text-white/80" />
+                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white/80 self-end sm:self-auto" />
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="bg-secondary text-white border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white/80 text-sm font-medium">Profile</p>
-                      <p className="text-2xl font-bold">{stats.profileCompletion}%</p>
+                <CardContent className="p-3 sm:p-4 lg:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white/80 text-xs sm:text-sm font-medium truncate">Profile</p>
+                      <p className="text-lg sm:text-xl lg:text-2xl font-bold">{stats.profileCompletion}%</p>
                       <p className="text-xs text-white/70">Complete</p>
                     </div>
-                    <Award className="h-8 w-8 text-white/80" />
+                    <Award className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white/80 self-end sm:self-auto" />
                   </div>
                 </CardContent>
               </Card>
