@@ -140,6 +140,36 @@ export type Database = {
           },
         ]
       }
+      currencies: {
+        Row: {
+          code: string
+          created_at: string | null
+          exchange_rate_to_usd: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          symbol: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          exchange_rate_to_usd?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          symbol: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          exchange_rate_to_usd?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          symbol?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           category: string
@@ -227,6 +257,38 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_pricing: {
+        Row: {
+          created_at: string | null
+          currency_code: string
+          id: string
+          plan: string
+          price: number
+        }
+        Insert: {
+          created_at?: string | null
+          currency_code: string
+          id?: string
+          plan: string
+          price: number
+        }
+        Update: {
+          created_at?: string | null
+          currency_code?: string
+          id?: string
+          plan?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_pricing_currency_code_fkey"
+            columns: ["currency_code"]
+            isOneToOne: false
+            referencedRelation: "currencies"
+            referencedColumns: ["code"]
           },
         ]
       }
@@ -344,7 +406,11 @@ export type Database = {
           longitude: number | null
           name: string
           phone: string | null
+          phone_verification_code: string | null
+          phone_verification_expires: string | null
+          phone_verified: boolean | null
           postal_code: string | null
+          preferred_currency: string | null
           price_range_max: number | null
           price_range_min: number | null
           profile_image_url: string | null
@@ -381,7 +447,11 @@ export type Database = {
           longitude?: number | null
           name: string
           phone?: string | null
+          phone_verification_code?: string | null
+          phone_verification_expires?: string | null
+          phone_verified?: boolean | null
           postal_code?: string | null
+          preferred_currency?: string | null
           price_range_max?: number | null
           price_range_min?: number | null
           profile_image_url?: string | null
@@ -418,7 +488,11 @@ export type Database = {
           longitude?: number | null
           name?: string
           phone?: string | null
+          phone_verification_code?: string | null
+          phone_verification_expires?: string | null
+          phone_verified?: boolean | null
           postal_code?: string | null
+          preferred_currency?: string | null
           price_range_max?: number | null
           price_range_min?: number | null
           profile_image_url?: string | null
@@ -612,6 +686,10 @@ export type Database = {
       get_current_user_type: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_plan_price: {
+        Args: { plan_name: string; currency_code?: string }
+        Returns: number
       }
       get_user_admin_messages: {
         Args: Record<PropertyKey, never>

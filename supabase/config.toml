@@ -3,3 +3,12 @@ project_id = "pkuwkuixwlibicaelchc"
 # Edge Functions
 [functions.google-maps-proxy]
 verify_jwt = false
+
+[functions.send-sms]
+verify_jwt = false
+
+[functions.flutterwave-payment]
+verify_jwt = true
+
+[functions.verify-payment]
+verify_jwt = false
