@@ -8,15 +8,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Loader2, Eye, EyeOff, ArrowLeft, Mail, Smartphone } from 'lucide-react';
 const findWhoSabiLogo = '/lovable-uploads/60f0692e-43cf-498a-bf01-0e645aa4348e.png';
 import { PasswordValidator, isPasswordValid } from '@/components/PasswordValidator';
+import { PhoneAuthFlow } from '@/components/PhoneAuthFlow';
 import { Link } from 'react-router-dom';
 
 const Auth = () => {
   const { signIn, signUp, user, profile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
   
   // Sign in form state
   const [signInEmail, setSignInEmail] = useState('');
@@ -30,6 +32,7 @@ const Auth = () => {
   const [userType, setUserType] = useState<'provider' | 'seeker'>('seeker');
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
   const [showPasswordValidator, setShowPasswordValidator] = useState(false);
+  const [phoneAuthMode, setPhoneAuthMode] = useState<'signin' | 'signup'>('signin');
 
   // Redirect if already logged in
   useEffect(() => {
@@ -113,6 +116,81 @@ const Auth = () => {
     }
   };
 
+  const handlePhoneAuthSuccess = (userData: any) => {
+    toast({
+      title: "Success!",
+      description: "Phone authentication successful",
+    });
+    // Redirect based on user type
+    if (userData.user_type === 'admin') {
+      window.location.href = '/admin';
+    } else {
+      window.location.href = '/dashboard';
+    }
+  };
+
+  // Show phone auth flow if phone method is selected
+  if (authMethod === 'phone') {
+    return (
+      <div className="min-h-screen bg-gradient-hero relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 left-20 w-32 h-32 bg-white rounded-full blur-xl animate-bounce-subtle"></div>
+          <div className="absolute top-40 right-32 w-24 h-24 bg-white rounded-full blur-xl animate-bounce-subtle" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-32 left-1/3 w-40 h-40 bg-white rounded-full blur-xl animate-bounce-subtle" style={{ animationDelay: '2s' }}></div>
+        </div>
+        
+        <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+          <div className="space-y-6">
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center mb-4">
+                <img 
+                  src={findWhoSabiLogo} 
+                  alt="FindWhoSabi" 
+                  className="h-10 w-auto"
+                />
+              </div>
+              <p className="text-white/80">Connect with skilled professionals</p>
+              <Link 
+                to="/"
+                className="inline-flex items-center gap-2 text-white/60 hover:text-white/80 transition-colors text-sm font-medium mt-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Homepage
+              </Link>
+              
+              <div className="flex gap-2 justify-center mt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAuthMethod('email')}
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Use Email
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="bg-primary"
+                >
+                  <Smartphone className="w-4 h-4 mr-2" />
+                  Phone Selected
+                </Button>
+              </div>
+            </div>
+            
+            <PhoneAuthFlow 
+              onSuccess={handlePhoneAuthSuccess}
+              mode={phoneAuthMode}
+              onModeChange={setPhoneAuthMode}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-hero relative overflow-hidden">
       {/* Animated background elements */}
@@ -133,6 +211,27 @@ const Auth = () => {
               />
             </div>
             <p className="text-muted-foreground">Connect with skilled professionals</p>
+            
+            <div className="flex gap-2 justify-center mt-4">
+              <Button
+                variant="default"
+                size="sm"
+                className="bg-primary"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                Email Selected
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAuthMethod('phone')}
+                className="border-primary/20 text-primary hover:bg-primary/10"
+              >
+                <Smartphone className="w-4 h-4 mr-2" />
+                Use Phone
+              </Button>
+            </div>
+            
             <Link 
               to="/"
               className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"

@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { Check, Star, Crown, X } from 'lucide-react';
+import { CurrencySelector } from '@/components/CurrencySelector';
+import { Check, Star, Crown, X, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
@@ -16,15 +17,92 @@ const Pricing = () => {
   const [loading, setLoading] = useState<string>('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [subscribedPlan, setSubscribedPlan] = useState<string>('');
+  const [selectedCurrency, setSelectedCurrency] = useState('NGN');
+  const [pricingData, setPricingData] = useState<any>({});
+  const [currencySymbol, setCurrencySymbol] = useState('₦');
 
   // Different pricing for providers vs seekers
   const isProvider = profile?.user_type === 'provider';
   
+  // Fetch pricing data when currency changes
+  useEffect(() => {
+    fetchPricingData();
+  }, [selectedCurrency]);
+
+  // Set user's preferred currency if available
+  useEffect(() => {
+    if (user) {
+      // Fetch user's preferred currency from database
+      const fetchUserCurrency = async () => {
+        const { data } = await supabase
+          .from('users')
+          .select('preferred_currency')
+          .eq('id', user.id)
+          .single();
+        if (data?.preferred_currency) {
+          setSelectedCurrency(data.preferred_currency);
+        }
+      };
+      fetchUserCurrency();
+    }
+  }, [user]);
+
+  const fetchPricingData = async () => {
+    try {
+      const { data: pricing, error: pricingError } = await supabase
+        .from('subscription_pricing')
+        .select('*')
+        .eq('currency_code', selectedCurrency);
+
+      if (pricingError) throw pricingError;
+
+      const { data: currency, error: currencyError } = await supabase
+        .from('currencies')
+        .select('symbol')
+        .eq('code', selectedCurrency)
+        .single();
+
+      if (currencyError) throw currencyError;
+
+      // Create pricing object
+      const pricingObj: any = {};
+      pricing?.forEach(p => {
+        pricingObj[p.plan] = p.price;
+      });
+
+      setPricingData(pricingObj);
+      setCurrencySymbol(currency.symbol);
+    } catch (error) {
+      console.error('Error fetching pricing:', error);
+    }
+  };
+
+  const handleCurrencyChange = async (currency: string) => {
+    setSelectedCurrency(currency);
+    
+    // Update user's preferred currency if logged in
+    if (user) {
+      try {
+        await supabase
+          .from('users')
+          .update({ preferred_currency: currency })
+          .eq('id', user.id);
+      } catch (error) {
+        console.error('Error updating preferred currency:', error);
+      }
+    }
+  };
+
+  const formatPrice = (planId: string) => {
+    const price = pricingData[planId];
+    if (!price) return 'Loading...';
+    return `${currencySymbol}${price.toLocaleString()}`;
+  };
+
   const plans = isProvider ? [
     {
       id: 'monthly',
       name: 'Provider Monthly',
-      price: '$29.99',
       period: '/month',
       description: 'Perfect for growing service providers',
       features: [
@@ -40,7 +118,6 @@ const Pricing = () => {
     {
       id: 'semi_annual',
       name: 'Provider Semi-Annual',
-      price: '$149.99',
       period: '/6 months',
       description: 'Best value for established providers',
       features: [
@@ -56,7 +133,6 @@ const Pricing = () => {
     {
       id: 'yearly',
       name: 'Provider Yearly',
-      price: '$259.99',
       period: '/year',
       description: 'Maximum exposure for professionals',
       features: [
@@ -73,7 +149,6 @@ const Pricing = () => {
     {
       id: 'monthly',
       name: 'Seeker Monthly',
-      price: '$9.99',
       period: '/month',
       description: 'Perfect for occasional service needs',
       features: [
@@ -88,7 +163,6 @@ const Pricing = () => {
     {
       id: 'semi_annual',
       name: 'Seeker Semi-Annual',
-      price: '$49.99',
       period: '/6 months',
       description: 'Best value for regular service users',
       features: [
@@ -104,7 +178,6 @@ const Pricing = () => {
     {
       id: 'yearly',
       name: 'Seeker Yearly',
-      price: '$89.99',
       period: '/year',
       description: 'Maximum savings for frequent users',
       features: [
@@ -213,6 +286,13 @@ const Pricing = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
         {/* Header */}
         <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <CurrencySelector 
+              selectedCurrency={selectedCurrency}
+              onCurrencyChange={handleCurrencyChange}
+              className="mb-4"
+            />
+          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             {isProvider ? 'Provider Plans' : 'Service Seeker Plans'}
           </h1>
@@ -265,7 +345,7 @@ const Pricing = () => {
                   {plan.id === 'yearly' && <Crown className="w-5 h-5 ml-2 text-yellow-500" />}
                 </CardTitle>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold text-blue-600">{plan.price}</span>
+                  <span className="text-4xl font-bold text-blue-600">{formatPrice(plan.id)}</span>
                   <span className="text-gray-600">{plan.period}</span>
                 </div>
                 <p className="text-gray-600">{plan.description}</p>
