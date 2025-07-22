@@ -219,54 +219,70 @@ const Pricing = () => {
     setLoading(planId);
 
     try {
-      // Calculate subscription expiry
-      const now = new Date();
-      let expiryDate: Date;
-      
-      switch(planId) {
-        case 'monthly':
-          expiryDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
-          break;
-        case 'semi_annual':
-          expiryDate = new Date(now.getFullYear(), now.getMonth() + 6, now.getDate());
-          break;
-        case 'yearly':
-          expiryDate = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
-          break;
-        default:
-          throw new Error('Invalid plan');
+      const price = pricingData[planId];
+      if (!price) {
+        throw new Error('Price not found for this plan');
       }
 
-      // Update user subscription
-      const { error } = await supabase
-        .from('users')
-        .update({
-          subscription_plan: planId as any,
-          subscription_status: planId as any,
-          subscription_expiry: expiryDate.toISOString(),
-          can_access_contact: true,
-          updated_at: new Date().toISOString()
+      // Generate unique transaction reference
+      const txRef = `FWS_${Date.now()}_${user.id.substring(0, 8)}`;
+
+      // Create payment attempt record
+      const { data: paymentAttempt, error: paymentError } = await supabase
+        .from('payment_attempts')
+        .insert({
+          user_id: user.id,
+          tx_ref: txRef,
+          amount: price,
+          plan: planId,
+          currency: selectedCurrency,
+          status: 'pending'
         })
-        .eq('id', user.id);
+        .select('*')
+        .single();
 
-      if (error) throw error;
+      if (paymentError) throw paymentError;
 
-      const planName = plans.find(p => p.id === planId)?.name || planId;
-      setSubscribedPlan(planName);
-      setShowSuccessModal(true);
+      // Initiate Flutterwave payment
+      const { data: paymentData, error: paymentInitError } = await supabase.functions.invoke('flutterwave-payment', {
+        body: {
+          amount: price,
+          currency: selectedCurrency,
+          tx_ref: txRef,
+          customer: {
+            email: user.email || profile?.email,
+            phone_number: profile?.phone,
+            name: profile?.name || user.email
+          },
+          customizations: {
+            title: 'FindWhoSabi Subscription',
+            description: `${planId} subscription plan`,
+            logo: 'https://yourlogo.com/logo.png'
+          },
+          plan: planId
+        }
+      });
 
-      // Refresh user profile
-      await refreshProfile();
+      if (paymentInitError) throw paymentInitError;
 
-      // Redirect to dashboard after modal
-      setTimeout(() => {
-        window.location.href = '/dashboard?success=subscription';
-      }, 3000);
+      if (paymentData.success && paymentData.payment_link) {
+        // Update payment attempt with payment link
+        await supabase
+          .from('payment_attempts')
+          .update({ payment_link: paymentData.payment_link })
+          .eq('id', paymentAttempt.id);
+
+        // Redirect to Flutterwave payment page
+        window.location.href = paymentData.payment_link;
+      } else {
+        throw new Error('Failed to create payment link');
+      }
 
     } catch (error: any) {
+      console.error('Payment initiation error:', error);
       toast({
-        title: "Subscription failed",
-        description: error.message,
+        title: "Payment failed",
+        description: error.message || "Failed to initiate payment",
         variant: "destructive"
       });
     } finally {

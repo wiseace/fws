@@ -59,24 +59,38 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
     setLoading(true);
     try {
-      // For signup, create user record first
+      // For signup, create auth user first
       if (mode === 'signup') {
-        // Generate a temporary UUID for the user
-        const tempUserId = crypto.randomUUID();
+        const temporaryEmail = `${phoneNumber.replace(/\D/g, '')}@phone.temp`;
         
-        const { error: insertError } = await supabase
-          .from('users')
-          .insert({
-            id: tempUserId,
-            email: `${phoneNumber.replace(/\D/g, '')}@phone.temp`, // Temporary email
-            phone: phoneNumber,
-            name,
-            user_type: userType,
-            phone_verified: false,
-          });
+        // Create auth user first
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: temporaryEmail,
+          password: crypto.randomUUID(), // Random password since we use phone auth
+          options: {
+            data: {
+              name,
+              user_type: userType,
+              phone: phoneNumber
+            }
+          }
+        });
 
-        if (insertError && !insertError.message.includes('duplicate')) {
-          throw insertError;
+        if (authError && !authError.message.includes('already registered')) {
+          throw authError;
+        }
+
+        // If user already exists, just get their data
+        if (authError?.message.includes('already registered')) {
+          const { data: existingUser } = await supabase
+            .from('users')
+            .select('*')
+            .eq('phone', phoneNumber)
+            .single();
+          
+          if (!existingUser) {
+            throw new Error('User exists but not found in database');
+          }
         }
       }
 

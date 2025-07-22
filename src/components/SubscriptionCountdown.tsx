@@ -99,10 +99,37 @@ export const SubscriptionCountdown = ({ profile }: SubscriptionCountdownProps) =
   };
 
   const getProgressPercentage = () => {
-    const totalDays = timeRemaining.months * 30 + timeRemaining.weeks * 7 + timeRemaining.days;
-    const maxDays = profile.subscription_plan === 'yearly' ? 365 : 
-                   profile.subscription_plan === 'semi_annual' ? 180 : 30;
-    return Math.max(0, Math.min(100, (totalDays / maxDays) * 100));
+    if (!profile.subscription_expiry) return 0;
+    
+    const expiryDate = new Date(profile.subscription_expiry);
+    const now = new Date();
+    
+    // Calculate the original subscription start date based on plan type
+    let originalDuration: number;
+    switch (profile.subscription_plan) {
+      case 'yearly':
+        originalDuration = 365;
+        break;
+      case 'semi_annual':
+        originalDuration = 180;
+        break;
+      case 'monthly':
+        originalDuration = 30;
+        break;
+      default:
+        originalDuration = 30;
+    }
+    
+    // Calculate start date by subtracting duration from expiry
+    const startDate = new Date(expiryDate);
+    startDate.setDate(startDate.getDate() - originalDuration);
+    
+    // Calculate total and remaining time
+    const totalTime = expiryDate.getTime() - startDate.getTime();
+    const remainingTime = expiryDate.getTime() - now.getTime();
+    
+    const percentage = Math.max(0, Math.min(100, (remainingTime / totalTime) * 100));
+    return percentage;
   };
 
   if (profile.subscription_plan === 'free' || timeRemaining.expired) {
