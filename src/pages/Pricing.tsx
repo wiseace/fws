@@ -259,6 +259,7 @@ const Pricing = () => {
             description: `${planId} subscription plan`,
             logo: 'https://yourlogo.com/logo.png'
           },
+          redirect_url: `${window.location.origin}/payment-success`,
           plan: planId
         }
       });

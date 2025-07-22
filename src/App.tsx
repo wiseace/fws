@@ -20,6 +20,7 @@ import Provider from "./pages/Provider";
 import Providers from "./pages/Providers";
 import ProviderProfile from "./pages/ProviderProfile";
 import Notifications from "./pages/Notifications";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
               </AdminRoute>
             } />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/providers" element={<Providers />} />
             <Route path="/provider/:id" element={<Provider />} />
             <Route path="/provider-profile" element={

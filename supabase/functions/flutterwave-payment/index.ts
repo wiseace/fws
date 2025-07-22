@@ -7,12 +7,21 @@ const corsHeaders = {
 };
 
 interface PaymentRequest {
-  plan: string;
+  amount: number;
   currency: string;
-  customer_email: string;
-  customer_name: string;
-  customer_phone?: string;
+  tx_ref: string;
+  customer: {
+    email: string;
+    name: string;
+    phone_number?: string;
+  };
+  customizations: {
+    title: string;
+    description: string;
+    logo: string;
+  };
   redirect_url: string;
+  plan: string;
 }
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -41,15 +50,16 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const { 
-      plan, 
+      amount,
       currency, 
-      customer_email, 
-      customer_name, 
-      customer_phone,
-      redirect_url 
+      tx_ref,
+      customer,
+      customizations,
+      redirect_url,
+      plan
     }: PaymentRequest = await req.json();
 
-    if (!plan || !currency || !customer_email || !customer_name) {
+    if (!amount || !currency || !tx_ref || !customer || !plan) {
       throw new Error('Missing required fields');
     }
 
@@ -76,25 +86,18 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Currency not supported');
     }
 
-    // Generate unique transaction reference
-    const tx_ref = `FWS_${user.id.substr(0, 8)}_${plan}_${Date.now()}`;
-
     // Prepare Flutterwave payment payload
     const paymentPayload = {
       tx_ref,
-      amount: pricing.price,
+      amount,
       currency,
-      redirect_url,
+      redirect_url: redirect_url || `${supabaseUrl}/payment-success`,
       customer: {
-        email: customer_email,
-        name: customer_name,
-        phonenumber: customer_phone || "",
+        email: customer.email,
+        name: customer.name,
+        phonenumber: customer.phone_number || "",
       },
-      customizations: {
-        title: "FindWhoSabi Subscription",
-        description: `${plan} subscription plan`,
-        logo: "https://your-logo-url.com/logo.png"
-      },
+      customizations,
       meta: {
         user_id: user.id,
         plan: plan,
@@ -129,7 +132,7 @@ const handler = async (req: Request): Promise<Response> => {
         tx_ref,
         plan,
         currency,
-        amount: pricing.price,
+        amount: amount,
         status: 'pending',
         payment_link: paymentData.data.link,
         created_at: new Date().toISOString()
@@ -145,7 +148,7 @@ const handler = async (req: Request): Promise<Response> => {
         success: true,
         payment_link: paymentData.data.link,
         tx_ref,
-        amount: pricing.price,
+        amount: amount,
         currency,
         currency_symbol: currencyInfo.symbol
       }),
