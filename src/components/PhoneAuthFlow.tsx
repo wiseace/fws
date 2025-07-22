@@ -59,42 +59,33 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
     setLoading(true);
     try {
-      // For signup, create auth user first
-      if (mode === 'signup') {
-        const temporaryEmail = `${phoneNumber.replace(/\D/g, '')}@phone.temp`;
+      // Check if user already exists for signin
+      if (mode === 'signin') {
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('*')
+          .eq('phone', phoneNumber)
+          .single();
         
-        // Create auth user first
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: temporaryEmail,
-          password: crypto.randomUUID(), // Random password since we use phone auth
-          options: {
-            data: {
-              name,
-              user_type: userType,
-              phone: phoneNumber
-            }
-          }
-        });
-
-        if (authError && !authError.message.includes('already registered')) {
-          throw authError;
-        }
-
-        // If user already exists, just get their data
-        if (authError?.message.includes('already registered')) {
-          const { data: existingUser } = await supabase
-            .from('users')
-            .select('*')
-            .eq('phone', phoneNumber)
-            .single();
-          
-          if (!existingUser) {
-            throw new Error('User exists but not found in database');
-          }
+        if (!existingUser) {
+          throw new Error('No account found with this phone number. Please sign up first.');
         }
       }
 
-      // Send verification code
+      // For signup, check if user already exists
+      if (mode === 'signup') {
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('*')
+          .eq('phone', phoneNumber)
+          .single();
+        
+        if (existingUser) {
+          throw new Error('An account with this phone number already exists. Please sign in instead.');
+        }
+      }
+
+      // Send verification code (required for both signin and signup)
       const { data, error } = await supabase.functions.invoke('send-sms', {
         body: {
           phone: phoneNumber,
@@ -138,7 +129,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
     setLoading(true);
     try {
-      // Verify the code
+      // Verify the code first
       const { data, error } = await supabase.functions.invoke('send-sms', {
         body: {
           phone: phoneNumber,
@@ -149,8 +140,33 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
       if (error) throw error;
 
-      if (data.success) {
-        // Get the verified user
+      if (!data.success) {
+        throw new Error(data.error || 'Verification failed');
+      }
+
+      // OTP verified successfully, now handle user creation/signin
+      if (mode === 'signup') {
+        // Create auth user after OTP verification
+        const temporaryEmail = `${phoneNumber.replace(/\D/g, '')}@phone.temp`;
+        
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: temporaryEmail,
+          password: crypto.randomUUID(),
+          options: {
+            data: {
+              name,
+              user_type: userType,
+              phone: phoneNumber,
+              phone_verified: true
+            }
+          }
+        });
+
+        if (authError) throw authError;
+
+        // Wait for user creation then get the user data
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         const { data: userData, error: userError } = await supabase
           .from('users')
           .select('*')
@@ -161,12 +177,49 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
         toast({
           title: "Success",
-          description: mode === 'signup' ? "Account created successfully!" : "Signed in successfully!",
+          description: "Account created successfully!",
         });
 
         onSuccess(userData);
       } else {
-        throw new Error(data.error || 'Verification failed');
+        // Sign in mode - get existing user and sign them in
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('phone', phoneNumber)
+          .single();
+
+        if (userError) throw userError;
+
+        // Sign in the user using their temporary email
+        const temporaryEmail = `${phoneNumber.replace(/\D/g, '')}@phone.temp`;
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: temporaryEmail,
+          password: userData.id // Use user ID as password for phone auth users
+        });
+
+        // If password signin fails, try to update the user's password
+        if (signInError) {
+          // For phone auth users, update their password to their user ID
+          await supabase.auth.admin.updateUserById(userData.id, {
+            password: userData.id
+          });
+          
+          // Try signing in again
+          const { error: retrySignInError } = await supabase.auth.signInWithPassword({
+            email: temporaryEmail,
+            password: userData.id
+          });
+          
+          if (retrySignInError) throw retrySignInError;
+        }
+
+        toast({
+          title: "Success",
+          description: "Signed in successfully!",
+        });
+
+        onSuccess(userData);
       }
     } catch (error: any) {
       console.error('Error verifying code:', error);
