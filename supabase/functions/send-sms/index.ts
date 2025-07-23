@@ -14,7 +14,9 @@ interface SendSMSRequest {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const termiiApiKey = Deno.env.get('TERMII_API_KEY')!;
+const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID')!;
+const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN')!;
+const twilioPhoneNumber = Deno.env.get('TWILIO_PHONE_NUMBER')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -25,46 +27,41 @@ const generateVerificationCode = (): string => {
 const sendSMS = async (phone: string, message: string): Promise<boolean> => {
   try {
     console.log('Attempting to send SMS to:', phone);
-    console.log('Using API key:', termiiApiKey ? 'API key present' : 'API key missing');
+    console.log('Using Twilio credentials:', twilioAccountSid ? 'Account SID present' : 'Account SID missing');
     
-    const requestBody = {
-      to: phone,
-      from: "FindWhoSabi",
-      sms: message,
-      type: "plain",
-      channel: "generic",
-      api_key: termiiApiKey,
-    };
+    // Encode credentials for Basic Auth
+    const credentials = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
     
-    console.log('Request body:', JSON.stringify(requestBody, (key, value) => {
-      if (key === 'api_key') return '***HIDDEN***';
-      return value;
-    }));
+    const requestBody = new URLSearchParams({
+      From: twilioPhoneNumber,
+      To: phone,
+      Body: message,
+    });
+    
+    console.log('Sending SMS via Twilio to:', phone);
 
-    const response = await fetch('https://v3.termii.com/api/sms/send', {
+    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Basic ${credentials}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(requestBody),
+      body: requestBody,
     });
 
     const result = await response.json();
-    console.log('TERMII SMS Response status:', response.status);
-    console.log('TERMII SMS Response:', result);
+    console.log('Twilio SMS Response status:', response.status);
+    console.log('Twilio SMS Response:', result);
     
-    // For testing, allow success even if SMS fails
-    if (!response.ok || !result.message_id) {
-      console.warn('SMS failed but continuing for testing purposes');
-      return true; // Return true for testing
+    if (!response.ok) {
+      console.error('Twilio SMS failed:', result);
+      throw new Error(result.message || 'Failed to send SMS');
     }
     
     return true;
   } catch (error) {
     console.error('SMS sending failed:', error);
-    // For testing, return true even on error
-    console.warn('SMS error but continuing for testing purposes');
-    return true;
+    throw error;
   }
 };
 
@@ -88,18 +85,44 @@ const handler = async (req: Request): Promise<Response> => {
       const verificationCode = generateVerificationCode();
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-      // Store verification code in database
-      const { error: dbError } = await supabase
+      // For new users during signup, create a temporary record
+      const { data: existingUser } = await supabase
         .from('users')
-        .update({
-          phone_verification_code: verificationCode,
-          phone_verification_expires: expiresAt.toISOString(),
-        })
-        .eq('phone', formattedPhone);
+        .select('id')
+        .eq('phone', formattedPhone)
+        .single();
 
-      if (dbError) {
-        console.error('Database error:', dbError);
-        throw new Error('Failed to store verification code');
+      if (!existingUser) {
+        // Create temporary user record for verification
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert({
+            phone: formattedPhone,
+            name: 'Temp User',
+            email: `temp_${Date.now()}@temp.com`,
+            phone_verification_code: verificationCode,
+            phone_verification_expires: expiresAt.toISOString(),
+            user_type: 'seeker'
+          });
+
+        if (insertError) {
+          console.error('Database insert error:', insertError);
+          throw new Error('Failed to create verification record');
+        }
+      } else {
+        // Update existing user with verification code
+        const { error: dbError } = await supabase
+          .from('users')
+          .update({
+            phone_verification_code: verificationCode,
+            phone_verification_expires: expiresAt.toISOString(),
+          })
+          .eq('phone', formattedPhone);
+
+        if (dbError) {
+          console.error('Database error:', dbError);
+          throw new Error('Failed to store verification code');
+        }
       }
 
       // Send SMS
