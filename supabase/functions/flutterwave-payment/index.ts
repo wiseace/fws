@@ -26,9 +26,7 @@ interface PaymentRequest {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const flutterwaveClientId = Deno.env.get('FLUTTERWAVE_CLIENT_ID')!;
-const flutterwaveSecretKey = Deno.env.get('FLUTTERWAVE_CLIENT_SECRET')!;
-const encryptionKey = Deno.env.get('FLUTTERWAVE_ENCRYPTION_KEY')!;
+const flutterwaveSecretKey = Deno.env.get('FLUTTERWAVE_SECRET_KEY')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 

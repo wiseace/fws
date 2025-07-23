@@ -33,7 +33,7 @@ const sendSMS = async (phone: string, message: string): Promise<boolean> => {
     const credentials = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
     
     const requestBody = new URLSearchParams({
-      From: twilioPhoneNumber,
+      From: `+${twilioPhoneNumber.replace(/^\+/, '')}`,
       To: phone,
       Body: message,
     });
@@ -93,10 +93,11 @@ const handler = async (req: Request): Promise<Response> => {
         .single();
 
       if (!existingUser) {
-        // Create temporary user record for verification
+        // Create temporary user record for verification with proper UUID
         const { error: insertError } = await supabase
           .from('users')
           .insert({
+            id: crypto.randomUUID(),
             phone: formattedPhone,
             name: 'Temp User',
             email: `temp_${Date.now()}@temp.com`,
