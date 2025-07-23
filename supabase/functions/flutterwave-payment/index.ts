@@ -24,11 +24,20 @@ interface PaymentRequest {
   plan: string;
 }
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const flutterwaveSecretKey = Deno.env.get('FLUTTERWAVE_SECRET_KEY')!;
+const supabaseUrl = Deno.env.get('SUPABASE_URL');
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const flutterwaveSecretKey = Deno.env.get('FLUTTERWAVE_SECRET_KEY');
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Validate environment variables
+if (!supabaseUrl || !supabaseServiceKey || !flutterwaveSecretKey) {
+  console.error('Missing required environment variables:', {
+    supabaseUrl: !!supabaseUrl,
+    supabaseServiceKey: !!supabaseServiceKey,
+    flutterwaveSecretKey: !!flutterwaveSecretKey
+  });
+}
+
+const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
@@ -36,6 +45,11 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Check environment variables first
+    if (!flutterwaveSecretKey) {
+      throw new Error('Flutterwave secret key not configured');
+    }
+
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       throw new Error('No authorization header');
@@ -109,7 +123,7 @@ const handler = async (req: Request): Promise<Response> => {
     const flutterwaveResponse = await fetch('https://api.flutterwave.com/v3/payments', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${flutterwaveSecretKey}`,
+        'Authorization': `Bearer ${flutterwaveSecretKey!}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(paymentPayload),

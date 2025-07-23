@@ -12,13 +12,24 @@ interface SendSMSRequest {
   code?: string;
 }
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID')!;
-const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN')!;
-const twilioPhoneNumber = Deno.env.get('TWILIO_PHONE_NUMBER')!;
+const supabaseUrl = Deno.env.get('SUPABASE_URL');
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
+const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
+const twilioPhoneNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Validate environment variables
+if (!supabaseUrl || !supabaseServiceKey || !twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
+  console.error('Missing required environment variables:', {
+    supabaseUrl: !!supabaseUrl,
+    supabaseServiceKey: !!supabaseServiceKey,
+    twilioAccountSid: !!twilioAccountSid,
+    twilioAuthToken: !!twilioAuthToken,
+    twilioPhoneNumber: !!twilioPhoneNumber
+  });
+}
+
+const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
 const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
