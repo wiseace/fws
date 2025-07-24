@@ -119,11 +119,13 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Creating Flutterwave payment with payload:', paymentPayload);
 
+    console.log('Using Flutterwave secret key (first 10 chars):', flutterwaveSecretKey?.substring(0, 10));
+
     // Initialize payment with Flutterwave
     const flutterwaveResponse = await fetch('https://api.flutterwave.com/v3/payments', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${flutterwaveSecretKey!}`,
+        'Authorization': `Bearer ${flutterwaveSecretKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(paymentPayload),

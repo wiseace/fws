@@ -104,22 +104,32 @@ const handler = async (req: Request): Promise<Response> => {
         .single();
 
       if (!existingUser) {
-        // Create temporary user record for verification with proper UUID
+        // Store verification code in a separate table instead of creating user record
         const { error: insertError } = await supabase
-          .from('users')
+          .from('phone_verifications')
           .insert({
-            id: crypto.randomUUID(),
             phone: formattedPhone,
-            name: 'Temp User',
-            email: `temp_${Date.now()}@temp.com`,
-            phone_verification_code: verificationCode,
-            phone_verification_expires: expiresAt.toISOString(),
-            user_type: 'seeker'
+            verification_code: verificationCode,
+            expires_at: expiresAt.toISOString(),
+            created_at: new Date().toISOString()
           });
 
         if (insertError) {
-          console.error('Database insert error:', insertError);
-          throw new Error('Failed to create verification record');
+          console.error('Phone verification insert error:', insertError);
+          // Try updating if record exists
+          const { error: updateError } = await supabase
+            .from('phone_verifications')
+            .update({
+              verification_code: verificationCode,
+              expires_at: expiresAt.toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('phone', formattedPhone);
+
+          if (updateError) {
+            console.error('Phone verification update error:', updateError);
+            throw new Error('Failed to store verification code');
+          }
         }
       } else {
         // Update existing user with verification code
@@ -161,40 +171,65 @@ const handler = async (req: Request): Promise<Response> => {
         throw new Error('Verification code is required');
       }
 
-      // Verify code from database
-      const { data: user, error } = await supabase
+      // Check existing user or phone verification record
+      const { data: existingUser } = await supabase
         .from('users')
         .select('phone_verification_code, phone_verification_expires')
         .eq('phone', formattedPhone)
         .single();
 
-      if (error || !user) {
-        throw new Error('User not found');
+      let verificationData;
+      if (existingUser) {
+        verificationData = existingUser;
+      } else {
+        // Check phone_verifications table
+        const { data: phoneVerification, error: phoneError } = await supabase
+          .from('phone_verifications')
+          .select('verification_code, expires_at')
+          .eq('phone', formattedPhone)
+          .single();
+
+        if (phoneError || !phoneVerification) {
+          throw new Error('Verification code not found');
+        }
+        
+        verificationData = {
+          phone_verification_code: phoneVerification.verification_code,
+          phone_verification_expires: phoneVerification.expires_at
+        };
       }
 
       const now = new Date();
-      const expiresAt = new Date(user.phone_verification_expires);
+      const expiresAt = new Date(verificationData.phone_verification_expires);
 
       if (now > expiresAt) {
         throw new Error('Verification code has expired');
       }
 
-      if (user.phone_verification_code !== code) {
+      if (verificationData.phone_verification_code !== code) {
         throw new Error('Invalid verification code');
       }
 
-      // Mark phone as verified and clear verification data
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({
-          phone_verified: true,
-          phone_verification_code: null,
-          phone_verification_expires: null,
-        })
-        .eq('phone', formattedPhone);
+      // If user exists, mark as verified
+      if (existingUser) {
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({
+            phone_verified: true,
+            phone_verification_code: null,
+            phone_verification_expires: null,
+          })
+          .eq('phone', formattedPhone);
 
-      if (updateError) {
-        throw new Error('Failed to verify phone number');
+        if (updateError) {
+          throw new Error('Failed to verify phone number');
+        }
+      } else {
+        // Delete from phone_verifications table
+        await supabase
+          .from('phone_verifications')
+          .delete()
+          .eq('phone', formattedPhone);
       }
 
       return new Response(
