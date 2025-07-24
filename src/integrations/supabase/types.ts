@@ -230,6 +230,33 @@ export type Database = {
           },
         ]
       }
+      phone_verifications: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          phone: string
+          updated_at: string | null
+          verification_code: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          phone: string
+          updated_at?: string | null
+          verification_code: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone?: string
+          updated_at?: string | null
+          verification_code?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           category: string
