@@ -7,13 +7,13 @@ const corsHeaders = {
 };
 
 interface VerifyPaymentRequest {
-  transaction_id: string;
-  tx_ref: string;
+  reference: string;
+  tx_ref?: string;
 }
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const flutterwaveSecretKey = Deno.env.get('FLUTTERWAVE_CLIENT_SECRET')!;
+const paystackSecretKey = Deno.env.get('PAYSTACK_SECRET_KEY')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -41,45 +41,46 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { transaction_id, tx_ref }: VerifyPaymentRequest = await req.json();
+    const { reference, tx_ref }: VerifyPaymentRequest = await req.json();
+    const transactionRef = reference || tx_ref;
 
-    if (!transaction_id || !tx_ref) {
-      throw new Error('Transaction ID and reference are required');
+    if (!transactionRef) {
+      throw new Error('Transaction reference is required');
     }
 
-    console.log('Verifying payment:', { transaction_id, tx_ref });
+    console.log('Verifying payment:', { reference: transactionRef });
 
-    // Verify payment with Flutterwave
-    const verifyResponse = await fetch(`https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`, {
+    // Verify payment with Paystack
+    const verifyResponse = await fetch(`https://api.paystack.co/transaction/verify/${transactionRef}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${flutterwaveSecretKey}`,
+        'Authorization': `Bearer ${paystackSecretKey}`,
         'Content-Type': 'application/json',
       },
     });
 
     const verificationData = await verifyResponse.json();
-    console.log('Flutterwave verification response:', verificationData);
+    console.log('Paystack verification response:', verificationData);
 
-    if (!verifyResponse.ok || verificationData.status !== 'success') {
+    if (!verifyResponse.ok || !verificationData.status) {
       throw new Error('Payment verification failed');
     }
 
     const payment = verificationData.data;
 
     // Check if payment was successful
-    if (payment.status !== 'successful') {
+    if (payment.status !== 'success') {
       throw new Error(`Payment status: ${payment.status}`);
     }
 
     // Verify transaction reference matches
-    if (payment.tx_ref !== tx_ref) {
+    if (payment.reference !== transactionRef) {
       throw new Error('Transaction reference mismatch');
     }
 
     // Extract user ID and plan from metadata
-    const userId = payment.meta?.user_id;
-    const plan = payment.meta?.plan;
+    const userId = payment.metadata?.user_id;
+    const plan = payment.metadata?.plan;
 
     if (!userId || !plan) {
       throw new Error('Invalid payment metadata');
@@ -110,10 +111,10 @@ const handler = async (req: Request): Promise<Response> => {
       .from('payment_attempts')
       .update({
         status: 'completed',
-        transaction_id,
+        transaction_id: payment.id,
         verified_at: new Date().toISOString()
       })
-      .eq('tx_ref', tx_ref);
+      .eq('tx_ref', transactionRef);
 
     if (paymentUpdateError) {
       console.error('Failed to update payment record:', paymentUpdateError);
@@ -141,7 +142,7 @@ const handler = async (req: Request): Promise<Response> => {
         subscription: {
           plan,
           expiry: subscriptionExpiry,
-          amount: payment.amount,
+          amount: payment.amount / 100, // Convert from kobo to naira
           currency: payment.currency
         }
       }),

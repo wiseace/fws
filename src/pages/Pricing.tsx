@@ -243,8 +243,8 @@ const Pricing = () => {
 
       if (paymentError) throw paymentError;
 
-      // Initiate Flutterwave payment
-      const { data: paymentData, error: paymentInitError } = await supabase.functions.invoke('flutterwave-payment', {
+      // Initiate Paystack payment
+      const { data: paymentData, error: paymentInitError } = await supabase.functions.invoke('paystack-payment', {
         body: {
           amount: price,
           currency: selectedCurrency,
@@ -254,12 +254,6 @@ const Pricing = () => {
             phone_number: profile?.phone,
             name: profile?.name || user.email
           },
-          customizations: {
-            title: 'FindWhoSabi Subscription',
-            description: `${planId} subscription plan`,
-            logo: 'https://yourlogo.com/logo.png'
-          },
-          redirect_url: `${window.location.origin}/payment-success`,
           plan: planId
         }
       });
@@ -273,7 +267,7 @@ const Pricing = () => {
           .update({ payment_link: paymentData.payment_link })
           .eq('id', paymentAttempt.id);
 
-        // Redirect to Flutterwave payment page
+        // Redirect to Paystack payment page
         window.location.href = paymentData.payment_link;
       } else {
         throw new Error('Failed to create payment link');
