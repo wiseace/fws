@@ -35,14 +35,9 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
 
   const fetchCurrencies = async () => {
     try {
-      const { data, error } = await supabase
-        .from('currencies')
-        .select('code, name, symbol')
-        .eq('is_active', true)
-        .order('name');
-
-      if (error) throw error;
-      setCurrencies(data || []);
+      // Only show NGN currency
+      const ngnCurrency = { code: 'NGN', name: 'Nigerian Naira', symbol: '₦' };
+      setCurrencies([ngnCurrency]);
     } catch (error) {
       console.error('Error fetching currencies:', error);
     } finally {
