@@ -90,17 +90,27 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Currency not supported');
     }
 
-    // Only allow NGN for Paystack (most common Paystack setup)
-    if (currency !== 'NGN') {
-      throw new Error('Currently only Nigerian Naira (NGN) is supported for payments');
+    // Validate supported currencies for Paystack
+    const supportedCurrencies = ['NGN', 'GHS', 'ZAR', 'KES', 'XOF'];
+    if (!supportedCurrencies.includes(currency)) {
+      throw new Error(`Currency ${currency} is not supported. Supported currencies: ${supportedCurrencies.join(', ')}`);
     }
 
-    // Convert amount to lowest currency unit (kobo for NGN, cents for USD, etc.)
-    const amountInSubunit = currency === 'NGN' ? amount * 100 : 
-                           currency === 'USD' ? amount * 100 : 
-                           currency === 'GHS' ? amount * 100 :
-                           currency === 'KES' ? amount * 100 : 
-                           amount * 100; // Default to 100 subunits
+    // Convert amount to lowest currency unit 
+    let amountInSubunit: number;
+    switch (currency) {
+      case 'NGN': // Kobo
+      case 'GHS': // Pesewas
+      case 'ZAR': // Cents
+      case 'KES': // Cents
+        amountInSubunit = amount * 100;
+        break;
+      case 'XOF': // Centimes
+        amountInSubunit = amount * 1; // XOF doesn't use subunits in Paystack
+        break;
+      default:
+        amountInSubunit = amount * 100;
+    }
 
     // Prepare Paystack payment payload
     const paymentPayload = {

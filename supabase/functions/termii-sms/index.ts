@@ -60,7 +60,13 @@ const sendSMS = async (phone: string, message: string): Promise<boolean> => {
     console.log('TERMII SMS Response status:', response.status);
     console.log('TERMII SMS Response:', result);
     
-    if (!response.ok || result.code !== 'ok') {
+    if (!response.ok) {
+      console.error('TERMII SMS failed:', result);
+      throw new Error(result.message || `HTTP ${response.status}: Failed to send SMS`);
+    }
+    
+    // TERMII can return 200 with different success indicators
+    if (result.code !== 'ok' && result.message_id === undefined) {
       console.error('TERMII SMS failed:', result);
       throw new Error(result.message || 'Failed to send SMS');
     }
