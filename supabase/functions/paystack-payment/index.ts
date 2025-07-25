@@ -90,6 +90,11 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Currency not supported');
     }
 
+    // Only allow NGN for Paystack (most common Paystack setup)
+    if (currency !== 'NGN') {
+      throw new Error('Currently only Nigerian Naira (NGN) is supported for payments');
+    }
+
     // Convert amount to lowest currency unit (kobo for NGN, cents for USD, etc.)
     const amountInSubunit = currency === 'NGN' ? amount * 100 : 
                            currency === 'USD' ? amount * 100 : 
