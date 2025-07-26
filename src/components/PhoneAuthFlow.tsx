@@ -86,7 +86,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
       }
 
       // Send verification code (required for both signin and signup)
-      const { data, error } = await supabase.functions.invoke('termii-sms', {
+      const { data, error } = await supabase.functions.invoke('send-sms', {
         body: {
           phone: phoneNumber,
           action: 'send_verification'
@@ -130,7 +130,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
     setLoading(true);
     try {
       // Verify the code first
-      const { data, error } = await supabase.functions.invoke('termii-sms', {
+      const { data, error } = await supabase.functions.invoke('send-sms', {
         body: {
           phone: phoneNumber,
           action: 'verify_code',
@@ -238,7 +238,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
     
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('termii-sms', {
+      const { data, error } = await supabase.functions.invoke('send-sms', {
         body: {
           phone: phoneNumber,
           action: 'send_verification'
