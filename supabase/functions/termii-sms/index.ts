@@ -15,7 +15,7 @@ interface SendOTPRequest {
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const termiiApiKey = 'TLoKQsvIlcSxHmM3AyxOCQgRgWEZSBgKmTSnDf2ozdeqLxo56anMUUCb84mzAg';
-const termiiSenderId = 'Termii';
+const termiiSenderId = 'N-Alert';
 
 // Validate environment variables
 if (!supabaseUrl || !supabaseServiceKey || !termiiApiKey || !termiiSenderId) {
@@ -48,7 +48,7 @@ const sendOTP = async (phone: string): Promise<string> => {
     
     console.log('Sending OTP via TERMII with payload:', { ...requestBody, api_key: '[HIDDEN]' });
 
-    const response = await fetch('https://api.ng.termii.com/api/sms/otp/send', {
+    const response = await fetch('https://v3.api.termii.com/api/sms/otp/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const verifyOTP = async (pinId: string, pin: string): Promise<boolean> => {
     
     console.log('Verifying OTP via TERMII');
 
-    const response = await fetch('https://api.ng.termii.com/api/sms/otp/verify', {
+    const response = await fetch('https://v3.api.termii.com/api/sms/otp/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
