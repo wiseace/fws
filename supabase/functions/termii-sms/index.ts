@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface SendSMSRequest {
+interface SendOTPRequest {
   phone: string;
   action: 'send_verification' | 'verify_code';
   code?: string;
@@ -14,8 +14,8 @@ interface SendSMSRequest {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-const termiiApiKey = Deno.env.get('TERMII_API_KEY');
-const termiiSenderId = Deno.env.get('TERMII_SENDER_ID') || 'N-Alert';
+const termiiApiKey = 'TLoKQsvIlcSxHmM3AyxOCQgRgWEZSBgKmTSnDf2ozdeqLxo56anMUUCb84mzAg';
+const termiiSenderId = 'Termii';
 
 // Validate environment variables
 if (!supabaseUrl || !supabaseServiceKey || !termiiApiKey || !termiiSenderId) {
@@ -29,26 +29,26 @@ if (!supabaseUrl || !supabaseServiceKey || !termiiApiKey || !termiiSenderId) {
 
 const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
-const generateVerificationCode = (): string => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-const sendSMS = async (phone: string, message: string): Promise<boolean> => {
+const sendOTP = async (phone: string): Promise<string> => {
   try {
-    console.log('Attempting to send SMS via TERMII to:', phone);
+    console.log('Attempting to send OTP via TERMII to:', phone);
     
     const requestBody = {
+      api_key: termiiApiKey,
+      message_type: "NUMERIC",
       to: phone,
       from: termiiSenderId,
-      sms: message,
-      type: "plain",
-      channel: "generic",
-      api_key: termiiApiKey
+      channel: "dnd",
+      pin_attempts: 3,
+      pin_time_to_live: 10,
+      pin_length: 6,
+      pin_placeholder: "< 1234 >",
+      message_text: "Your FindWhoSabi verification code is < 1234 >. Valid for 10 minutes."
     };
     
-    console.log('Sending SMS via TERMII with sender ID:', termiiSenderId);
+    console.log('Sending OTP via TERMII with payload:', { ...requestBody, api_key: '[HIDDEN]' });
 
-    const response = await fetch('https://api.ng.termii.com/api/sms/send', {
+    const response = await fetch('https://api.ng.termii.com/api/sms/otp/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,23 +57,67 @@ const sendSMS = async (phone: string, message: string): Promise<boolean> => {
     });
 
     const result = await response.json();
-    console.log('TERMII SMS Response status:', response.status);
-    console.log('TERMII SMS Response:', result);
+    console.log('TERMII OTP Response status:', response.status);
+    console.log('TERMII OTP Response:', result);
     
     if (!response.ok) {
-      console.error('TERMII SMS failed:', result);
-      throw new Error(result.message || `HTTP ${response.status}: Failed to send SMS`);
+      console.error('TERMII OTP failed:', result);
+      throw new Error(result.message || `HTTP ${response.status}: Failed to send OTP`);
     }
     
-    // TERMII can return 200 with different success indicators
-    if (result.code !== 'ok' && result.message_id === undefined) {
-      console.error('TERMII SMS failed:', result);
-      throw new Error(result.message || 'Failed to send SMS');
+    // Check for successful response - TERMII OTP returns pinId on success
+    if (!result.pinId) {
+      console.error('TERMII OTP failed - no pinId returned:', result);
+      throw new Error(result.message || 'Failed to send OTP - no pinId returned');
     }
     
+    console.log('OTP sent successfully, pinId:', result.pinId);
+    return result.pinId;
+  } catch (error) {
+    console.error('OTP sending failed:', error);
+    throw error;
+  }
+};
+
+const verifyOTP = async (pinId: string, pin: string): Promise<boolean> => {
+  try {
+    console.log('Attempting to verify OTP via TERMII, pinId:', pinId, 'pin:', pin);
+    
+    const requestBody = {
+      api_key: termiiApiKey,
+      pin_id: pinId,
+      pin: pin
+    };
+    
+    console.log('Verifying OTP via TERMII');
+
+    const response = await fetch('https://api.ng.termii.com/api/sms/otp/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    const result = await response.json();
+    console.log('TERMII OTP Verify Response status:', response.status);
+    console.log('TERMII OTP Verify Response:', result);
+    
+    if (!response.ok) {
+      console.error('TERMII OTP verification failed:', result);
+      throw new Error(result.message || `HTTP ${response.status}: Failed to verify OTP`);
+    }
+    
+    // Check if verification was successful
+    if (result.verified !== true) {
+      console.error('TERMII OTP verification failed:', result);
+      throw new Error(result.message || 'Invalid verification code');
+    }
+    
+    console.log('OTP verified successfully');
     return true;
   } catch (error) {
-    console.error('SMS sending failed:', error);
+    console.error('OTP verification failed:', error);
     throw error;
   }
 };
@@ -84,7 +128,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { phone, action, code }: SendSMSRequest = await req.json();
+    const { phone, action, code }: SendOTPRequest = await req.json();
 
     if (!phone) {
       throw new Error('Phone number is required');
@@ -95,10 +139,11 @@ const handler = async (req: Request): Promise<Response> => {
     const formattedPhone = cleanPhone.startsWith('+') ? cleanPhone : `+${cleanPhone}`;
 
     if (action === 'send_verification') {
-      const verificationCode = generateVerificationCode();
+      // Send OTP using TERMII and get pinId
+      const pinId = await sendOTP(formattedPhone);
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-      // For new users during signup, create a temporary record
+      // For new users during signup, create a temporary record with pinId
       const { data: existingUser } = await supabase
         .from('users')
         .select('id')
@@ -106,12 +151,12 @@ const handler = async (req: Request): Promise<Response> => {
         .single();
 
       if (!existingUser) {
-        // Store verification code in a separate table instead of creating user record
+        // Store pinId in phone_verifications table for new users
         const { error: insertError } = await supabase
           .from('phone_verifications')
           .insert({
             phone: formattedPhone,
-            verification_code: verificationCode,
+            verification_code: pinId, // Store pinId as verification_code
             expires_at: expiresAt.toISOString(),
             created_at: new Date().toISOString()
           });
@@ -122,7 +167,7 @@ const handler = async (req: Request): Promise<Response> => {
           const { error: updateError } = await supabase
             .from('phone_verifications')
             .update({
-              verification_code: verificationCode,
+              verification_code: pinId,
               expires_at: expiresAt.toISOString(),
               updated_at: new Date().toISOString()
             })
@@ -134,11 +179,11 @@ const handler = async (req: Request): Promise<Response> => {
           }
         }
       } else {
-        // Update existing user with verification code
+        // Update existing user with pinId
         const { error: dbError } = await supabase
           .from('users')
           .update({
-            phone_verification_code: verificationCode,
+            phone_verification_code: pinId,
             phone_verification_expires: expiresAt.toISOString(),
           })
           .eq('phone', formattedPhone);
@@ -147,14 +192,6 @@ const handler = async (req: Request): Promise<Response> => {
           console.error('Database error:', dbError);
           throw new Error('Failed to store verification code');
         }
-      }
-
-      // Send SMS
-      const message = `Your FindWhoSabi verification code is: ${verificationCode}. Valid for 10 minutes.`;
-      const smsSent = await sendSMS(formattedPhone, message);
-
-      if (!smsSent) {
-        throw new Error('Failed to send SMS');
       }
 
       return new Response(
@@ -173,7 +210,7 @@ const handler = async (req: Request): Promise<Response> => {
         throw new Error('Verification code is required');
       }
 
-      // Check existing user or phone verification record
+      // Check existing user or phone verification record to get pinId
       const { data: existingUser } = await supabase
         .from('users')
         .select('phone_verification_code, phone_verification_expires')
@@ -208,7 +245,11 @@ const handler = async (req: Request): Promise<Response> => {
         throw new Error('Verification code has expired');
       }
 
-      if (verificationData.phone_verification_code !== code) {
+      // Verify OTP using TERMII API with pinId and code
+      const pinId = verificationData.phone_verification_code;
+      const isVerified = await verifyOTP(pinId, code);
+
+      if (!isVerified) {
         throw new Error('Invalid verification code');
       }
 
@@ -249,7 +290,7 @@ const handler = async (req: Request): Promise<Response> => {
     throw new Error('Invalid action');
 
   } catch (error: any) {
-    console.error('SMS function error:', error);
+    console.error('OTP function error:', error);
     return new Response(
       JSON.stringify({ 
         success: false, 
