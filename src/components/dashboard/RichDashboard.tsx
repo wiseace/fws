@@ -205,10 +205,12 @@ export const RichDashboard = () => {
         console.log('Checking notification:', notification.title, notification.message, 'user verification status:', profile?.verification_status);
         
         // If it's a verification revoke notification but user was never verified, don't show it
-        if ((notification.title?.includes('Verification') || 
-             notification.title?.includes('Unverified') ||
-             notification.message?.includes('verification') ||
-             notification.message?.includes('revoked')) && 
+        const isVerificationNotification = notification.title?.toLowerCase().includes('verification') || 
+                                          notification.title?.toLowerCase().includes('unverified') ||
+                                          notification.message?.toLowerCase().includes('verification') ||
+                                          notification.message?.toLowerCase().includes('revoked');
+        
+        if (isVerificationNotification && 
             (!profile?.verification_status || profile.verification_status === 'not_verified')) {
           console.log('Filtering out verification notification for unverified user');
           return false;

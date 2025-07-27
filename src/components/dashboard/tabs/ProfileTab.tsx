@@ -237,7 +237,7 @@ export const ProfileTab = () => {
                     value={isPhoneUser ? (email || '') : (profile?.email || '')}
                     onChange={isPhoneUser ? (e) => setEmail(e.target.value) : undefined}
                     disabled={!isPhoneUser}
-                    className={isPhoneUser ? "" : "bg-gray-50"}
+                    className={!isPhoneUser ? "bg-gray-50" : ""}
                     placeholder={isPhoneUser ? "Enter email address to add" : ""}
                   />
                   {isPhoneUser && (

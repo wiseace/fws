@@ -5,10 +5,9 @@ import { Label } from '@/components/ui/label';
 import { CustomPhoneInput } from '@/components/ui/phone-input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Smartphone, Mail, Clock, CheckCircle } from 'lucide-react';
+import { Smartphone, CheckCircle, Eye, EyeOff } from 'lucide-react';
 
 interface PhoneAuthFlowProps {
   onSuccess: (user: any) => void;
@@ -24,6 +23,8 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
   const [step, setStep] = useState<'phone' | 'verify'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [name, setName] = useState('');
@@ -48,10 +49,19 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
       return;
     }
 
-    if (mode === 'signup' && !name) {
+    if (!password) {
       toast({
-        title: "Name required",
-        description: "Please enter your full name",
+        title: "Password required",
+        description: "Please enter a password",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (mode === 'signup' && (!name || password.length < 6)) {
+      toast({
+        title: "Missing information",
+        description: "Please enter your name and a password (minimum 6 characters)",
         variant: "destructive",
       });
       return;
@@ -59,16 +69,24 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
     setLoading(true);
     try {
-      // Check if user already exists for signin
+      // For signin, try to authenticate first
       if (mode === 'signin') {
-        const { data: existingUser, error: userError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('phone', phoneNumber)
-          .single();
-        
-        if (userError || !existingUser) {
-          throw new Error('No account found with this phone number. Please sign up first.');
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email: `phone_${phoneNumber.replace('+', '')}@phoneauth.local`,
+          password: password
+        });
+
+        if (authError) {
+          throw new Error('Invalid phone number or password');
+        }
+
+        if (authData.user) {
+          toast({
+            title: "Success",
+            description: "Signed in successfully!",
+          });
+          onSuccess(authData.user);
+          return;
         }
       }
 
@@ -85,7 +103,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
         }
       }
 
-      // Send verification code (required for both signin and signup)
+      // Send verification code for signup
       const { data, error } = await supabase.functions.invoke('send-sms', {
         body: {
           phone: phoneNumber,
@@ -138,130 +156,57 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
         }
       });
 
-      if (error) {
-        console.error('Edge function error:', error);
-        const errorMessage = error.message || 'Verification failed';
-        
-        // Handle specific error cases more gracefully
-        if (errorMessage.includes('not found') || errorMessage.includes('expired')) {
-          toast({
-            title: "Code Expired",
-            description: "Verification code expired. Please request a new code.",
-            variant: "destructive",
-          });
-          setStep('phone'); // Go back to phone input step
-        } else {
-          toast({
-            title: "Error",
-            description: errorMessage,
-            variant: "destructive",
-          });
-        }
-        setLoading(false);
-        return;
+      if (error || !data.success) {
+        throw new Error(data?.error || 'Verification failed');
       }
 
-      if (!data.success) {
-        const errorMessage = data.error || 'Verification failed';
-        
-        // Handle specific error cases more gracefully  
-        if (errorMessage.includes('not found') || errorMessage.includes('expired')) {
-          toast({
-            title: "Code Expired",
-            description: "Verification code expired. Please request a new code.",
-            variant: "destructive",
-          });
-          setStep('phone'); // Go back to phone input step
-        } else {
-          toast({
-            title: "Error",
-            description: errorMessage,
-            variant: "destructive",
-          });
+      // Create user account with password
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: `phone_${phoneNumber.replace('+', '')}@phoneauth.local`,
+        password: password,
+        options: {
+          data: {
+            name: name,
+            phone: phoneNumber,
+            user_type: userType,
+            phone_verified: true
+          },
+          emailRedirectTo: `${window.location.origin}/dashboard`
         }
-        setLoading(false);
-        return;
+      });
+
+      if (authError) {
+        console.error('Auth signup error:', authError);
+        throw new Error(authError.message || 'Failed to create account');
       }
 
-      // OTP verified successfully, now handle user creation/signin
-      if (mode === 'signup') {
-        // Create anonymous auth user for phone signup
-        const { data: authData, error: authError } = await supabase.auth.signInAnonymously({
-          options: {
-            data: {
-              name,
-              user_type: userType,
-              phone: phoneNumber,
-              phone_verified: true
-            }
-          }
-        });
-
-        if (authError) throw authError;
-
-        // Wait for user creation in the database
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Wait for the trigger to create the user record
-        let userData = null;
+      if (authData.user) {
+        // Poll for user creation and redirect
         let attempts = 0;
         const maxAttempts = 10;
         
-        while (!userData && attempts < maxAttempts) {
-          const { data, error } = await supabase
+        const pollForUser = async () => {
+          const { data: userData } = await supabase
             .from('users')
             .select('*')
-            .eq('phone', phoneNumber)
+            .eq('id', authData.user.id)
             .single();
-          
-          if (data) {
-            userData = data;
-            break;
+            
+          if (userData) {
+            toast({
+              title: "Success",
+              description: "Account created successfully!",
+            });
+            onSuccess(authData.user);
+          } else if (attempts < maxAttempts) {
+            attempts++;
+            setTimeout(pollForUser, 500);
+          } else {
+            throw new Error('Account created but profile setup failed. Please try signing in.');
           }
-          
-          attempts++;
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-
-        if (!userData) {
-          throw new Error('Failed to create user account. Please try again.');
-        }
-
-        toast({
-          title: "Success",
-          description: "Account created successfully!",
-        });
-
-        onSuccess(userData);
-      } else {
-        // Sign in mode - get existing user and create anonymous session
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('phone', phoneNumber)
-          .single();
-
-        if (userError) throw userError;
-
-        // Create anonymous session for existing phone user
-        const { error: authError } = await supabase.auth.signInAnonymously({
-          options: {
-            data: {
-              user_id: userData.id,
-              phone: phoneNumber,
-              phone_verified: true
-            }
-          }
-        });
-
-        if (authError) throw authError;
-
-        toast({
-          title: "Success",
-          description: "Signed in successfully!",
-        });
-
-        onSuccess(userData);
+        };
+        
+        await pollForUser();
       }
     } catch (error: any) {
       console.error('Error verifying code:', error);
@@ -320,7 +265,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
           <CardDescription>
             {mode === 'signup' 
               ? 'Enter your details to create a new account'
-              : 'Enter your phone number to sign in'
+              : 'Enter your phone number and password to sign in'
             }
           </CardDescription>
         </CardHeader>
@@ -334,7 +279,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your full name"
-                  required
+                  disabled={loading}
                 />
               </div>
               
@@ -346,6 +291,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
                     variant={userType === 'seeker' ? 'default' : 'outline'}
                     onClick={() => setUserType('seeker')}
                     className="flex-1"
+                    disabled={loading}
                   >
                     Service Seeker
                   </Button>
@@ -354,6 +300,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
                     variant={userType === 'provider' ? 'default' : 'outline'}
                     onClick={() => setUserType('provider')}
                     className="flex-1"
+                    disabled={loading}
                   >
                     Service Provider
                   </Button>
@@ -369,15 +316,45 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
               onChange={(value) => setPhoneNumber(value || '')}
               placeholder="Enter your phone number"
               className="w-full"
+              disabled={loading}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={mode === 'signup' ? "Create a password (min 6 characters)" : "Enter your password"}
+                disabled={loading}
+                className="pr-10"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
 
           <Button 
             onClick={handleSendCode} 
-            disabled={loading || !phoneNumber}
-            className="w-full"
+            className="w-full" 
+            disabled={loading || !phoneNumber || !password || (mode === 'signup' && !name)}
           >
-            {loading ? 'Sending...' : 'Send Verification Code'}
+            {loading ? "Processing..." : (mode === 'signup' ? "Create Account" : "Sign In")}
           </Button>
 
           <div className="text-center">
@@ -385,6 +362,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
               variant="link"
               onClick={() => onModeChange(mode === 'signup' ? 'signin' : 'signup')}
               className="text-sm"
+              disabled={loading}
             >
               {mode === 'signup' 
                 ? 'Already have an account? Sign in'
@@ -432,7 +410,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
           disabled={loading || verificationCode.length !== 6}
           className="w-full"
         >
-          {loading ? 'Verifying...' : 'Verify Code'}
+          {loading ? 'Verifying...' : 'Verify Code & Complete Registration'}
         </Button>
 
         <div className="text-center space-y-2">
@@ -442,20 +420,14 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
             disabled={countdown > 0 || loading}
             className="text-sm"
           >
-            {countdown > 0 ? (
-              <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                Resend in {countdown}s
-              </span>
-            ) : (
-              'Resend Code'
-            )}
+            {countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
           </Button>
           
           <Button
             variant="link"
             onClick={() => setStep('phone')}
             className="text-sm block w-full"
+            disabled={loading}
           >
             ← Change Phone Number
           </Button>
