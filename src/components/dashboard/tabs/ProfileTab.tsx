@@ -232,9 +232,10 @@ export const ProfileTab = () => {
                 <div className="flex gap-2">
                   <Input
                     id="email"
-                    value={profile?.email || ''}
-                    disabled
-                    className="bg-gray-50"
+                    value={isPhoneUser ? '' : (profile?.email || '')}
+                    disabled={!isPhoneUser}
+                    className={isPhoneUser ? "" : "bg-gray-50"}
+                    placeholder={isPhoneUser ? "Enter email address to add" : ""}
                   />
                   {isPhoneUser && (
                     <Button
@@ -244,8 +245,8 @@ export const ProfileTab = () => {
                       onClick={() => setIsEmailModalOpen(true)}
                       className="flex items-center gap-1"
                     >
-                      <Plus className="h-3 w-3" />
-                      Add Email
+                      <Mail className="h-3 w-3" />
+                      Add & Verify Email
                     </Button>
                   )}
                 </div>

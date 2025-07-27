@@ -10,9 +10,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { AdminTableControls } from '@/components/admin/AdminTableControls';
+import { EditUserModal } from '@/components/admin/EditUserModal';
 
 import { User as UserType, VerificationRequest, Service } from '@/types/database';
-import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard } from 'lucide-react';
+import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard, Edit } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
 const EnhancedAdmin = () => {
@@ -30,6 +31,10 @@ const EnhancedAdmin = () => {
   const [displayedUsers, setDisplayedUsers] = useState<UserType[]>([]);
   const [displayedVerifications, setDisplayedVerifications] = useState<VerificationRequest[]>([]);
   const [displayedServices, setDisplayedServices] = useState<Service[]>([]);
+  
+  // Edit user modal state
+  const [editUserModalOpen, setEditUserModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
 
   useEffect(() => {
     console.log('Enhanced Admin useEffect - profile:', profile);
@@ -698,6 +703,19 @@ const EnhancedAdmin = () => {
                                 </select>
                               </div>
                               
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setEditUserModalOpen(true);
+                                }}
+                                className="rounded-lg"
+                              >
+                                <Edit className="w-3 h-3 mr-1" />
+                                Edit
+                              </Button>
+                              
                               {user.email === 'hi@ariyo.dev' ? (
                                 <div className="flex items-center gap-1 px-2 py-1 bg-muted rounded-lg border border-border">
                                   <Shield className="w-3 h-3" />
@@ -921,6 +939,22 @@ const EnhancedAdmin = () => {
 
         <Footer editMode={false} />
       </div>
+      
+      {/* Edit User Modal */}
+      <EditUserModal
+        user={selectedUser}
+        isOpen={editUserModalOpen}
+        onClose={() => {
+          setEditUserModalOpen(false);
+          setSelectedUser(null);
+        }}
+        onUserUpdated={() => {
+          fetchUsers();
+          fetchStats();
+          setEditUserModalOpen(false);
+          setSelectedUser(null);
+        }}
+      />
     </ProtectedRoute>
   );
 };
