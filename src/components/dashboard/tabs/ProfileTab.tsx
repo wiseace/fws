@@ -10,7 +10,8 @@ import { CustomPhoneInput } from '@/components/ui/phone-input';
 import { AddressInput } from '@/components/ui/address-input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
-import { User, Settings, Save, CreditCard, Calendar, CheckCircle, Upload, Camera } from 'lucide-react';
+import { EmailVerificationModal } from '@/components/EmailVerificationModal';
+import { User, Settings, Save, CreditCard, Calendar, CheckCircle, Upload, Camera, Mail, Plus } from 'lucide-react';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 
 export const ProfileTab = () => {
@@ -23,6 +24,10 @@ export const ProfileTab = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  
+  // Check if user registered with phone (has phone auth email pattern)
+  const isPhoneUser = user?.email?.includes('@phoneauth.local') || user?.email?.includes('@anonymous.local');
 
   useEffect(() => {
     if (profile) {
@@ -224,13 +229,29 @@ export const ProfileTab = () => {
               
               <div>
                 <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  value={profile?.email || ''}
-                  disabled
-                  className="bg-gray-50"
-                />
-                <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                <div className="flex gap-2">
+                  <Input
+                    id="email"
+                    value={profile?.email || ''}
+                    disabled
+                    className="bg-gray-50"
+                  />
+                  {isPhoneUser && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEmailModalOpen(true)}
+                      className="flex items-center gap-1"
+                    >
+                      <Plus className="h-3 w-3" />
+                      Add Email
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {isPhoneUser ? 'Add a verified email address to your account' : 'Email cannot be changed'}
+                </p>
               </div>
               
               <div>
@@ -324,6 +345,18 @@ export const ProfileTab = () => {
         </Card>
       </div>
 
+      {/* Email Verification Modal */}
+      <EmailVerificationModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        onEmailVerified={() => {
+          refreshProfile();
+          toast({
+            title: "Email Added",
+            description: "Your email has been successfully added and verified.",
+          });
+        }}
+      />
     </div>
   );
 };

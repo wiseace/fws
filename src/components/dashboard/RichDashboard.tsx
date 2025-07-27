@@ -90,6 +90,16 @@ export const RichDashboard = () => {
       setActiveTab(profile?.user_type === 'provider' ? 'services' : 'profile');
     }
   }, [profile?.user_type]);
+
+  // Listen for tab change events from onboarding wizard
+  useEffect(() => {
+    const handleTabChange = (event: CustomEvent) => {
+      setActiveTab(event.detail);
+    };
+
+    window.addEventListener('tabChange', handleTabChange as EventListener);
+    return () => window.removeEventListener('tabChange', handleTabChange as EventListener);
+  }, []);
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -189,7 +199,18 @@ export const RichDashboard = () => {
         ...notification,
         type: notification.type as 'info' | 'success' | 'warning' | 'error'
       }));
-      setNotifications(typedData);
+      
+      // Filter out verification revoke notifications for new users who haven't been verified
+      const filteredNotifications = typedData.filter(notification => {
+        // If it's a verification revoke notification but user was never verified, don't show it
+        if (notification.title === 'Account Verification Revoked' && 
+            (!profile?.verification_status || profile.verification_status === 'not_verified')) {
+          return false;
+        }
+        return true;
+      });
+      
+      setNotifications(filteredNotifications);
     }
   };
 

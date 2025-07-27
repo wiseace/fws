@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@/types/database';
-import { CheckCircle, XCircle, AlertTriangle, MessageSquare } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, MessageSquare, Edit } from 'lucide-react';
+import { EditUserModal } from './EditUserModal';
 
 interface UserVerificationModalProps {
   user: User | null;
@@ -19,6 +20,7 @@ interface UserVerificationModalProps {
 export const UserVerificationModal = ({ user, isOpen, onClose, onUserUpdated }: UserVerificationModalProps) => {
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { toast } = useToast();
 
   const handleVerify = async () => {
@@ -180,36 +182,47 @@ export const UserVerificationModal = ({ user, isOpen, onClose, onUserUpdated }: 
             />
           </div>
 
-          <div className="flex gap-2">
-            {user.verification_status === 'verified' ? (
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              {user.verification_status === 'verified' ? (
+                <Button
+                  onClick={handleUnverify}
+                  disabled={loading || !reason.trim()}
+                  variant="destructive"
+                  className="flex-1"
+                >
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Unverify User
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleVerify}
+                  disabled={loading}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Verify User
+                </Button>
+              )}
+              
               <Button
-                onClick={handleUnverify}
+                onClick={handleSendMessage}
                 disabled={loading || !reason.trim()}
-                variant="destructive"
+                variant="outline"
                 className="flex-1"
               >
-                <XCircle className="w-4 h-4 mr-2" />
-                Unverify User
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Send Message
               </Button>
-            ) : (
-              <Button
-                onClick={handleVerify}
-                disabled={loading}
-                className="flex-1 bg-green-600 hover:bg-green-700"
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Verify User
-              </Button>
-            )}
+            </div>
             
             <Button
-              onClick={handleSendMessage}
-              disabled={loading || !reason.trim()}
+              onClick={() => setIsEditModalOpen(true)}
               variant="outline"
-              className="flex-1"
+              className="w-full"
             >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Send Message
+              <Edit className="w-4 h-4 mr-2" />
+              Edit User Details
             </Button>
           </div>
 
@@ -222,6 +235,16 @@ export const UserVerificationModal = ({ user, isOpen, onClose, onUserUpdated }: 
           </Button>
         </div>
       </DialogContent>
+      
+      <EditUserModal
+        user={user}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onUserUpdated={() => {
+          onUserUpdated();
+          setIsEditModalOpen(false);
+        }}
+      />
     </Dialog>
   );
 };

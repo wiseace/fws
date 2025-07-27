@@ -72,27 +72,21 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Complete Profile',
           completed: false,
           actionHandler: () => {
-            // Close wizard first
             onClose();
             
-            // Navigate to dashboard and then scroll to profile tab
+            // Set the active tab directly
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('tab', 'profile');
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
+            
+            // If not on dashboard, navigate there
             if (window.location.pathname !== '/dashboard') {
-              window.location.href = '/dashboard';
+              window.location.href = '/dashboard?tab=profile';
               return;
             }
             
-            setTimeout(() => {
-              const profileTab = document.querySelector('[data-state="inactive"][data-value="profile"]') as HTMLElement;
-              if (profileTab) {
-                profileTab.click();
-                setTimeout(() => {
-                  const profileContent = document.querySelector('[data-state="active"] form, [data-state="active"] .profile-form');
-                  if (profileContent) {
-                    profileContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                }, 300);
-              }
-            }, 200);
+            // Trigger tab change by dispatching event
+            window.dispatchEvent(new CustomEvent('tabChange', { detail: 'profile' }));
           }
         },
         {
@@ -103,35 +97,21 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           action: 'Start Verification',
           completed: false,
           actionHandler: () => {
-            console.log('🔥 Verification actionHandler started');
-            console.log('📍 Current pathname:', window.location.pathname);
-            console.log('🔒 User authenticated:', !!user);
-            console.log('👤 Profile loaded:', !!profile);
-            
             onClose();
             
-            // Try multiple navigation approaches
-            console.log('🚀 Attempting navigation to dashboard...');
+            // Set the active tab directly
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('tab', 'verification');
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
             
-            // First try React Router
-            try {
-              console.log('📍 Method 1: Using React Router navigate');
-              navigate('/dashboard?tab=verification');
-              
-              // Wait a bit and check if navigation worked
-              setTimeout(() => {
-                console.log('🔍 After navigate - current path:', window.location.pathname);
-                if (window.location.pathname !== '/dashboard') {
-                  console.log('⚠️ React Router navigate failed, trying window.location...');
-                  window.location.href = '/dashboard?tab=verification';
-                }
-              }, 500);
-              
-            } catch (error) {
-              console.error('❌ Navigation error:', error);
-              console.log('🔄 Fallback: Using window.location');
+            // If not on dashboard, navigate there
+            if (window.location.pathname !== '/dashboard') {
               window.location.href = '/dashboard?tab=verification';
+              return;
             }
+            
+            // Trigger tab change by dispatching event
+            window.dispatchEvent(new CustomEvent('tabChange', { detail: 'verification' }));
           }
         },
         {
@@ -153,23 +133,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           actionHandler: () => {
             onClose();
             
+            // Set the active tab directly
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('tab', 'services');
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
+            
+            // If not on dashboard, navigate there
             if (window.location.pathname !== '/dashboard') {
-              window.location.href = '/dashboard';
+              window.location.href = '/dashboard?tab=services';
               return;
             }
             
-            setTimeout(() => {
-              const servicesTab = document.querySelector('[data-state="inactive"][data-value="services"]') as HTMLElement;
-              if (servicesTab) {
-                servicesTab.click();
-                setTimeout(() => {
-                  const servicesContent = document.querySelector('[data-state="active"] .services-grid, [data-state="active"] button[aria-label*="Add"], [data-state="active"] [class*="add"]');
-                  if (servicesContent) {
-                    servicesContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                }, 300);
-              }
-            }, 200);
+            // Trigger tab change by dispatching event
+            window.dispatchEvent(new CustomEvent('tabChange', { detail: 'services' }));
           }
         }
       ]);
@@ -186,23 +162,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isVisible, o
           actionHandler: () => {
             onClose();
             
+            // Set the active tab directly
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('tab', 'profile');
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
+            
+            // If not on dashboard, navigate there
             if (window.location.pathname !== '/dashboard') {
-              window.location.href = '/dashboard';
+              window.location.href = '/dashboard?tab=profile';
               return;
             }
             
-            setTimeout(() => {
-              const profileTab = document.querySelector('[data-state="inactive"][data-value="profile"]') as HTMLElement;
-              if (profileTab) {
-                profileTab.click();
-                setTimeout(() => {
-                  const profileContent = document.querySelector('[data-state="active"] form, [data-state="active"] .profile-form');
-                  if (profileContent) {
-                    profileContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                }, 300);
-              }
-            }, 200);
+            // Trigger tab change by dispatching event
+            window.dispatchEvent(new CustomEvent('tabChange', { detail: 'profile' }));
           }
         },
         {
