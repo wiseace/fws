@@ -104,32 +104,22 @@ const handler = async (req: Request): Promise<Response> => {
         .single();
 
       if (!existingUser) {
-        // Store verification code in a separate table instead of creating user record
-        const { error: insertError } = await supabase
+        // Store verification code in a separate table (upsert to handle duplicates)
+        const { error: upsertError } = await supabase
           .from('phone_verifications')
-          .insert({
+          .upsert({
             phone: formattedPhone,
             verification_code: verificationCode,
             expires_at: expiresAt.toISOString(),
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'phone'
           });
 
-        if (insertError) {
-          console.error('Phone verification insert error:', insertError);
-          // Try updating if record exists
-          const { error: updateError } = await supabase
-            .from('phone_verifications')
-            .update({
-              verification_code: verificationCode,
-              expires_at: expiresAt.toISOString(),
-              updated_at: new Date().toISOString()
-            })
-            .eq('phone', formattedPhone);
-
-          if (updateError) {
-            console.error('Phone verification update error:', updateError);
-            throw new Error('Failed to store verification code');
-          }
+        if (upsertError) {
+          console.error('Phone verification upsert error:', upsertError);
+          throw new Error('Failed to store verification code');
         }
       } else {
         // Update existing user with verification code
@@ -190,7 +180,17 @@ const handler = async (req: Request): Promise<Response> => {
           .single();
 
         if (phoneError || !phoneVerification) {
-          throw new Error('Verification code not found');
+          console.log('Phone verification lookup failed:', phoneError);
+          return new Response(
+            JSON.stringify({ 
+              success: false, 
+              error: 'Verification code not found or expired. Please request a new code.' 
+            }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 404 
+            }
+          );
         }
         
         verificationData = {

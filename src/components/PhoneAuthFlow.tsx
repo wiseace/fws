@@ -138,10 +138,49 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Edge function error:', error);
+        const errorMessage = error.message || 'Verification failed';
+        
+        // Handle specific error cases more gracefully
+        if (errorMessage.includes('not found') || errorMessage.includes('expired')) {
+          toast({
+            title: "Code Expired",
+            description: "Verification code expired. Please request a new code.",
+            variant: "destructive",
+          });
+          setStep('phone'); // Go back to phone input step
+        } else {
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        }
+        setLoading(false);
+        return;
+      }
 
       if (!data.success) {
-        throw new Error(data.error || 'Verification failed');
+        const errorMessage = data.error || 'Verification failed';
+        
+        // Handle specific error cases more gracefully  
+        if (errorMessage.includes('not found') || errorMessage.includes('expired')) {
+          toast({
+            title: "Code Expired",
+            description: "Verification code expired. Please request a new code.",
+            variant: "destructive",
+          });
+          setStep('phone'); // Go back to phone input step
+        } else {
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        }
+        setLoading(false);
+        return;
       }
 
       // OTP verified successfully, now handle user creation/signin
