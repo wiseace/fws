@@ -185,12 +185,8 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
       // OTP verified successfully, now handle user creation/signin
       if (mode === 'signup') {
-        // Create auth user after OTP verification
-        const temporaryEmail = `phone${phoneNumber.replace(/\D/g, '')}@example.com`;
-        
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: temporaryEmail,
-          password: crypto.randomUUID(),
+        // Create anonymous auth user for phone signup
+        const { data: authData, error: authError } = await supabase.auth.signInAnonymously({
           options: {
             data: {
               name,
@@ -203,7 +199,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
         if (authError) throw authError;
 
-        // Wait for user creation then get the user data
+        // Wait for user creation in the database
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         const { data: userData, error: userError } = await supabase
@@ -221,7 +217,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
         onSuccess(userData);
       } else {
-        // Sign in mode - get existing user and sign them in
+        // Sign in mode - get existing user and create anonymous session
         const { data: userData, error: userError } = await supabase
           .from('users')
           .select('*')
@@ -230,28 +226,18 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
 
         if (userError) throw userError;
 
-        // Sign in the user using their temporary email
-        const temporaryEmail = `phone${phoneNumber.replace(/\D/g, '')}@example.com`;
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: temporaryEmail,
-          password: userData.id // Use user ID as password for phone auth users
+        // Create anonymous session for existing phone user
+        const { error: authError } = await supabase.auth.signInAnonymously({
+          options: {
+            data: {
+              user_id: userData.id,
+              phone: phoneNumber,
+              phone_verified: true
+            }
+          }
         });
 
-        // If password signin fails, try to update the user's password
-        if (signInError) {
-          // For phone auth users, update their password to their user ID
-          await supabase.auth.admin.updateUserById(userData.id, {
-            password: userData.id
-          });
-          
-          // Try signing in again
-          const { error: retrySignInError } = await supabase.auth.signInWithPassword({
-            email: temporaryEmail,
-            password: userData.id
-          });
-          
-          if (retrySignInError) throw retrySignInError;
-        }
+        if (authError) throw authError;
 
         toast({
           title: "Success",
