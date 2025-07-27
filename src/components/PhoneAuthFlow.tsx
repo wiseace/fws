@@ -202,13 +202,30 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
         // Wait for user creation in the database
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('phone', phoneNumber)
-          .single();
+        // Wait for the trigger to create the user record
+        let userData = null;
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        while (!userData && attempts < maxAttempts) {
+          const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('phone', phoneNumber)
+            .single();
+          
+          if (data) {
+            userData = data;
+            break;
+          }
+          
+          attempts++;
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
 
-        if (userError) throw userError;
+        if (!userData) {
+          throw new Error('Failed to create user account. Please try again.');
+        }
 
         toast({
           title: "Success",
