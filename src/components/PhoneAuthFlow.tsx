@@ -186,7 +186,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
       // OTP verified successfully, now handle user creation/signin
       if (mode === 'signup') {
         // Create auth user after OTP verification
-        const temporaryEmail = `${phoneNumber.replace(/\D/g, '')}@phone.temp`;
+        const temporaryEmail = `${phoneNumber.replace(/\D/g, '')}@phoneauth.local`;
         
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: temporaryEmail,
@@ -231,7 +231,7 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
         if (userError) throw userError;
 
         // Sign in the user using their temporary email
-        const temporaryEmail = `${phoneNumber.replace(/\D/g, '')}@phone.temp`;
+        const temporaryEmail = `${phoneNumber.replace(/\D/g, '')}@phoneauth.local`;
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: temporaryEmail,
           password: userData.id // Use user ID as password for phone auth users
