@@ -61,13 +61,13 @@ export const PhoneAuthFlow: React.FC<PhoneAuthFlowProps> = ({
     try {
       // Check if user already exists for signin
       if (mode === 'signin') {
-        const { data: existingUser } = await supabase
+        const { data: existingUser, error: userError } = await supabase
           .from('users')
           .select('*')
           .eq('phone', phoneNumber)
           .single();
         
-        if (!existingUser) {
+        if (userError || !existingUser) {
           throw new Error('No account found with this phone number. Please sign up first.');
         }
       }

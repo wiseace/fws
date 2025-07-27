@@ -21,13 +21,15 @@ export const ProfileTab = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [email, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   
   // Check if user registered with phone (has phone auth email pattern)
-  const isPhoneUser = user?.email?.includes('@phoneauth.local') || user?.email?.includes('@anonymous.local');
+  const isPhoneUser = profile?.email?.includes('@phoneauth.local') || profile?.email?.includes('@anonymous.local') || false;
+  console.log('ProfileTab - isPhoneUser:', isPhoneUser, 'email:', profile?.email);
 
   useEffect(() => {
     if (profile) {
@@ -232,7 +234,8 @@ export const ProfileTab = () => {
                 <div className="flex gap-2">
                   <Input
                     id="email"
-                    value={isPhoneUser ? '' : (profile?.email || '')}
+                    value={isPhoneUser ? (email || '') : (profile?.email || '')}
+                    onChange={isPhoneUser ? (e) => setEmail(e.target.value) : undefined}
                     disabled={!isPhoneUser}
                     className={isPhoneUser ? "" : "bg-gray-50"}
                     placeholder={isPhoneUser ? "Enter email address to add" : ""}
