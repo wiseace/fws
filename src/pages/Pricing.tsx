@@ -24,10 +24,10 @@ const Pricing = () => {
   // Different pricing for providers vs seekers
   const isProvider = profile?.user_type === 'provider';
   
-  // Fetch pricing data when currency changes
+  // Fetch pricing data when currency changes or user profile changes
   useEffect(() => {
     fetchPricingData();
-  }, [selectedCurrency]);
+  }, [selectedCurrency, profile?.user_type]);
 
   // Set user's preferred currency if available
   useEffect(() => {
@@ -49,10 +49,13 @@ const Pricing = () => {
 
   const fetchPricingData = async () => {
     try {
+      const userType = profile?.user_type || 'seeker';
+      
       const { data: pricing, error: pricingError } = await supabase
         .from('subscription_pricing')
         .select('*')
-        .eq('currency_code', selectedCurrency);
+        .eq('currency_code', selectedCurrency)
+        .eq('user_type', userType);
 
       if (pricingError) throw pricingError;
 

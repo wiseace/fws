@@ -354,6 +354,7 @@ export type Database = {
           id: string
           plan: string
           price: number
+          user_type: Database["public"]["Enums"]["user_type"]
         }
         Insert: {
           created_at?: string | null
@@ -361,6 +362,7 @@ export type Database = {
           id?: string
           plan: string
           price: number
+          user_type?: Database["public"]["Enums"]["user_type"]
         }
         Update: {
           created_at?: string | null
@@ -368,6 +370,7 @@ export type Database = {
           id?: string
           plan?: string
           price?: number
+          user_type?: Database["public"]["Enums"]["user_type"]
         }
         Relationships: [
           {

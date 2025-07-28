@@ -15,6 +15,7 @@ import { NewDashboard } from "./pages/NewDashboard";
 import Admin from "./pages/Admin";
 import AdminCategories from "./pages/AdminCategories";
 import AdminProfile from "./pages/AdminProfile";
+import AdminPricing from "./pages/AdminPricing";
 import Pricing from "./pages/Pricing";
 import Provider from "./pages/Provider";
 import Providers from "./pages/Providers";
@@ -54,6 +55,11 @@ const App = () => (
             <Route path="/admin/profile" element={
               <AdminRoute>
                 <AdminProfile />
+              </AdminRoute>
+            } />
+            <Route path="/admin/pricing" element={
+              <AdminRoute>
+                <AdminPricing />
               </AdminRoute>
             } />
             <Route path="/pricing" element={<Pricing />} />
