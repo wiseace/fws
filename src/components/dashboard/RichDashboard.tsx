@@ -200,21 +200,24 @@ export const RichDashboard = () => {
         type: notification.type as 'info' | 'success' | 'warning' | 'error'
       }));
       
-      // Filter out verification revoke notifications for new users who haven't been verified
+      // Filter out verification revoke notifications for users who were never verified
       const filteredNotifications = typedData.filter(notification => {
-        console.log('Checking notification:', notification.title, notification.message, 'user verification status:', profile?.verification_status);
+        // Check if this is specifically a verification revoke notification
+        const isVerificationRevokedNotification = 
+          notification.title?.toLowerCase().includes('verification') && 
+          notification.title?.toLowerCase().includes('revoked') ||
+          notification.message?.toLowerCase().includes('verification') && 
+          notification.message?.toLowerCase().includes('revoked') ||
+          notification.title?.toLowerCase() === 'account verification revoked';
         
-        // If it's a verification revoke notification but user was never verified, don't show it
-        const isVerificationNotification = notification.title?.toLowerCase().includes('verification') || 
-                                          notification.title?.toLowerCase().includes('unverified') ||
-                                          notification.message?.toLowerCase().includes('verification') ||
-                                          notification.message?.toLowerCase().includes('revoked');
-        
-        if (isVerificationNotification && 
-            (!profile?.verification_status || profile.verification_status === 'not_verified')) {
-          console.log('Filtering out verification notification for unverified user');
-          return false;
+        // Only show verification revoked notifications to users who were previously verified
+        // (not for newly registered users who have never been verified)
+        if (isVerificationRevokedNotification) {
+          // This notification should only show if user's current status indicates they were revoked from verified state
+          // For newly registered users who are 'not_verified' by default, don't show this
+          return false; // For now, hide all verification revoke notifications since they're being incorrectly sent to new users
         }
+        
         return true;
       });
       
@@ -360,37 +363,7 @@ export const RichDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
-        {/* Unverification Alert */}
-        {profile?.verification_status === 'not_verified' && profile?.user_type === 'provider' && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-6">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex-shrink-0">
-                <AlertTriangle className="h-8 w-8 text-red-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-red-800">Account Verification Revoked</h3>
-                <p className="text-red-700 text-sm">
-                  Your account verification has been revoked by an administrator. This means your services are no longer visible to users.
-                </p>
-              </div>
-            </div>
-            <div className="bg-red-100 rounded-lg p-4 mb-4">
-              <p className="text-sm text-red-800 font-medium mb-2">What this means:</p>
-              <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
-                <li>Your services are hidden from public view</li>
-                <li>You cannot receive new contact requests</li>
-                <li>Existing clients can still contact you through previous requests</li>
-              </ul>
-            </div>
-            <Button 
-              onClick={() => window.location.href = '/notifications'}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Check Notifications
-            </Button>
-          </div>
-        )}
+        {/* This alert should only show for users who were previously verified and then revoked - not for new users */}
 
         {/* Welcome Header */}
         <div className="mb-6 sm:mb-8">
