@@ -99,12 +99,17 @@ const handler = async (req: Request): Promise<Response> => {
     const amountInSubunit = amount * 100;
 
     // Prepare Paystack payment payload
+    // For phone-authenticated users, use a valid fallback email for Paystack
+    const validEmail = customer.email.includes('@phoneauth.local') 
+      ? `user+${user.id.substring(0, 8)}@findwhosabi.com`
+      : customer.email;
+
     const paymentPayload = {
       reference: tx_ref,
       amount: amountInSubunit,
       currency: currency,
-      email: customer.email,
-      callback_url: `${supabaseUrl}/payment-success?plan=${plan}&tx_ref=${tx_ref}`,
+      email: validEmail,
+      callback_url: `${req.headers.get('origin') || supabaseUrl}/payment-success?plan=${plan}&tx_ref=${tx_ref}`,
       metadata: {
         user_id: user.id,
         plan: plan,
