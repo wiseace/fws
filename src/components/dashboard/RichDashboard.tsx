@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { OnboardingWizard } from '@/components/dashboard/OnboardingWizard';
+import { MobileDashboardLayout } from '@/components/dashboard/MobileDashboardLayout';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -73,6 +75,7 @@ interface Notification {
 export const RichDashboard = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const { showWizard, dismissWizard, showWizardManually, onboardingProgress } = useOnboarding();
   const [stats, setStats] = useState<DashboardStats>({});
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStep[]>([]);
@@ -360,6 +363,235 @@ export const RichDashboard = () => {
     );
   }
 
+  const unreadNotifications = notifications.filter(n => !n.read).length;
+
+  // Mobile Layout
+  if (isMobile) {
+    return (
+      <MobileDashboardLayout 
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onboardingProgress={onboardingProgress}
+        unreadNotifications={unreadNotifications}
+      >
+        <div className="p-4 space-y-6">
+          {/* Mobile Stats Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            {profile?.user_type === 'provider' ? (
+              <>
+                <Card className="bg-primary text-primary-foreground border-0">
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <Star className="h-6 w-6 mx-auto text-primary-foreground/80" />
+                      <div>
+                        <p className="text-2xl font-bold">{stats.totalServices || 0}</p>
+                        <p className="text-xs text-primary-foreground/80">Services</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-green-600 text-white border-0">
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <CheckCircle className="h-6 w-6 mx-auto text-white/80" />
+                      <div>
+                        <p className="text-2xl font-bold">{stats.activeServices || 0}</p>
+                        <p className="text-xs text-white/80">Active</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-blue-600 text-white border-0">
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <TrendingUp className="h-6 w-6 mx-auto text-white/80" />
+                      <div>
+                        <p className="text-2xl font-bold">{stats.thisWeekRequests || 0}</p>
+                        <p className="text-xs text-white/80">This Week</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-purple-600 text-white border-0">
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <Award className="h-6 w-6 mx-auto text-white/80" />
+                      <div>
+                        <p className="text-2xl font-bold">{stats.profileCompletion}%</p>
+                        <p className="text-xs text-white/80">Complete</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <>
+                <Card 
+                  className="bg-primary text-primary-foreground border-0 cursor-pointer active:scale-95 transition-transform" 
+                  onClick={() => window.location.href = '/browse'}
+                >
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <Search className="h-6 w-6 mx-auto text-primary-foreground/80" />
+                      <div>
+                        <p className="text-lg font-bold">Discover</p>
+                        <p className="text-xs text-primary-foreground/80">Services</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card 
+                  className="bg-green-600 text-white border-0 cursor-pointer active:scale-95 transition-transform" 
+                  onClick={() => window.location.href = '/browse'}
+                >
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <Users className="h-6 w-6 mx-auto text-white/80" />
+                      <div>
+                        <p className="text-lg font-bold">Browse</p>
+                        <p className="text-xs text-white/80">Providers</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card 
+                  className="bg-purple-600 text-white border-0 cursor-pointer active:scale-95 transition-transform" 
+                  onClick={() => setActiveTab('profile')}
+                >
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <Award className="h-6 w-6 mx-auto text-white/80" />
+                      <div>
+                        <p className="text-lg font-bold">{stats.profileCompletion}%</p>
+                        <p className="text-xs text-white/80">Complete</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card 
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 cursor-pointer active:scale-95 transition-transform" 
+                  onClick={() => window.location.href = '/pricing'}
+                >
+                  <CardContent className="p-4">
+                    <div className="text-center space-y-2">
+                      <Star className="h-6 w-6 mx-auto text-white/80" />
+                      <div>
+                        <p className="text-lg font-bold">Upgrade</p>
+                        <p className="text-xs text-white/80">Premium</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Tab Content */}
+          <Card className="border-0 shadow-lg">
+            <CardContent className="p-4">
+              {activeTab === 'services' && <MyServicesTab />}
+              {activeTab === 'verification' && <VerificationTab />}
+              {activeTab === 'profile' && <ProfileTab />}
+              {activeTab === 'messages' && <MessagesTab />}
+            </CardContent>
+          </Card>
+
+          {/* Mobile Notifications */}
+          {notifications.length > 0 && (
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Bell className="h-5 w-5" />
+                  Recent Notifications
+                  {unreadNotifications > 0 && (
+                    <Badge variant="destructive" className="ml-auto">
+                      {unreadNotifications}
+                    </Badge>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {notifications.slice(0, 3).map((notification) => (
+                  <div 
+                    key={notification.id}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                      !notification.read 
+                        ? 'bg-primary/5 border-primary/20' 
+                        : 'bg-muted/30 border-border'
+                    }`}
+                    onClick={() => handleNotificationClick(notification)}
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className={`p-1 rounded-full mt-0.5 ${
+                        notification.type === 'success' ? 'bg-green-100' :
+                        notification.type === 'warning' ? 'bg-yellow-100' :
+                        notification.type === 'error' ? 'bg-red-100' : 'bg-blue-100'
+                      }`}>
+                        {notification.type === 'success' && <CheckCircle className="h-3 w-3 text-green-600" />}
+                        {notification.type === 'warning' && <AlertCircle className="h-3 w-3 text-yellow-600" />}
+                        {notification.type === 'error' && <AlertCircle className="h-3 w-3 text-red-600" />}
+                        {notification.type === 'info' && <Bell className="h-3 w-3 text-blue-600" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{notification.title}</p>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{notification.message}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {new Date(notification.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      {!notification.read && (
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {notifications.length > 3 && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full mt-3"
+                    onClick={() => window.location.href = '/notifications'}
+                  >
+                    View All Notifications
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Mobile Subscription Info */}
+          {profile?.user_type !== 'admin' && (
+            <SubscriptionCountdown profile={profile} />
+          )}
+        </div>
+
+        {/* Mobile Modals */}
+        <OnboardingWizard
+          isVisible={showWizard}
+          onClose={dismissWizard}
+        />
+        <NotificationModal
+          notification={selectedNotification}
+          isOpen={isNotificationModalOpen}
+          onClose={() => setIsNotificationModalOpen(false)}
+          onMarkAsRead={markNotificationAsRead}
+        />
+        <ServiceModal
+          isOpen={isServiceModalOpen}
+          onClose={() => setIsServiceModalOpen(false)}
+          onServiceCreated={handleServiceCreated}
+        />
+      </MobileDashboardLayout>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">

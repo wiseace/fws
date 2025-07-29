@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,6 +20,7 @@ import { Loader2 } from 'lucide-react';
 const EnhancedAdmin = () => {
   const { user, profile, updateUserRole, deleteUser } = useSecureAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('verifications');
   
@@ -301,40 +303,44 @@ const EnhancedAdmin = () => {
       <div className="min-h-screen bg-background">
         <Header editMode={false} onToggleEdit={() => {}} />
         
-        {/* Contained Layout */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
-          {/* Modern Header */}
-          <div className="mb-8 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary rounded-xl">
-                <Shield className="h-8 w-8 text-primary-foreground" />
+        {/* Mobile/Desktop Responsive Layout */}
+        <div className={`max-w-7xl mx-auto ${isMobile ? 'px-3 py-4 pt-20' : 'px-4 sm:px-6 lg:px-8 py-8 pt-32'}`}>
+          {/* Responsive Header */}
+          <div className={`mb-6 ${isMobile ? 'space-y-4' : 'flex items-center justify-between'}`}>
+            <div className="flex items-center gap-3">
+              <div className={`${isMobile ? 'p-2' : 'p-3'} bg-primary rounded-xl`}>
+                <Shield className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary-foreground`} />
               </div>
               <div>
-                <h1 className="heading-1">Enhanced Admin Dashboard</h1>
-                <p className="body-text text-muted-foreground mt-1">
-                  System Management & Analytics Center with Advanced Controls
+                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl lg:text-3xl'} font-bold text-foreground`}>
+                  {isMobile ? 'Admin Dashboard' : 'Enhanced Admin Dashboard'}
+                </h1>
+                <p className={`${isMobile ? 'text-sm' : 'text-base'} text-muted-foreground mt-1`}>
+                  {isMobile ? 'System Management' : 'System Management & Analytics Center with Advanced Controls'}
                 </p>
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className={`flex items-center ${isMobile ? 'justify-between w-full' : 'gap-3'}`}>
+              {!isMobile && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.location.href = '/admin/categories'}
+                  className="flex items-center gap-2"
+                >
+                  <span className="text-sm">📁</span>
+                  Categories
+                </Button>
+              )}
               <Button 
                 variant="outline" 
-                size="sm"
-                onClick={() => window.location.href = '/admin/categories'}
-                className="flex items-center gap-2"
-              >
-                <span className="text-sm">📁</span>
-                Categories
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
+                size={isMobile ? "sm" : "sm"}
                 onClick={() => window.location.href = '/dashboard'}
                 className="flex items-center gap-2"
               >
                 <LayoutDashboard className="h-4 w-4" />
-                User Dashboard
+                {isMobile ? 'Dashboard' : 'User Dashboard'}
               </Button>
               <Button 
                 size="sm"
@@ -347,26 +353,26 @@ const EnhancedAdmin = () => {
                 }}
                 className="rounded-lg"
               >
-                🔄 Refresh
+                {isMobile ? '🔄' : '🔄 Refresh'}
               </Button>
             </div>
           </div>
 
-          {/* Enhanced Stats Grid */}
+          {/* Responsive Stats Grid */}
           {stats && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+            <div className={`grid ${isMobile ? 'grid-cols-2 gap-3 mb-6' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8'}`}>
               <Card 
                 className="cursor-pointer hover:bg-muted/50 transition-colors duration-200" 
                 onClick={() => setActiveTab('users')}
               >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-3 bg-primary rounded-xl">
-                      <Users className="h-6 w-6 text-primary-foreground" />
+                <CardContent className={isMobile ? "p-4" : "p-6"}>
+                  <div className={`flex flex-col items-center text-center ${isMobile ? 'space-y-2' : 'space-y-4'}`}>
+                    <div className={`${isMobile ? 'p-2' : 'p-3'} bg-primary rounded-xl`}>
+                      <Users className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-primary-foreground`} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Total Users</p>
-                      <p className="text-2xl font-bold text-foreground">{stats.total_users}</p>
+                      <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-muted-foreground mb-1`}>Total Users</p>
+                      <p className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-foreground`}>{stats.total_users}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -427,15 +433,35 @@ const EnhancedAdmin = () => {
             </div>
           )}
 
-          {/* Modern Tabs Interface */}
-          <div className="px-6 pb-8">
+          {/* Responsive Tabs Interface */}
+          <div className={isMobile ? "pb-4" : "px-6 pb-8"}>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <div className="flex items-center justify-center">
-                <TabsList className="grid grid-cols-4 w-full max-w-2xl bg-muted/30 p-1 rounded-full h-12">
-                  <TabsTrigger value="verifications" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Verifications</TabsTrigger>
-                  <TabsTrigger value="users" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Users</TabsTrigger>
-                  <TabsTrigger value="services" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Services</TabsTrigger>
-                  <TabsTrigger value="categories" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all">Categories</TabsTrigger>
+                <TabsList className={`grid grid-cols-4 w-full ${isMobile ? 'max-w-full bg-muted/30 p-1 rounded-lg h-10' : 'max-w-2xl bg-muted/30 p-1 rounded-full h-12'}`}>
+                  <TabsTrigger 
+                    value="verifications" 
+                    className={`${isMobile ? 'rounded-md text-xs' : 'rounded-full'} data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all`}
+                  >
+                    {isMobile ? 'Verify' : 'Verifications'}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="users" 
+                    className={`${isMobile ? 'rounded-md text-xs' : 'rounded-full'} data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all`}
+                  >
+                    Users
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="services" 
+                    className={`${isMobile ? 'rounded-md text-xs' : 'rounded-full'} data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all`}
+                  >
+                    Services
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="categories" 
+                    className={`${isMobile ? 'rounded-md text-xs' : 'rounded-full'} data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm font-medium transition-all`}
+                  >
+                    {isMobile ? 'Cats' : 'Categories'}
+                  </TabsTrigger>
                 </TabsList>
               </div>
 
