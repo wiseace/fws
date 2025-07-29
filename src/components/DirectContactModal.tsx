@@ -112,8 +112,11 @@ export const DirectContactModal = ({ isOpen, onClose, service }: DirectContactMo
               </p>
             </div>
             <div className="flex space-x-2">
-              <Button onClick={() => setShowSubscriptionGate(true)} className="flex-1">
-                Get Subscription
+              <Button onClick={() => {
+                onClose();
+                window.location.href = '/pricing';
+              }} className="flex-1">
+                View Pricing Plans
               </Button>
               <Button variant="outline" onClick={onClose} className="flex-1">
                 Close
