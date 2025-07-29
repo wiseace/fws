@@ -1,33 +1,31 @@
-
 import { useState } from 'react';
 import { Menu, X, User, LogOut, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 const findWhoSabiLogo = '/lovable-uploads/60f0692e-43cf-498a-bf01-0e645aa4348e.png';
-
 interface HeaderProps {
   editMode: boolean;
   onToggleEdit: () => void;
 }
-
-export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
+export const Header = ({
+  editMode,
+  onToggleEdit
+}: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, profile, signOut } = useAuth();
-
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 p-4">
+  const {
+    user,
+    profile,
+    signOut
+  } = useAuth();
+  return <header className="fixed top-0 left-0 right-0 z-50 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white/80 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/30 px-4 sm:px-6 py-3 sm:py-4 backdrop-saturate-150">
           <div className="flex justify-between items-center h-12 sm:h-14">
           {/* Logo */}
           <div className="flex items-center">
             <div className="cursor-pointer" onClick={() => window.location.href = '/'}>
-              <img 
-                src={findWhoSabiLogo} 
-                alt="FindWhoSabi" 
-                className="h-6 xs:h-7 sm:h-10 w-auto object-contain transition-all duration-300 hover:scale-105" 
-              />
+              <img src={findWhoSabiLogo} alt="FindWhoSabi" className="h-6 xs:h-7 sm:h-10 w-auto object-contain transition-all duration-300 hover:scale-105" />
             </div>
           </div>
 
@@ -50,8 +48,7 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
           {/* Right Actions */}
           <div className="flex items-center space-x-2 sm:space-x-4">
 
-            {user ? (
-              <DropdownMenu>
+            {user ? <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 rounded-xl px-2 sm:px-4 py-2 transition-all duration-300">
                     <User className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
@@ -68,23 +65,14 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button 
-                onClick={() => window.location.href = '/auth'}
-                className="bg-primary hover:bg-primary/90 text-white font-semibold px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm"
-              >
+              </DropdownMenu> : <Button onClick={() => window.location.href = '/auth'} className="bg-primary hover:bg-primary/90 text-white px-3 sm:px-6 py-2 sm:py-2.5 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 sm:text-sm font-bold text-sm rounded-xl">
                 <LogIn className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden xs:inline">SIGN IN</span>
                 <span className="xs:hidden">IN</span>
-              </Button>
-            )}
+              </Button>}
 
             {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
+            <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
@@ -92,16 +80,13 @@ export const Header = ({ editMode, onToggleEdit }: HeaderProps) => {
         </div>
 
         {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="mt-4 bg-white/90 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/30 px-6 py-6 backdrop-saturate-150">
+        {mobileMenuOpen && <div className="mt-4 bg-white/90 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/30 px-6 py-6 backdrop-saturate-150">
             <div className="flex flex-col space-y-4">
               <a href="/" className="px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition-all duration-300">Home</a>
               <a href="/browse" className="px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition-all duration-300">Browse Services</a>
               <a href="/providers" className="px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition-all duration-300">Providers</a>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
-    </header>
-  );
+    </header>;
 };
