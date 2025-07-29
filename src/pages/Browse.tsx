@@ -56,7 +56,6 @@ const Browse = () => {
       .eq('user.user_type', 'provider')
       .eq('user.is_verified', true)
       .eq('user.verification_status', 'verified')
-      .neq('user.subscription_plan', 'free')
       .order('created_at', { ascending: false });
     
     if (data) {

@@ -64,6 +64,9 @@ export const ModernProviderCard = ({ provider, onContactClick }: ModernProviderC
     if (!user) {
       return 'Sign Up to Contact';
     }
+    if (!canAccessContactInfo) {
+      return 'Subscribe to Contact';
+    }
     return 'Contact Provider';
   };
 
