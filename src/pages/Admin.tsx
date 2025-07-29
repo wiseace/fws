@@ -338,6 +338,15 @@ const Admin = () => {
               <Button 
                 variant="outline" 
                 size="sm"
+                onClick={() => window.location.href = '/admin/pricing'}
+                className="flex items-center gap-2"
+              >
+                <span className="text-sm">💰</span>
+                Pricing
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
                 onClick={() => window.location.href = '/dashboard'}
                 className="flex items-center gap-2"
               >

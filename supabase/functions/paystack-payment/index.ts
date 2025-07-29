@@ -67,12 +67,24 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Missing required fields');
     }
 
-    // Get pricing for the plan and currency
+    // Get user profile to determine user type
+    const { data: userProfile, error: profileError } = await supabase
+      .from('users')
+      .select('user_type')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !userProfile) {
+      throw new Error('User profile not found');
+    }
+
+    // Get pricing for the plan, currency, and user type
     const { data: pricing, error: pricingError } = await supabase
       .from('subscription_pricing')
       .select('price')
       .eq('plan', plan)
       .eq('currency_code', currency)
+      .eq('user_type', userProfile.user_type)
       .single();
 
     if (pricingError || !pricing) {
