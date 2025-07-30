@@ -360,7 +360,7 @@ const EnhancedAdmin = () => {
 
           {/* Responsive Stats Grid */}
           {stats && (
-            <div className={`grid ${isMobile ? 'grid-cols-2 gap-3 mb-6' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8'}`}>
+            <div className={`grid ${isMobile ? 'grid-cols-2 gap-3 mb-6' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8'}`}>
               <Card 
                 className="cursor-pointer hover:bg-muted/50 transition-colors duration-200" 
                 onClick={() => setActiveTab('users')}
@@ -382,14 +382,14 @@ const EnhancedAdmin = () => {
                 className="cursor-pointer hover:bg-muted/50 transition-colors duration-200"
                 onClick={() => setActiveTab('users')}
               >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-3 bg-green-600 rounded-xl">
-                      <UserCheck className="h-6 w-6 text-white" />
+                <CardContent className={isMobile ? "p-4" : "p-6"}>
+                  <div className={`flex flex-col items-center text-center ${isMobile ? 'space-y-2' : 'space-y-4'}`}>
+                    <div className={`${isMobile ? 'p-2' : 'p-3'} bg-green-600 rounded-xl`}>
+                      <UserCheck className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-white`} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Verified Users</p>
-                      <p className="text-2xl font-bold text-foreground">{stats.verified_users}</p>
+                      <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-muted-foreground mb-1`}>Verified Users</p>
+                      <p className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-foreground`}>{stats.verified_users}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -399,14 +399,14 @@ const EnhancedAdmin = () => {
                 className="cursor-pointer hover:bg-muted/50 transition-colors duration-200"
                 onClick={() => setActiveTab('verifications')}
               >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-3 bg-orange-600 rounded-xl">
-                      <Shield className="h-6 w-6 text-white" />
+                <CardContent className={isMobile ? "p-4" : "p-6"}>
+                  <div className={`flex flex-col items-center text-center ${isMobile ? 'space-y-2' : 'space-y-4'}`}>
+                    <div className={`${isMobile ? 'p-2' : 'p-3'} bg-orange-600 rounded-xl`}>
+                      <Shield className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-white`} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Pending Verifications</p>
-                      <p className="text-2xl font-bold text-foreground">{stats.pending_verifications}</p>
+                      <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-muted-foreground mb-1`}>Pending Verifications</p>
+                      <p className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-foreground`}>{stats.pending_verifications}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -416,20 +416,18 @@ const EnhancedAdmin = () => {
                 className="cursor-pointer hover:bg-muted/50 transition-colors duration-200"
                 onClick={() => setActiveTab('services')}
               >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-3 bg-purple-600 rounded-xl">
-                      <Eye className="h-6 w-6 text-white" />
+                <CardContent className={isMobile ? "p-4" : "p-6"}>
+                  <div className={`flex flex-col items-center text-center ${isMobile ? 'space-y-2' : 'space-y-4'}`}>
+                    <div className={`${isMobile ? 'p-2' : 'p-3'} bg-purple-600 rounded-xl`}>
+                      <Eye className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-white`} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Total Services</p>
-                      <p className="text-2xl font-bold text-foreground">{stats.total_services}</p>
+                      <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-muted-foreground mb-1`}>Total Services</p>
+                      <p className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-foreground`}>{stats.total_services}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              
-              {/* Contact requests feature removed */}
             </div>
           )}
 

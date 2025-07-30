@@ -197,19 +197,22 @@ export const MyServicesTab = () => {
           </Button>
         </div>
         
-        {/* Stats Row */}
-        <div className="flex items-center gap-4 mt-6">
-          <div className="bg-brand-success text-white px-4 py-2 rounded-lg shadow-sm">
-            <div className="flex items-center gap-2">
+        {/* Mobile-friendly Stats Row */}
+        <div className="grid grid-cols-3 gap-3 mt-6">
+          <div className="bg-green-600 text-white p-3 rounded-lg shadow-sm text-center">
+            <div className="flex items-center justify-center gap-2 mb-1">
               <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <span className="font-semibold">{activeServices} Active</span>
+              <span className="text-lg font-bold">{activeServices}</span>
             </div>
+            <span className="text-xs font-medium opacity-90">Active</span>
           </div>
-          <div className="bg-primary-light text-white px-4 py-2 rounded-lg shadow-sm">
-            <span className="font-semibold">{services.length - activeServices} Inactive</span>
+          <div className="bg-blue-600 text-white p-3 rounded-lg shadow-sm text-center">
+            <div className="text-lg font-bold mb-1">{services.length - activeServices}</div>
+            <span className="text-xs font-medium opacity-90">Inactive</span>
           </div>
-          <div className="bg-primary text-white px-4 py-2 rounded-lg shadow-sm">
-            <span className="font-semibold">{services.length} Total</span>
+          <div className="bg-primary text-white p-3 rounded-lg shadow-sm text-center">
+            <div className="text-lg font-bold mb-1">{services.length}</div>
+            <span className="text-xs font-medium opacity-90">Total</span>
           </div>
         </div>
       </div>
@@ -263,8 +266,8 @@ export const MyServicesTab = () => {
         </div>
       ) : (
         <>
-          {/* Services Grid */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+          {/* Mobile-responsive Services Grid */}
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
             {currentServices.map((service) => (
               <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br from-background to-muted/10 border border-border/50 hover:border-primary/30 overflow-hidden">
                 <CardContent className="p-0">

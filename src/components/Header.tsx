@@ -18,7 +18,7 @@ export const Header = ({
     profile,
     signOut
   } = useAuth();
-  return <header className="fixed top-0 left-0 right-0 z-50 p-4">
+  return <header className="fixed top-0 left-0 right-0 z-40 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white/80 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/30 px-4 sm:px-6 py-3 sm:py-4 backdrop-saturate-150">
           <div className="flex justify-between items-center h-12 sm:h-14">

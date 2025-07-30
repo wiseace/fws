@@ -65,7 +65,11 @@ export const MobileDashboardLayout = ({
     setIsOpen(false);
   };
   if (!isMobile) {
-    return <div className="w-full">{children}</div>;
+    return (
+      <div className="w-full">
+        {children}
+      </div>
+    );
   }
   return <div className="min-h-screen bg-background">
       {/* Mobile Header */}

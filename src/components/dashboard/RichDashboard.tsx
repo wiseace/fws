@@ -374,7 +374,7 @@ export const RichDashboard = () => {
         onboardingProgress={onboardingProgress}
         unreadNotifications={unreadNotifications}
       >
-        <div className="p-4 space-y-6">
+        <div className="p-4 pb-20 space-y-6">
           {/* Mobile Stats Grid */}
           <div className="grid grid-cols-2 gap-3">
             {profile?.user_type === 'provider' ? (
