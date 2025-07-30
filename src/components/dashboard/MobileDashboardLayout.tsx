@@ -74,15 +74,15 @@ export const MobileDashboardLayout = ({
   return <div className="min-h-screen bg-background">
       {/* Mobile Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="flex items-center justify-between h-14 px-4">
-          <div className="flex items-center gap-3">
-            <div className="p-1.5 bg-primary rounded-lg">
-              <LayoutDashboard className="h-4 w-4 text-white" />
+        <div className="flex items-center justify-between h-12 px-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1 bg-primary rounded-lg">
+              <LayoutDashboard className="h-3 w-3 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold truncate">Dashboard</h1>
-              {onboardingProgress < 100 && <div className="flex items-center gap-2">
-                  <div className="w-16 h-1 bg-muted rounded-full overflow-hidden">
+              <h1 className="text-base font-semibold truncate">Dashboard</h1>
+              {onboardingProgress < 100 && <div className="flex items-center gap-1 mt-0.5">
+                  <div className="w-12 h-0.5 bg-muted rounded-full overflow-hidden">
                     <div className="h-full bg-primary transition-all duration-300" style={{
                   width: `${onboardingProgress}%`
                 }} />
@@ -178,17 +178,19 @@ export const MobileDashboardLayout = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1">
+      <div className="flex-1 pb-16">
         {children}
       </div>
 
       {/* Bottom navigation for quick access */}
-      <div className="sticky bottom-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
-        <div className="grid grid-cols-4 gap-1 p-2">
-          {filteredTabs.slice(0, 4).map(tab => <Button key={tab.id} variant="ghost" className={cn("h-12 flex-col gap-1 relative", activeTab === tab.id ? "text-primary" : "text-muted-foreground")} onClick={() => handleTabClick(tab.id)}>
-              {tab.icon}
-              <span className="text-xs truncate">{tab.label}</span>
-              {tab.badge && tab.badge > 0 && <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
+        <div className="grid grid-cols-4 gap-1 p-1.5">
+          {filteredTabs.slice(0, 4).map(tab => <Button key={tab.id} variant="ghost" className={cn("h-10 flex-col gap-0.5 relative text-xs", activeTab === tab.id ? "text-primary bg-primary/10" : "text-muted-foreground")} onClick={() => handleTabClick(tab.id)}>
+              <div className="flex items-center justify-center">
+                {React.cloneElement(tab.icon as React.ReactElement, { className: "h-3.5 w-3.5" })}
+              </div>
+              <span className="text-xs truncate leading-tight">{tab.label}</span>
+              {tab.badge && tab.badge > 0 && <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 p-0 text-xs flex items-center justify-center">
                   {tab.badge}
                 </Badge>}
             </Button>)}

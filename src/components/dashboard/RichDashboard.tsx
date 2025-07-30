@@ -374,17 +374,17 @@ export const RichDashboard = () => {
         onboardingProgress={onboardingProgress}
         unreadNotifications={unreadNotifications}
       >
-        <div className="p-4 pb-20 space-y-6">
+        <div className="p-3 space-y-4">
           {/* Mobile Stats Grid */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             {profile?.user_type === 'provider' ? (
               <>
                 <Card className="bg-primary text-primary-foreground border-0">
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <Star className="h-6 w-6 mx-auto text-primary-foreground/80" />
+                  <CardContent className="p-3">
+                    <div className="text-center space-y-1">
+                      <Star className="h-5 w-5 mx-auto text-primary-foreground/80" />
                       <div>
-                        <p className="text-2xl font-bold">{stats.totalServices || 0}</p>
+                        <p className="text-xl font-bold">{stats.totalServices || 0}</p>
                         <p className="text-xs text-primary-foreground/80">Services</p>
                       </div>
                     </div>
@@ -392,11 +392,11 @@ export const RichDashboard = () => {
                 </Card>
 
                 <Card className="bg-green-600 text-white border-0">
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <CheckCircle className="h-6 w-6 mx-auto text-white/80" />
+                  <CardContent className="p-3">
+                    <div className="text-center space-y-1">
+                      <CheckCircle className="h-5 w-5 mx-auto text-white/80" />
                       <div>
-                        <p className="text-2xl font-bold">{stats.activeServices || 0}</p>
+                        <p className="text-xl font-bold">{stats.activeServices || 0}</p>
                         <p className="text-xs text-white/80">Active</p>
                       </div>
                     </div>
@@ -404,11 +404,11 @@ export const RichDashboard = () => {
                 </Card>
 
                 <Card className="bg-blue-600 text-white border-0">
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <TrendingUp className="h-6 w-6 mx-auto text-white/80" />
+                  <CardContent className="p-3">
+                    <div className="text-center space-y-1">
+                      <TrendingUp className="h-5 w-5 mx-auto text-white/80" />
                       <div>
-                        <p className="text-2xl font-bold">{stats.thisWeekRequests || 0}</p>
+                        <p className="text-xl font-bold">{stats.thisWeekRequests || 0}</p>
                         <p className="text-xs text-white/80">This Week</p>
                       </div>
                     </div>
@@ -416,11 +416,11 @@ export const RichDashboard = () => {
                 </Card>
 
                 <Card className="bg-purple-600 text-white border-0">
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <Award className="h-6 w-6 mx-auto text-white/80" />
+                  <CardContent className="p-3">
+                    <div className="text-center space-y-1">
+                      <Award className="h-5 w-5 mx-auto text-white/80" />
                       <div>
-                        <p className="text-2xl font-bold">{stats.profileCompletion}%</p>
+                        <p className="text-xl font-bold">{stats.profileCompletion}%</p>
                         <p className="text-xs text-white/80">Complete</p>
                       </div>
                     </div>
@@ -433,11 +433,11 @@ export const RichDashboard = () => {
                   className="bg-primary text-primary-foreground border-0 cursor-pointer active:scale-95 transition-transform" 
                   onClick={() => window.location.href = '/browse'}
                 >
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <Search className="h-6 w-6 mx-auto text-primary-foreground/80" />
+                  <CardContent className="p-3">
+                    <div className="text-center space-y-1">
+                      <Search className="h-5 w-5 mx-auto text-primary-foreground/80" />
                       <div>
-                        <p className="text-lg font-bold">Discover</p>
+                        <p className="text-base font-bold">Discover</p>
                         <p className="text-xs text-primary-foreground/80">Services</p>
                       </div>
                     </div>
@@ -448,11 +448,11 @@ export const RichDashboard = () => {
                   className="bg-green-600 text-white border-0 cursor-pointer active:scale-95 transition-transform" 
                   onClick={() => window.location.href = '/browse'}
                 >
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <Users className="h-6 w-6 mx-auto text-white/80" />
+                  <CardContent className="p-3">
+                    <div className="text-center space-y-1">
+                      <Users className="h-5 w-5 mx-auto text-white/80" />
                       <div>
-                        <p className="text-lg font-bold">Browse</p>
+                        <p className="text-base font-bold">Browse</p>
                         <p className="text-xs text-white/80">Providers</p>
                       </div>
                     </div>
@@ -463,11 +463,11 @@ export const RichDashboard = () => {
                   className="bg-purple-600 text-white border-0 cursor-pointer active:scale-95 transition-transform" 
                   onClick={() => setActiveTab('profile')}
                 >
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <Award className="h-6 w-6 mx-auto text-white/80" />
+                  <CardContent className="p-3">
+                    <div className="text-center space-y-1">
+                      <Award className="h-5 w-5 mx-auto text-white/80" />
                       <div>
-                        <p className="text-lg font-bold">{stats.profileCompletion}%</p>
+                        <p className="text-base font-bold">{stats.profileCompletion}%</p>
                         <p className="text-xs text-white/80">Complete</p>
                       </div>
                     </div>
@@ -478,11 +478,11 @@ export const RichDashboard = () => {
                   className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 cursor-pointer active:scale-95 transition-transform" 
                   onClick={() => window.location.href = '/pricing'}
                 >
-                  <CardContent className="p-4">
-                    <div className="text-center space-y-2">
-                      <Star className="h-6 w-6 mx-auto text-white/80" />
+                  <CardContent className="p-3">
+                    <div className="text-center space-y-1">
+                      <Star className="h-5 w-5 mx-auto text-white/80" />
                       <div>
-                        <p className="text-lg font-bold">Upgrade</p>
+                        <p className="text-base font-bold">Upgrade</p>
                         <p className="text-xs text-white/80">Premium</p>
                       </div>
                     </div>

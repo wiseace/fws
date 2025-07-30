@@ -18,6 +18,15 @@ export const Header = ({
     profile,
     signOut
   } = useAuth();
+
+  // Hide header on dashboard pages for mobile to prevent overlap with MobileDashboardLayout
+  const isDashboardPage = window.location.pathname === '/dashboard' || window.location.pathname === '/admin';
+  const isMobile = window.innerWidth < 768;
+  
+  if (isDashboardPage && isMobile) {
+    return null;
+  }
+
   return <header className="fixed top-0 left-0 right-0 z-40 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white/80 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/30 px-4 sm:px-6 py-3 sm:py-4 backdrop-saturate-150">

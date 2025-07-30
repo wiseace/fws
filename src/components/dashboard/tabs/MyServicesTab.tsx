@@ -180,38 +180,38 @@ export const MyServicesTab = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-xl p-6 border border-primary/20">
-        <div className="flex items-center justify-between">
+      {/* Header Section - Mobile Optimized */}
+      <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-xl p-3 sm:p-6 border border-primary/20">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-1">
-            <h2 className="text-2xl font-bold text-foreground">My Services</h2>
-            <p className="text-muted-foreground">Manage and track your service offerings</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">My Services</h2>
+            <p className="text-sm text-muted-foreground">Manage and track your service offerings</p>
           </div>
           <Button 
             onClick={() => handleServiceModalOpen()}
-            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white shadow-lg"
-            size="lg"
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white shadow-lg w-full sm:w-auto"
+            size="sm"
           >
-            <PlusCircle className="h-5 w-5 mr-2" />
+            <PlusCircle className="h-4 w-4 mr-2" />
             Create Service
           </Button>
         </div>
         
-        {/* Mobile-friendly Stats Row */}
-        <div className="grid grid-cols-3 gap-3 mt-6">
-          <div className="bg-green-600 text-white p-3 rounded-lg shadow-sm text-center">
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <span className="text-lg font-bold">{activeServices}</span>
+        {/* Mobile-optimized Stats Row */}
+        <div className="grid grid-cols-3 gap-2 mt-4">
+          <div className="bg-green-600 text-white p-2 sm:p-3 rounded-lg shadow-sm text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+              <span className="text-base sm:text-lg font-bold">{activeServices}</span>
             </div>
             <span className="text-xs font-medium opacity-90">Active</span>
           </div>
-          <div className="bg-blue-600 text-white p-3 rounded-lg shadow-sm text-center">
-            <div className="text-lg font-bold mb-1">{services.length - activeServices}</div>
+          <div className="bg-blue-600 text-white p-2 sm:p-3 rounded-lg shadow-sm text-center">
+            <div className="text-base sm:text-lg font-bold mb-1">{services.length - activeServices}</div>
             <span className="text-xs font-medium opacity-90">Inactive</span>
           </div>
-          <div className="bg-primary text-white p-3 rounded-lg shadow-sm text-center">
-            <div className="text-lg font-bold mb-1">{services.length}</div>
+          <div className="bg-primary text-white p-2 sm:p-3 rounded-lg shadow-sm text-center">
+            <div className="text-base sm:text-lg font-bold mb-1">{services.length}</div>
             <span className="text-xs font-medium opacity-90">Total</span>
           </div>
         </div>
