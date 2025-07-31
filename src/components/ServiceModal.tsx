@@ -305,9 +305,9 @@ export const ServiceModal = ({ isOpen, onClose, onServiceCreated, editingService
                   accept="image/*"
                   onChange={handleFileChange}
                   disabled={loading}
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-primary/90"
+                  className="file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary file:text-white hover:file:bg-primary/90 text-sm"
                 />
-                <p className="text-xs text-gray-500 mt-1 mb-4">
+                <p className="text-xs text-muted-foreground mt-2">
                   Upload an image (max 1MB). If no image is uploaded, a FINDWHOSABI placeholder will be used.
                 </p>
               </div>

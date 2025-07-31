@@ -30,7 +30,8 @@ export const MobileDashboardLayout = ({
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const {
-    profile
+    profile,
+    signOut
   } = useAuth();
   const tabs: TabItem[] = [{
     id: 'profile',
@@ -74,13 +75,20 @@ export const MobileDashboardLayout = ({
   return <div className="min-h-screen bg-background pb-20">
       {/* Mobile Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="flex items-center justify-between h-14 px-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-lg">
-              <LayoutDashboard className="h-4 w-4 text-white" />
-            </div>
+        <div className="flex items-center justify-between h-12 px-4">
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => window.location.href = '/'}
+              className="p-1.5 hover:bg-primary/10"
+            >
+              <div className="p-1 bg-primary rounded-md">
+                <LayoutDashboard className="h-3 w-3 text-white" />
+              </div>
+            </Button>
             <div>
-              <h1 className="text-lg font-semibold">Dashboard</h1>
+              <h1 className="text-base font-semibold">Dashboard</h1>
               <p className="text-xs text-muted-foreground capitalize">{profile?.user_type}</p>
             </div>
           </div>
@@ -90,11 +98,8 @@ export const MobileDashboardLayout = ({
              <Button 
                variant="ghost" 
                size="sm" 
-               onClick={() => {
-                 // Add logout functionality here
-                 window.location.href = '/auth';
-               }}
-               className="text-xs px-2 py-1 h-8"
+               onClick={signOut}
+               className="text-xs px-2 py-1 h-7"
              >
                Logout
              </Button>
@@ -108,21 +113,31 @@ export const MobileDashboardLayout = ({
             </SheetTrigger>
             <SheetContent side="right" className="w-80 p-0">
               <div className="flex flex-col h-full">
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary rounded-lg">
-                      <LayoutDashboard className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-semibold">Dashboard</h2>
-                      <p className="text-sm text-muted-foreground capitalize">{profile?.user_type}</p>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 text-slate-50">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
+                 {/* Header */}
+                 <div className="flex items-center justify-between p-4 border-b">
+                   <div className="flex items-center gap-2">
+                     <Button 
+                       variant="ghost" 
+                       size="sm" 
+                       onClick={() => {
+                         setIsOpen(false);
+                         window.location.href = '/';
+                       }}
+                       className="p-1.5 hover:bg-primary/10"
+                     >
+                       <div className="p-1.5 bg-primary rounded-lg">
+                         <LayoutDashboard className="h-4 w-4 text-white" />
+                       </div>
+                     </Button>
+                     <div>
+                       <h2 className="text-base font-semibold">Dashboard</h2>
+                       <p className="text-xs text-muted-foreground capitalize">{profile?.user_type}</p>
+                     </div>
+                   </div>
+                   <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-7 w-7">
+                     <X className="h-4 w-4" />
+                   </Button>
+                 </div>
 
                 {/* Progress indicator for providers */}
                 {profile?.user_type === 'provider' && onboardingProgress < 100 && <div className="p-6 border-b bg-muted/20">
