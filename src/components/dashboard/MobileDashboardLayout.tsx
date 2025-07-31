@@ -74,8 +74,8 @@ export const MobileDashboardLayout = ({
   }
   return <div className="min-h-screen bg-background pb-20">
       {/* Mobile Header */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="flex items-center justify-between h-12 px-4">
+      <div className="sticky top-0 z-50 bg-background border-b">
+        <div className="flex items-center justify-between h-14 px-4">
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
@@ -83,8 +83,8 @@ export const MobileDashboardLayout = ({
               onClick={() => window.location.href = '/'}
               className="p-1.5 hover:bg-primary/10"
             >
-              <div className="p-1 bg-primary rounded-md">
-                <LayoutDashboard className="h-3 w-3 text-white" />
+              <div className="p-1.5 bg-primary rounded-lg">
+                <LayoutDashboard className="h-4 w-4 text-white" />
               </div>
             </Button>
             <div>
