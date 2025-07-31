@@ -74,10 +74,9 @@ export const Header = ({
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu> : <Button onClick={() => window.location.href = '/auth'} className="bg-primary hover:bg-primary/90 text-white px-3 sm:px-6 py-2 sm:py-2.5 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 sm:text-sm font-bold text-sm rounded-xl">
+              </DropdownMenu> : <Button onClick={() => window.location.href = '/auth'} className="bg-primary hover:bg-primary/90 text-white px-2 sm:px-6 py-2 sm:py-2.5 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm font-bold rounded-xl min-w-[70px] sm:min-w-auto">
                 <LogIn className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden xs:inline">SIGN IN</span>
-                <span className="xs:hidden">IN</span>
+                <span>SIGN IN</span>
               </Button>}
 
             {/* Mobile menu button */}

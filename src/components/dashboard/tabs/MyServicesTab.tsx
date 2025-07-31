@@ -267,12 +267,12 @@ export const MyServicesTab = () => {
       ) : (
         <>
           {/* Mobile-responsive Services Grid */}
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+          <div className="grid gap-3 sm:gap-6 grid-cols-1 lg:grid-cols-2">
             {currentServices.map((service) => (
               <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br from-background to-muted/10 border border-border/50 hover:border-primary/30 overflow-hidden">
                 <CardContent className="p-0">
                   {/* Service Image/Header */}
-                  <div className={`relative h-32 border-b border-border/50 ${
+                  <div className={`relative h-24 sm:h-32 border-b border-border/50 ${
                     service.image_url 
                       ? 'bg-cover bg-center' 
                       : 'bg-primary'
@@ -281,71 +281,73 @@ export const MyServicesTab = () => {
                     {service.image_url && (
                       <div className="absolute inset-0 bg-black/50"></div>
                     )}
-                    <div className="relative p-4 h-full flex items-center">
-                      <div className="flex-1">
-                        <h3 className={`font-bold text-xl transition-colors line-clamp-1 ${
+                    <div className="relative p-3 sm:p-4 h-full flex items-center">
+                      <div className="flex-1 min-w-0">
+                        <h3 className={`font-bold text-base sm:text-xl transition-colors line-clamp-1 ${
                           service.image_url 
                             ? 'text-white group-hover:text-gray-200' 
                             : 'text-white group-hover:text-gray-200'
                         }`}>
                           {service.service_name}
                         </h3>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2 flex-wrap">
                           <Badge 
                             variant="outline"
-                            className="bg-transparent border-white text-white hover:bg-white hover:text-primary transition-all"
+                            className="bg-transparent border-white text-white hover:bg-white hover:text-primary transition-all text-xs px-1.5 py-0.5"
                           >
                             {service.category}
                           </Badge>
                           <Badge 
                             variant="outline"
                             className={service.is_active 
-                              ? "bg-brand-success/30 border-brand-success text-white font-semibold shadow-sm hover:bg-brand-success hover:text-white animate-pulse transition-all" 
-                              : "bg-primary-light/30 border-primary-light text-white font-semibold shadow-sm hover:bg-primary-light hover:text-white transition-all"
+                              ? "bg-brand-success/30 border-brand-success text-white font-semibold shadow-sm hover:bg-brand-success hover:text-white transition-all text-xs px-1.5 py-0.5" 
+                              : "bg-primary-light/30 border-primary-light text-white font-semibold shadow-sm hover:bg-primary-light hover:text-white transition-all text-xs px-1.5 py-0.5"
                             }
                           >
                             {service.is_active ? "● Active" : "○ Inactive"}
                           </Badge>
                         </div>
                       </div>
-                      <div className="flex flex-col space-y-1 opacity-100 group-hover:opacity-100 transition-opacity duration-200">
+                      <div className="flex flex-col space-y-1 opacity-100 group-hover:opacity-100 transition-opacity duration-200 ml-2">
                         <Button 
                           size="sm" 
                           variant="ghost" 
                           onClick={() => handleServiceModalOpen(service)}
-                          className="bg-white/10 backdrop-blur-sm text-white hover:bg-primary hover:text-white transition-all duration-200 h-8 w-8 p-0 shadow-lg"
+                          className="bg-white/10 backdrop-blur-sm text-white hover:bg-primary hover:text-white transition-all duration-200 h-6 w-6 sm:h-8 sm:w-8 p-0 shadow-lg"
                         >
-                          <Edit className="w-4 h-4" />
+                          <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                         </Button>
                         <Button 
                           size="sm" 
                           variant="ghost" 
                           onClick={() => handleDelete(service.id)}
-                          className="bg-white/10 backdrop-blur-sm text-white hover:bg-destructive hover:text-white transition-all duration-200 h-8 w-8 p-0 shadow-lg"
+                          className="bg-white/10 backdrop-blur-sm text-white hover:bg-destructive hover:text-white transition-all duration-200 h-6 w-6 sm:h-8 sm:w-8 p-0 shadow-lg"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                         </Button>
                       </div>
                     </div>
                   </div>
                   
                   {/* Service Content */}
-                  <div className="p-6">
+                  <div className="p-3 sm:p-6">
                     {service.description && (
-                      <p className="text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
+                      <p className="text-muted-foreground mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3 leading-relaxed text-sm">
                         {service.description}
                       </p>
                     )}
                     
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-xs sm:text-sm gap-2">
                       {service.location && (
-                        <div className="flex items-center text-muted-foreground">
-                          <MapPin className="h-4 w-4 mr-2 text-primary" />
-                          <span className="font-medium">{service.location}</span>
+                        <div className="flex items-center text-muted-foreground min-w-0 flex-1">
+                          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 text-primary flex-shrink-0" />
+                          <span className="font-medium truncate">{service.location}</span>
                         </div>
                       )}
-                      <div className="text-muted-foreground">
-                        <span className="font-medium">Created</span> {new Date(service.created_at).toLocaleDateString()}
+                      <div className="text-muted-foreground text-right flex-shrink-0">
+                        <span className="font-medium hidden sm:inline">Created </span>
+                        <span className="sm:hidden">📅 </span>
+                        {new Date(service.created_at).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
