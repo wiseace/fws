@@ -100,8 +100,8 @@ export const MobileAdminLayout = ({
               <span className="text-xs font-medium text-primary">Home</span>
             </Button>
             <div>
-              <h1 className="text-lg font-bold flex items-center gap-2">
-                <Shield className="h-5 w-5 text-primary" />
+              <h1 className="text-base font-bold flex items-center gap-2">
+                <Shield className="h-4 w-4 text-primary" />
                 Admin
               </h1>
               <p className="text-xs text-muted-foreground">System Management</p>

@@ -333,7 +333,11 @@ const Admin = () => {
                 ) : (
                   <div className="space-y-3">
                     {verificationRequests.map((request) => (
-                      <Card key={request.id} className="border-l-4 border-l-orange-500">
+                      <Card key={request.id} className={`border-l-4 ${
+                        request.status === 'verified' ? 'border-l-green-500' : 
+                        request.status === 'rejected' ? 'border-l-red-500' : 
+                        'border-l-orange-500'
+                      }`}>
                         <CardContent className="p-4">
                           <div className="space-y-2">
                             <div className="flex justify-between items-start">
@@ -341,27 +345,42 @@ const Admin = () => {
                                 <h3 className="font-medium">{(request as any).user?.name || 'Unknown User'}</h3>
                                 <p className="text-sm text-muted-foreground">{(request as any).user?.email}</p>
                               </div>
-                              <Badge variant="outline">{request.status}</Badge>
+                              <Badge variant={
+                                request.status === 'verified' ? 'default' :
+                                request.status === 'rejected' ? 'destructive' :
+                                'secondary'
+                              }>
+                                {request.status}
+                              </Badge>
                             </div>
                             <p className="text-sm"><strong>Business:</strong> {(request as any).business_name}</p>
                             <p className="text-sm"><strong>Type:</strong> {(request as any).business_type}</p>
-                            <div className="flex gap-2 pt-2">
-                              <Button 
-                                size="sm" 
-                                onClick={() => handleVerificationAction(request.id, 'verified')}
-                                className="flex-1"
-                              >
-                                Verify
-                              </Button>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                onClick={() => handleVerificationAction(request.id, 'rejected')}
-                                className="flex-1"
-                              >
-                                Reject
-                              </Button>
-                            </div>
+                            
+                            {request.status === 'pending' ? (
+                              <div className="flex gap-2 pt-2">
+                                <Button 
+                                  size="sm" 
+                                  onClick={() => handleVerificationAction(request.id, 'verified')}
+                                  className="flex-1"
+                                >
+                                  Verify
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline" 
+                                  onClick={() => handleVerificationAction(request.id, 'rejected')}
+                                  className="flex-1"
+                                >
+                                  Reject
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="pt-2">
+                                <p className="text-xs text-muted-foreground">
+                                  Status: {request.status} on {new Date(request.updated_at || request.created_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                            )}
                           </div>
                         </CardContent>
                       </Card>
