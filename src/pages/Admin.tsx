@@ -323,16 +323,29 @@ const Admin = () => {
                   <h2 className="text-lg font-semibold">Verification Requests</h2>
                   <Badge variant="secondary">{verificationRequests.length}</Badge>
                 </div>
-                {verificationRequests.length === 0 ? (
+                {verificationRequests.filter(req => req.status === 'pending').length === 0 ? (
                   <Card>
                     <CardContent className="p-6 text-center">
                       <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <p className="text-muted-foreground">No pending verification requests</p>
+                      {verificationRequests.length > 0 && (
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {verificationRequests.filter(req => req.status === 'verified').length} verified, {verificationRequests.filter(req => req.status === 'rejected').length} rejected
+                        </p>
+                      )}
                     </CardContent>
                   </Card>
                 ) : (
                   <div className="space-y-3">
-                    {verificationRequests.map((request) => (
+                    {/* Show pending requests first, then verified/rejected for reference */}
+                    {verificationRequests
+                      .sort((a, b) => {
+                        // Sort by status (pending first) then by created date
+                        if (a.status === 'pending' && b.status !== 'pending') return -1;
+                        if (a.status !== 'pending' && b.status === 'pending') return 1;
+                        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                      })
+                      .map((request) => (
                       <Card key={request.id} className={`border-l-4 ${
                         request.status === 'verified' ? 'border-l-green-500' : 
                         request.status === 'rejected' ? 'border-l-red-500' : 
