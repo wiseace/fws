@@ -72,23 +72,25 @@ export const MobileDashboardLayout = ({
       </div>
     );
   }
-  return <div className="min-h-screen bg-background pb-20">
-      {/* Mobile Header */}
-      <div className="sticky top-0 z-50 bg-background border-b">
-        <div className="flex items-center justify-between h-14 px-4">
-          <div className="flex items-center gap-2">
+  return <div className="min-h-screen bg-background">
+      {/* Mobile Header - Compact and functional */}
+      <div className="sticky top-0 z-50 bg-background border-b shadow-sm">
+        <div className="flex items-center justify-between h-16 px-4">
+          <div className="flex items-center gap-3">
+            {/* Home Button with Logo */}
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={() => window.location.href = '/'}
-              className="p-1.5 hover:bg-primary/10"
+              className="flex items-center gap-2 p-2 hover:bg-primary/10 border border-primary/20"
             >
-              <div className="p-1.5 bg-primary rounded-lg">
-                <LayoutDashboard className="h-4 w-4 text-white" />
+              <div className="p-1 bg-primary rounded-md">
+                <LayoutDashboard className="h-3 w-3 text-white" />
               </div>
+              <span className="text-xs font-medium text-primary">Home</span>
             </Button>
             <div>
-              <h1 className="text-base font-semibold">Dashboard</h1>
+              <h1 className="text-lg font-bold">Dashboard</h1>
               <p className="text-xs text-muted-foreground capitalize">{profile?.user_type}</p>
             </div>
           </div>
@@ -200,17 +202,17 @@ export const MobileDashboardLayout = ({
          </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1">
+      {/* Content - No padding top since header is sticky */}
+      <div className="flex-1 pb-20">
         {children}
       </div>
 
       {/* Bottom navigation for quick access */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t safe-area-pb">
-        <div className="grid grid-cols-4 gap-1 p-2 pb-4">
-          {filteredTabs.slice(0, 4).map(tab => <Button key={tab.id} variant="ghost" className={cn("h-12 flex-col gap-1 relative text-xs", activeTab === tab.id ? "text-primary bg-primary/10" : "text-muted-foreground")} onClick={() => handleTabClick(tab.id)}>
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t">
+        <div className="grid grid-cols-4 gap-1 p-3 pb-safe">
+          {filteredTabs.slice(0, 4).map(tab => <Button key={tab.id} variant="ghost" className={cn("h-14 flex-col gap-1 relative text-xs", activeTab === tab.id ? "text-primary bg-primary/10" : "text-muted-foreground")} onClick={() => handleTabClick(tab.id)}>
               <div className="flex items-center justify-center">
-                {React.cloneElement(tab.icon as React.ReactElement, { className: "h-4 w-4" })}
+                {React.cloneElement(tab.icon as React.ReactElement, { className: "h-5 w-5" })}
               </div>
               <span className="text-xs truncate leading-tight">{tab.label}</span>
               {tab.badge && tab.badge > 0 && <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center">

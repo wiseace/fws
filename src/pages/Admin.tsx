@@ -11,6 +11,8 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { CompactAdminTableControls } from '@/components/admin/CompactAdminTableControls';
 import { UserVerificationModal } from '@/components/admin/UserVerificationModal';
+import { MobileAdminLayout } from '@/components/admin/MobileAdminLayout';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 import { User as UserType, VerificationRequest, Service } from '@/types/database';
 import { Users, CheckCircle, XCircle, Eye, Trash2, Shield, UserCheck, User, LayoutDashboard, RefreshCw, Settings, MessageSquare } from 'lucide-react';
@@ -20,6 +22,7 @@ import { Loader2 } from 'lucide-react';
 const Admin = () => {
   const { user, profile, updateUserRole, deleteUser } = useSecureAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('verifications');
   
@@ -300,6 +303,155 @@ const Admin = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
         </div>
+      </ProtectedRoute>
+    );
+  }
+
+  // Mobile Layout
+  if (isMobile) {
+    return (
+      <ProtectedRoute>
+        <MobileAdminLayout 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab}
+          stats={stats}
+        >
+          <div className="px-4">
+            {activeTab === 'verifications' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">Verification Requests</h2>
+                  <Badge variant="secondary">{verificationRequests.length}</Badge>
+                </div>
+                {verificationRequests.length === 0 ? (
+                  <Card>
+                    <CardContent className="p-6 text-center">
+                      <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">No pending verification requests</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-3">
+                    {verificationRequests.map((request) => (
+                      <Card key={request.id} className="border-l-4 border-l-orange-500">
+                        <CardContent className="p-4">
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h3 className="font-medium">{(request as any).user?.name || 'Unknown User'}</h3>
+                                <p className="text-sm text-muted-foreground">{(request as any).user?.email}</p>
+                              </div>
+                              <Badge variant="outline">{request.status}</Badge>
+                            </div>
+                            <p className="text-sm"><strong>Business:</strong> {(request as any).business_name}</p>
+                            <p className="text-sm"><strong>Type:</strong> {(request as any).business_type}</p>
+                            <div className="flex gap-2 pt-2">
+                              <Button 
+                                size="sm" 
+                                onClick={() => handleVerificationAction(request.id, 'verified')}
+                                className="flex-1"
+                              >
+                                Verify
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => handleVerificationAction(request.id, 'rejected')}
+                                className="flex-1"
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {activeTab === 'users' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">Users</h2>
+                  <Badge variant="secondary">{users.length}</Badge>
+                </div>
+                <div className="space-y-3">
+                  {users.map((user) => (
+                    <Card key={user.id}>
+                      <CardContent className="p-4">
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-medium">{user.name}</h3>
+                              <p className="text-sm text-muted-foreground">{user.email}</p>
+                            </div>
+                            <Badge variant={user.verification_status === 'verified' ? 'default' : 'secondary'}>
+                              {user.verification_status}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {user.user_type}
+                            </Badge>
+                            {user.phone && (
+                              <span className="text-xs text-muted-foreground">{user.phone}</span>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'services' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">Services</h2>
+                  <Badge variant="secondary">{services.length}</Badge>
+                </div>
+                <div className="space-y-3">
+                  {services.map((service) => (
+                    <Card key={service.id}>
+                      <CardContent className="p-4">
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-medium">{(service as any).service_name}</h3>
+                              <p className="text-sm text-muted-foreground">{(service.user as any)?.name}</p>
+                            </div>
+                            <Badge variant={(service as any).is_active ? 'default' : 'secondary'}>
+                              {(service as any).is_active ? 'active' : 'inactive'}
+                            </Badge>
+                          </div>
+                          <p className="text-sm">{service.description?.substring(0, 100)}...</p>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {service.category}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {(service as any).location || 'Not specified'}
+                            </span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'messages' && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">Messages</h2>
+                <AdminMessagesManager />
+              </div>
+            )}
+          </div>
+        </MobileAdminLayout>
       </ProtectedRoute>
     );
   }
