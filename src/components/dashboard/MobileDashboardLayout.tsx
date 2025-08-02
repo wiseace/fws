@@ -73,37 +73,37 @@ export const MobileDashboardLayout = ({
     );
   }
   return <div className="min-h-screen bg-background">
-      {/* Mobile Header - Compact and no gaps */}
+      {/* Mobile Header - Ultra compact */}
       <div className="sticky top-0 z-50 bg-background border-b">
-        <div className="flex items-center justify-between h-10 px-3">{/* Further reduced to h-10 */}
-          <div className="flex items-center gap-3">
-            {/* Home Button with Logo */}
+        <div className="flex items-center justify-between h-12 px-4 py-2 mobile-header-stack">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            {/* Home Button */}
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={() => window.location.href = '/'}
-              className="flex items-center gap-2 p-2 hover:bg-primary/10 border border-primary/20"
+              className="flex items-center gap-1.5 px-2 py-1 h-8 hover:bg-primary/10 border border-primary/20 shrink-0"
             >
-              <div className="p-1 bg-primary rounded-md">
+              <div className="p-0.5 bg-primary rounded">
                 <LayoutDashboard className="h-3 w-3 text-white" />
               </div>
-              <span className="text-xs font-medium text-primary">Home</span>
+              <span className="text-xs font-medium text-primary hidden xs:inline">HOME</span>
             </Button>
-            <div>
-              <h1 className="text-lg font-bold">Dashboard</h1>
+            <div className="min-w-0">
+              <h1 className="text-base font-bold truncate">Dashboard</h1>
               <p className="text-xs text-muted-foreground capitalize">{profile?.user_type}</p>
             </div>
           </div>
           
-           <div className="flex items-center gap-2">
+           <div className="flex items-center gap-1 shrink-0">
              {/* Logout Button */}
              <Button 
                variant="ghost" 
                size="sm" 
                onClick={signOut}
-               className="text-xs px-2 py-1 h-7"
+               className="text-xs px-2 py-1 h-8 hover:bg-destructive/10 text-destructive"
              >
-               Logout
+               LOGOUT
              </Button>
 
              <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -203,7 +203,7 @@ export const MobileDashboardLayout = ({
       </div>
 
       {/* Content - Negative margin to eliminate white space */}
-      <div className="flex-1 pb-20 -mt-4">
+      <div className="flex-1 pb-20 -mt-6">
         {children}
       </div>
 

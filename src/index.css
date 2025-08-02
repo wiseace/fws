@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile header responsive design */
+@media (max-width: 480px) {
+  .mobile-header-stack {
+    flex-direction: column;
+    height: auto;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  .mobile-header-content {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Prevent caching for immediate updates across all browsers */
 * {
   -webkit-backface-visibility: hidden;
