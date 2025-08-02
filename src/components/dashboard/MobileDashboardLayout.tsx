@@ -73,9 +73,9 @@ export const MobileDashboardLayout = ({
     );
   }
   return <div className="min-h-screen bg-background">
-      {/* Mobile Header - Removed shadow and reduced height */}
+      {/* Mobile Header - Compact and no gaps */}
       <div className="sticky top-0 z-50 bg-background border-b">
-        <div className="flex items-center justify-between h-12 px-4">{/* Reduced from h-16 to h-12 */}
+        <div className="flex items-center justify-between h-10 px-3">{/* Further reduced to h-10 */}
           <div className="flex items-center gap-3">
             {/* Home Button with Logo */}
             <Button 
@@ -202,8 +202,8 @@ export const MobileDashboardLayout = ({
          </div>
       </div>
 
-      {/* Content - No padding top since header is sticky */}
-      <div className="flex-1 pb-20">
+      {/* Content - No padding and no gaps */}
+      <div className="flex-1 pb-20 -mt-0">
         {children}
       </div>
 

@@ -158,34 +158,42 @@ export const AdminMessagesPanel = () => {
 
         <div className="space-y-3 max-h-96 overflow-y-auto">
           {messages.length === 0 ? (
-            <div className="text-center py-8 bg-muted/30 rounded-lg">
-              <MessageSquare className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+            <div className="text-center py-6 bg-muted/30 rounded-lg">
+              <MessageSquare className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">No messages yet</p>
             </div>
           ) : (
             messages.map((message) => (
               <div
                 key={message.id}
-                className={`p-4 rounded-lg border ${
+                className={`p-3 rounded-lg border space-y-2 ${
                   message.is_from_admin 
-                    ? 'bg-blue-50 border-blue-200' 
-                    : 'bg-green-50 border-green-200'
+                    ? 'bg-blue-50 border-blue-200 ml-0 mr-4' 
+                    : 'bg-green-50 border-green-200 ml-4 mr-0'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 flex-wrap">
                     {getMessageTypeIcon(message.message_type)}
                     <span className="font-semibold text-sm">
                       {message.is_from_admin ? `Admin: ${message.admin_name}` : 'You'}
                     </span>
                     {getMessageTypeBadge(message.message_type)}
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
                     <Clock className="h-3 w-3" />
-                    {new Date(message.created_at).toLocaleDateString()}
+                    <span className="hidden sm:inline">
+                      {new Date(message.created_at).toLocaleDateString()}
+                    </span>
+                    <span className="sm:hidden">
+                      {new Date(message.created_at).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric' 
+                      })}
+                    </span>
                   </div>
                 </div>
-                <p className="text-sm">{message.message}</p>
+                <p className="text-sm leading-relaxed break-words">{message.message}</p>
               </div>
             ))
           )}
