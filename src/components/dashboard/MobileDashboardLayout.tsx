@@ -202,8 +202,8 @@ export const MobileDashboardLayout = ({
          </div>
       </div>
 
-      {/* Content - No padding and no gaps */}
-      <div className="flex-1 pb-20 -mt-0">
+      {/* Content - Negative margin to eliminate white space */}
+      <div className="flex-1 pb-20 -mt-4">
         {children}
       </div>
 
