@@ -1,0 +1,7 @@
+{
+  "name": "findwhosabi",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
