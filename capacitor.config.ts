@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.13d652b2f19f4b5f9528251cdec00174',
+  appId: 'com.findwhosabi.app',
   appName: 'findwhosabi',
   webDir: 'dist',
   server: {
