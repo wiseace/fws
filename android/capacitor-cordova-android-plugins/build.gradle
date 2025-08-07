@@ -1,0 +1,11 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('cordova.variables.gradle'))
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation fileTree(dir: 'src/main/libs', include: ['*.jar'])
+}

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">findwhosabi</string>
-    <string name="title_activity_main">findwhosabi</string>
+    <string name="app_name">Findwhosabi</string>
+    <string name="title_activity_main">Findwhosabi</string>
     <string name="package_name">com.findwhosabi.app</string>
     <string name="custom_url_scheme">com.findwhosabi.app</string>
 </resources>
