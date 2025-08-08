@@ -11,7 +11,7 @@ A modern, fully editable professional directory website with visual editing capa
 - ⭐ **Professional Profiles**: Detailed profile cards with ratings and verification
 - 🎯 **Category Filtering**: Easy navigation through different professional categories
 - 🔧 **Live Editing Panel**: Built-in CMS-style admin interface
-- 🗄️ **Supabase Ready**: Structure prepared for database integration
+- 🗄️ **Supabase Ready**: Structure prepared for database integration and built-in.
 
 ## Tech Stack
 
