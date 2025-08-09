@@ -1,0 +1,15 @@
+# Ensure Gradle wrapper jars are committed as binary and not via Git LFS
+android/gradle/wrapper/gradle-wrapper.jar binary -diff -merge
+gradle/wrapper/gradle-wrapper.jar binary -diff -merge
+
+# Line endings and executables for wrapper scripts
+* text=auto
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Ensure gradle wrapper scripts preserve exec bit
+android/gradlew text eol=lf
+gradlew text eol=lf
+
+# Treat all jars as binary
+*.jar binary
