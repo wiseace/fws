@@ -69,10 +69,9 @@ goto fail
 
 set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
 
-@if not exist "%CLASSPATH%" (
-  set ALT_CLASSPATH=%APP_HOME%\..\gradle\wrapper\gradle-wrapper.jar
-  if exist "%ALT_CLASSPATH%" set CLASSPATH=%ALT_CLASSPATH%
-)
+set ALT_CLASSPATH=%APP_HOME%\..\gradle\wrapper\gradle-wrapper.jar
+@if exist "%ALT_CLASSPATH%" set CLASSPATH=%CLASSPATH%;%ALT_CLASSPATH%
+
 
 @rem Execute Gradle
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*

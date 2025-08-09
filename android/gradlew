@@ -82,13 +82,11 @@ esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
-# Fallback to root-level Gradle wrapper if android wrapper is missing or invalid
-if [ ! -f "$CLASSPATH" ]; then
-  ALT_CLASSPATH="$APP_HOME/../gradle/wrapper/gradle-wrapper.jar"
-  if [ -f "$ALT_CLASSPATH" ]; then
-    CLASSPATH="$ALT_CLASSPATH"
-  fi
+ALT_CLASSPATH="$APP_HOME/../gradle/wrapper/gradle-wrapper.jar"
+if [ -f "$ALT_CLASSPATH" ]; then
+  CLASSPATH="$CLASSPATH:$ALT_CLASSPATH"
 fi
+
 
 
 # Determine the Java command to use to start the JVM.
